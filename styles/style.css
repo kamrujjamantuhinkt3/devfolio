@@ -363,6 +363,7 @@ figure { margin: 0; }
     justify-content: space-between;
 }
 .mobile.is-open { transform: translateX(0); }
+.mobile { overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
 
 .mobile__links { display: flex; flex-direction: column; }
 .mobile__links a {
@@ -2183,9 +2184,13 @@ body.is-ready .accent.is-flowing .char {
 }
 .sheet[hidden] { display: none; }
 
+/* only shown on phones, where the panel becomes a bottom sheet */
+.sheet__grab { display: none; }
+
 .sheet__scrim {
     position: absolute;
     inset: 0;
+    touch-action: none;
     background: rgba(3, 6, 20, .72);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
@@ -2199,6 +2204,8 @@ body.is-ready .accent.is-flowing .char {
     width: min(620px, 100%);
     max-height: min(82vh, 760px);
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;      /* stop the page scrolling once the panel ends */
     padding: 34px 36px 30px;
     border-radius: 20px;
     border: 1px solid var(--border);
@@ -2533,8 +2540,8 @@ body.is-ready .accent.is-flowing .char {
     position: relative;
     display: grid;
     place-items: center;
-    min-height: clamp(430px, 55vw, 600px);
-    padding: 84px 24px;
+    min-height: clamp(580px, 70vw, 800px);
+    padding: 104px 24px;
     margin: 18px 0;
     overflow: hidden;
     isolation: isolate;
@@ -3118,15 +3125,31 @@ body.is-ready .accent.is-flowing .char {
     .foot__top { flex-direction: column; text-align: center; }
     .foot__base { flex-direction: column-reverse; text-align: center; }
     .foot__statement { padding: 30px 8px 26px; }
-    .reel { padding: 60px 20px; min-height: 400px; }
+    .reel { padding: 74px 20px; min-height: 520px; }
     .xps { padding-left: 22px; }
     .xp__node { left: -22px; }
     .xp__toggle { flex-wrap: wrap; gap: 10px 14px; }
     .xp__meta { align-items: flex-start; text-align: left; margin-left: 0; width: 100%; order: 3; flex-direction: row; align-items: center; gap: 10px; }
     .xp__chev { position: absolute; right: 6px; top: 22px; }
     .xp__inner { padding-left: 6px; }
-    .sheet { padding: 16px; }
-    .sheet__panel { padding: 28px 22px 24px; max-height: 88vh; }
+    /* bottom sheet: easier to reach, and it cannot overflow off the top */
+    .sheet { padding: 0; place-items: end center; }
+    .sheet__panel {
+        width: 100%;
+        max-height: 86vh;
+        padding: 20px 20px 24px;
+        border-radius: 22px 22px 0 0;
+        transform: translateY(30px);
+    }
+    .sheet__grab {
+        display: block;
+        width: 40px; height: 4px;
+        margin: 0 auto 16px;
+        border-radius: 999px;
+        background: var(--border);
+    }
+    .sheet__close { top: 14px; right: 14px; }
+    .sheet__cover .proj__cover { aspect-ratio: 16 / 9; }
     .focus { padding: 24px 22px; }
     .filters { justify-content: center; }
     .tally { gap: 10px 18px; }
@@ -3273,7 +3296,7 @@ body.is-ready .accent.is-flowing .char {
 /* Landscape phones - 100svh plus a full hero will not fit */
 @media (max-height: 560px) and (orientation: landscape) {
     .hero { min-height: auto; padding: 96px 20px 54px; }
-    .reel { min-height: 280px; padding: 48px 20px; }
+    .reel { min-height: 300px; padding: 52px 20px; }
     .mobile { padding-top: 84px; }
     .sheet__panel { max-height: 92vh; }
 }

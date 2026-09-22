@@ -7,6 +7,39 @@
     var body = document.body;
     var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+
+    /* Locking the page behind an overlay. `overflow: hidden` on <body> is
+       ignored by iOS Safari, which keeps scrolling the page underneath, so the
+       body is pinned instead and the scroll position restored on release.
+       Counted, because the menu and the project sheet can both ask for it. */
+    var scrollLock = (function () {
+        var depth = 0;
+        var savedY = 0;
+
+        return {
+            on: function () {
+                if (depth++ > 0) return;
+                savedY = window.scrollY || window.pageYOffset || 0;
+                body.style.position = "fixed";
+                body.style.top = -savedY + "px";
+                body.style.left = "0";
+                body.style.right = "0";
+                body.style.width = "100%";
+            },
+            off: function () {
+                depth -= 1;
+                if (depth > 0) return;
+                depth = 0;
+                body.style.position = "";
+                body.style.top = "";
+                body.style.left = "";
+                body.style.right = "";
+                body.style.width = "";
+                window.scrollTo(0, savedY);
+            }
+        };
+    })();
+
     /* Theme*/
     var themeBtn = document.getElementById("themeToggle");
 
@@ -30,7 +63,26 @@
     var pageLoaded = false;
     var finished = false;
 
-    window.addEventListener("load", function () { pageLoaded = true; });
+    scrollLock.on();     // held until the loader finishes
+
+    function markLoaded() { pageLoaded = true; }
+
+    // Waiting on window "load" means waiting for every eager image, which on a
+    // phone stalls the bar at 92% for seconds. The only asset the first screen
+    // actually needs is the portrait, so that is what is waited on.
+    var heroShot = document.querySelector(".portrait__frame img");
+
+    if (heroShot) {
+        if (heroShot.complete) markLoaded();
+        else {
+            heroShot.addEventListener("load", markLoaded);
+            heroShot.addEventListener("error", markLoaded);
+        }
+    } else {
+        markLoaded();
+    }
+
+    window.addEventListener("load", markLoaded);
 
     function finish() {
         if (finished) return;
@@ -42,6 +94,7 @@
         setTimeout(function () {
             preloader.classList.add("is-done");
             body.classList.remove("is-loading");
+            scrollLock.off();                    // release the pin taken at start-up
             body.classList.add("is-ready");
             startStory();
             setTimeout(function () { preloader.style.display = "none"; }, 900);
@@ -61,7 +114,7 @@
     }, 40);
 
     // never leave anyone stuck behind the loader
-    setTimeout(function () { clearInterval(timer); finish(); }, 5000);
+    setTimeout(function () { clearInterval(timer); finish(); }, 3200);
 
     /* Starfield */
     var canvas = document.getElementById("stars");
@@ -851,14 +904,14 @@
 
             lastOpener = card.querySelector(".proj__open");
             sheet.hidden = false;
-            document.body.style.overflow = "hidden";
+            scrollLock.on();
             requestAnimationFrame(function () { sheet.classList.add("is-open"); });
             sheet.querySelector(".sheet__close").focus();
         }
 
         function closeSheet() {
             sheet.classList.remove("is-open");
-            document.body.style.overflow = "";
+            scrollLock.off();
             setTimeout(function () {
                 sheet.hidden = true;
                 sheetBody.innerHTML = "";
@@ -1343,7 +1396,8 @@
         scrim.classList.toggle("is-open", open);
         burger.setAttribute("aria-expanded", String(open));
         menu.setAttribute("aria-hidden", String(!open));
-        body.style.overflow = open ? "hidden" : "";
+        if (open) scrollLock.on();
+        else scrollLock.off();
     }
 
     burger.addEventListener("click", function () { setMenu(!menu.classList.contains("is-open")); });
