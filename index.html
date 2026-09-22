@@ -1,11 +1,188 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kamrujjaman Tuhin</title>
+    <meta name="description" content="Kamrujjaman Tuhin — full-stack developer. I design and build reliable, purposeful experiences for the web.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+    <noscript><style>.preloader{display:none!important}.reveal,.char{opacity:1!important;transform:none!important}</style></noscript>
 </head>
-<body>
-    
+<body class="is-loading">
+
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <div class="preloader__inner">
+            <span class="mark">
+                <svg class="mark__orbit" viewBox="0 0 120 120" aria-hidden="true">
+                    <g class="mark__tilt">
+                        <circle class="mark__ring" cx="60" cy="60" r="52" vector-effect="non-scaling-stroke"/>
+                        <g class="mark__spin"><circle class="mark__moon" cx="112" cy="60" r="6"/></g>
+                    </g>
+                </svg>
+                <span class="mark__kt">KT</span>
+            </span>
+            <span class="preloader__caption">Kamrujjaman&nbsp;Tuhin</span>
+            <div class="preloader__track"><span class="preloader__bar" id="preBar"></span></div>
+            <span class="preloader__pct"><span id="prePct">0</span>%</span>
+        </div>
+    </div>
+
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Navbar -->
+    <header class="nav" id="nav">
+        <div class="nav__inner">
+
+            <!-- KT monogram with orbit -->
+            <a href="#home" class="logo" aria-label="Kamrujjaman Tuhin — home">
+                <span class="mark">
+                    <svg class="mark__orbit" viewBox="0 0 120 120" aria-hidden="true">
+                        <g class="mark__tilt">
+                            <circle class="mark__ring" cx="60" cy="60" r="52" vector-effect="non-scaling-stroke"/>
+                            <g class="mark__spin"><circle class="mark__moon" cx="112" cy="60" r="6"/></g>
+                        </g>
+                    </svg>
+                    <span class="mark__kt">KT</span>
+                </span>
+                <span class="logo__text">
+                    <span class="logo__name">Kamrujjaman&nbsp;Tuhin</span>
+                    <span class="logo__role">Full-Stack Developer</span>
+                </span>
+            </a>
+
+            <nav class="nav__links" id="navLinks" aria-label="Primary">
+                <a href="#home" class="nav__link is-active">Home</a>
+                <a href="#about" class="nav__link">About</a>
+                <a href="#education" class="nav__link">Education</a>
+                <a href="#skills" class="nav__link">Skills</a>
+                <a href="#projects" class="nav__link">Projects</a>
+                <a href="#experience" class="nav__link">Experience</a>
+                <a href="#contact" class="nav__link">Contact</a>
+                <span class="nav__pill" id="navPill" aria-hidden="true"></span>
+            </nav>
+
+            <div class="nav__actions">
+                <button class="icon-btn" id="themeToggle" type="button" aria-label="Switch colour theme" title="Switch theme">
+                    <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.2v2.4M12 19.4v2.4M2.2 12h2.4M19.4 12h2.4M5.1 5.1l1.7 1.7M17.2 17.2l1.7 1.7M18.9 5.1l-1.7 1.7M6.8 17.2l-1.7 1.7"/></svg>
+                    <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a8.5 8.5 0 1 0 10.7 10.7z"/></svg>
+                </button>
+                <a href="#contact" class="btn btn--sm btn--primary nav__cta">Get in touch</a>
+                <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile" id="mobileMenu" aria-hidden="true">
+        <nav class="mobile__links" aria-label="Mobile">
+            <a href="#home" style="--i:1">Home</a>
+            <a href="#about" style="--i:2">About</a>
+            <a href="#education" style="--i:3">Education</a>
+            <a href="#skills" style="--i:4">Skills</a>
+            <a href="#projects" style="--i:5">Projects</a>
+            <a href="#experience" style="--i:6">Experience</a>
+            <a href="#contact" style="--i:7">Contact</a>
+        </nav>
+        <div class="mobile__social">
+            <a href="https://www.linkedin.com/in/kamrujjamantuhinkt3" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="https://www.github.com/kamrujjamantuhinkt3" target="_blank" rel="noopener">GitHub</a>
+        </div>
+    </div>
+    <div class="mobile__scrim" id="scrim"></div>
+
+    <!-- Hero / Banner -->
+    <main>
+    <section class="hero" id="home">
+
+        <div class="hero__bg" aria-hidden="true">
+            <canvas class="stars" id="stars"></canvas>
+            <span class="nebula nebula--1"></span>
+            <span class="nebula nebula--2"></span>
+            <span class="hero__vignette"></span>
+        </div>
+
+        <div class="hero__inner">
+
+            <div class="hero__copy">
+                <p class="eyebrow reveal" style="--d:.05s"><span class="eyebrow__rule"></span>Full-Stack Developer</p>
+
+                <h1 class="hero__title reveal" style="--d:.14s">
+                    Hello, I&rsquo;m<br>
+                    <span class="accent" data-split>Kamrujjaman Tuhin</span>
+                </h1>
+
+                <!-- The story, told chapter by chapter -->
+                <div class="story reveal" style="--d:.28s">
+                    <p class="story__marker">
+                        <span class="story__no" id="storyNo">01</span>
+                        <span class="story__name" id="storyName">Curiosity</span>
+                    </p>
+                    <p class="story__text" id="storyText">
+                        One question I could never put down &mdash; how does any of this
+                        actually work? It cost me a lot of sleep. I have never regretted it.
+                    </p>
+                    <div class="story__dots" id="storyDots" role="tablist" aria-label="Story chapters"></div>
+                </div>
+
+                <div class="hero__cta reveal" style="--d:.42s">
+                    <a href="#projects" class="btn btn--primary">
+                        <span>View my work</span>
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+                    </a>
+                    <a href="#contact" class="btn btn--ghost"><span>Get in touch</span></a>
+                </div>
+
+                <div class="hero__social reveal" style="--d:.52s">
+                    <a class="social" href="https://www.linkedin.com/in/kamrujjamantuhinkt3" target="_blank" rel="noopener" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3.2 9h3.6v12H3.2zM9.2 9h3.45v1.64h.05c.48-.9 1.66-1.85 3.42-1.85 3.66 0 4.33 2.4 4.33 5.52V21h-3.6v-5.02c0-1.2-.02-2.74-1.67-2.74-1.67 0-1.93 1.3-1.93 2.65V21H9.2z"/></svg>
+                    </a>
+                    <a class="social" href="https://www.github.com/kamrujjamantuhinkt3" target="_blank" rel="noopener" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>
+                    </a>
+                    <a class="social" href="mailto:kamrujjamantuhinkt3@gmail.com" aria-label="Email">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.25h18c.69 0 1.25.56 1.25 1.25v.42l-9.9 5.86a.75.75 0 0 1-.7 0L1.75 6.92V6.5c0-.69.56-1.25 1.25-1.25zm19.25 3.42V17.5c0 .69-.56 1.25-1.25 1.25H3c-.69 0-1.25-.56-1.25-1.25V8.67l9.14 5.41c.68.4 1.54.4 2.22 0z"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- The portrait + constellation -->
+            <div class="stage reveal" style="--d:.34s">
+                <svg class="stage__lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                    <polyline points="8,22 92,16 94,74 10,86" />
+                </svg>
+
+                <span class="orbit orbit--1" aria-hidden="true"></span>
+                <span class="orbit orbit--2" aria-hidden="true"></span>
+
+                <figure class="portrait">
+                    <span class="portrait__glow" aria-hidden="true"></span>
+                    <div class="portrait__frame">
+                        <img src="assets/images/tuhin-formal.png" alt="Portrait of Kamrujjaman Tuhin" width="440" height="440">
+                        <span class="portrait__tone" aria-hidden="true"></span>
+                        <span class="portrait__vignette" aria-hidden="true"></span>
+                        <span class="portrait__sheen" aria-hidden="true"></span>
+                    </div>
+                    <svg class="portrait__outline" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                        <polygon class="edge-base" points="50,0 100,25 100,75 50,100 0,75 0,25"/>
+                        <polygon class="edge-run"  points="50,0 100,25 100,75 50,100 0,75 0,25"/>
+                    </svg>
+                </figure>
+
+                <div class="nodes" id="nodes"></div>
+            </div>
+        </div>
+
+    </section>
+
+    </main>
+
+    <script src="js/main.js"></script>
 </body>
 </html>
