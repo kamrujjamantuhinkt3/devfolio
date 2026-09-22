@@ -2417,6 +2417,29 @@ body.is-ready .accent.is-flowing .char {
 .reel__cta { justify-content: center; }
 
 
+/* Download CV */
+.btn--cv svg { stroke-width: 2; }
+.btn--cv:hover svg { transform: translateY(2px); }
+
+.reach__cv {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+.reach__cv:hover svg { transform: translateY(2px); }
+
+/* Until the PDF is in place the button stays labelled but inactive, rather
+   than sending a recruiter to a 404 */
+.btn.is-missing {
+    border: 1px dashed var(--border);
+    background: transparent;
+    color: var(--muted);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+.btn.is-missing:hover { transform: none; box-shadow: none; }
+
+
 /* Contact */
 .contact__aura {
     position: absolute;
@@ -2755,18 +2778,14 @@ body.is-ready .accent.is-flowing .char {
 }
 
 .foot__by {
-    margin-top: 14px;
-    font-family: var(--font-name);
-    font-size: 1.04rem;
+    margin-top: 16px;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
     color: var(--indigo-300);
 }
-.foot__by::before {
-    content: "";
-    display: block;
-    width: 36px; height: 1px;
-    margin: 0 auto 12px;
-    background: linear-gradient(90deg, transparent, var(--indigo-400), transparent);
-}
+.foot__by::before { content: "\2014\00a0"; }
 
 
 /* Footer — base row */

@@ -1113,6 +1113,33 @@
     }
 
 
+    /* CV buttons — check the file is actually there before offering it, so a
+       recruiter never clicks through to a 404. Skipped on file:// where a
+       fetch would fail for reasons that say nothing about the file. */
+    var cvButtons = [document.getElementById("cvHero"), document.getElementById("cvContact")]
+        .filter(Boolean);
+
+    if (cvButtons.length && /^https?:$/.test(window.location.protocol)) {
+        fetch(cvButtons[0].getAttribute("href"), { method: "HEAD" })
+            .then(function (res) {
+                if (res.ok) return;
+                markMissing();
+            })
+            .catch(markMissing);
+    }
+
+    function markMissing() {
+        cvButtons.forEach(function (btn) {
+            btn.classList.add("is-missing");
+            btn.removeAttribute("href");
+            btn.removeAttribute("download");
+            btn.setAttribute("role", "button");
+            btn.setAttribute("aria-disabled", "true");
+            btn.title = "CV will be available shortly";
+        });
+    }
+
+
     /* Footer year, so it never goes stale */
     var yearEl = document.getElementById("year");
     if (yearEl) yearEl.textContent = String(new Date().getFullYear());
