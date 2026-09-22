@@ -812,6 +812,19 @@
         function openSheet(card) {
             var detail = card.querySelector(".proj__detail");
             sheetBody.innerHTML = "";
+
+            // carry the card's cover into the sheet, so the thing clicked and the
+            // panel that opens are visibly the same project. A real screenshot
+            // comes along with it, since the <img> lives inside the cover.
+            var cover = card.querySelector(".proj__cover");
+            if (cover) {
+                var frame = document.createElement("div");
+                frame.className = "sheet__cover";
+                frame.setAttribute("aria-hidden", "true");
+                frame.appendChild(cover.cloneNode(true));
+                sheetBody.appendChild(frame);
+            }
+
             sheetBody.appendChild(detail.content.cloneNode(true));
 
             // the heading has to carry the id the dialog is labelled by
@@ -854,7 +867,15 @@
         }
 
         projects.forEach(function (card) {
-            card.querySelector(".proj__open").addEventListener("click", function () { openSheet(card); });
+            var opener = card.querySelector(".proj__open");
+            opener.addEventListener("click", function () { openSheet(card); });
+
+            // the light layer is decorative, so it is added here rather than
+            // repeated twelve times in the markup
+            var glow = document.createElement("span");
+            glow.className = "proj__glow";
+            glow.setAttribute("aria-hidden", "true");
+            opener.appendChild(glow);
 
             // A screenshot replaces the placeholder number. CSS `:has()` already
             // covers this; the class is the fallback for browsers without it.
@@ -869,6 +890,46 @@
                 shot.remove();
             });
         });
+
+
+        /* One delegated listener for all twelve cards, throttled to a frame */
+        if (!reduced && window.matchMedia("(pointer: fine)").matches) {
+            var tiltCard = null;
+            var tiltEvent = null;
+            var tiltQueued = false;
+            var MAX_TILT = 5;          // degrees; enough to read as depth, not as a toy
+
+            projGrid.addEventListener("mousemove", function (e) {
+                var opener = e.target.closest(".proj__open");
+                if (!opener) return;
+
+                tiltCard = opener;
+                tiltEvent = e;
+                if (tiltQueued) return;
+                tiltQueued = true;
+
+                requestAnimationFrame(function () {
+                    tiltQueued = false;
+                    if (!tiltCard || !tiltEvent) return;
+
+                    var box = tiltCard.getBoundingClientRect();
+                    var px = (tiltEvent.clientX - box.left) / box.width;
+                    var py = (tiltEvent.clientY - box.top) / box.height;
+
+                    tiltCard.style.setProperty("--ry", ((px - 0.5) * 2 * MAX_TILT).toFixed(2) + "deg");
+                    tiltCard.style.setProperty("--rx", ((0.5 - py) * 2 * MAX_TILT).toFixed(2) + "deg");
+                    tiltCard.style.setProperty("--mx", (px * 100).toFixed(1) + "%");
+                    tiltCard.style.setProperty("--my", (py * 100).toFixed(1) + "%");
+                });
+            });
+
+            projGrid.addEventListener("mouseout", function (e) {
+                var opener = e.target.closest(".proj__open");
+                if (!opener || opener.contains(e.relatedTarget)) return;
+                opener.style.setProperty("--rx", "0deg");
+                opener.style.setProperty("--ry", "0deg");
+            });
+        }
 
         sheet.querySelectorAll("[data-sheet-close]").forEach(function (el) {
             el.addEventListener("click", closeSheet);

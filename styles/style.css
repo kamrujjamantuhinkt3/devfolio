@@ -1992,7 +1992,7 @@ body.is-ready .accent.is-flowing .char {
     gap: 14px;
 }
 
-.proj { display: flex; }
+.proj { display: flex; perspective: 1000px; }
 .proj.is-hidden { display: none; }
 
 .proj__open {
@@ -2022,12 +2022,33 @@ body.is-ready .accent.is-flowing .char {
     transition: opacity .4s ease;
     z-index: 2;
 }
+/* Tilt follows the pointer; the angles are written by script and kept small
+   so it reads as depth rather than as a gimmick. */
+.proj__open {
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transform-style: preserve-3d;
+}
 .proj__open:hover,
 .proj__open:focus-visible {
-    transform: translateY(-6px);
+    transform: translateY(-6px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
     border-color: rgba(129, 140, 248, .45);
-    box-shadow: 0 20px 44px rgba(2, 4, 16, .55);
+    box-shadow: 0 22px 48px rgba(2, 4, 16, .6);
 }
+
+/* A soft light that follows the cursor across the card */
+.proj__glow {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 0%),
+                rgba(129, 140, 248, .16), transparent 70%);
+    opacity: 0;
+    transition: opacity .35s ease;
+    pointer-events: none;
+}
+.proj__open:hover .proj__glow,
+.proj__open:focus-visible .proj__glow { opacity: 1; }
 .proj__open:hover::before,
 .proj__open:focus-visible::before { opacity: 1; }
 
@@ -2068,6 +2089,12 @@ body.is-ready .accent.is-flowing .char {
     transition: transform .8s cubic-bezier(.22, 1, .36, 1);
 }
 .proj__open:hover .proj__cover::after { transform: rotate(-18deg) scaleY(.44) translateX(-26px); }
+
+/* the cover eases in as the card lifts */
+.proj__cover { transition: transform .7s cubic-bezier(.22, 1, .36, 1); }
+.proj__open:hover .proj__cover { transform: scale(1.05); }
+.proj__no { transition: transform .6s cubic-bezier(.22, 1, .36, 1), opacity .4s ease; }
+.proj__open:hover .proj__no { transform: translateY(-4px) scale(1.06); }
 
 .proj__no {
     position: relative;
@@ -2133,13 +2160,16 @@ body.is-ready .accent.is-flowing .char {
     letter-spacing: .4px;
     color: var(--indigo-300);
 }
-.proj__cue::after {
-    content: "";
-    width: 14px; height: 1px;
-    background: currentColor;
-    transition: width .35s ease;
+.proj__cue svg {
+    width: 14px; height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform .35s cubic-bezier(.22, 1, .36, 1);
 }
-.proj__open:hover .proj__cue::after { width: 26px; }
+.proj__open:hover .proj__cue svg { transform: translateX(5px); }
 
 
 /* Projects — the detail sheet */
@@ -2195,6 +2225,33 @@ body.is-ready .accent.is-flowing .char {
 }
 .sheet__close:hover { color: var(--text); border-color: var(--indigo-500); transform: rotate(90deg); }
 .sheet__close svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+/* Projects — the cover carries into the sheet, so the card a visitor clicked
+   and the panel that opens are visibly the same thing */
+.sheet__cover {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 0 0 22px;
+    box-shadow: 0 16px 36px rgba(2, 4, 16, .5);
+}
+.sheet__cover .proj__cover { aspect-ratio: 16 / 7; transform: none; }
+.sheet__cover .proj__no { font-size: 3.2rem; }
+
+/* content arrives in reading order rather than all at once */
+.sheet__body > * { animation: sheetIn .55s cubic-bezier(.22, 1, .36, 1) both; }
+.sheet__body > *:nth-child(1) { animation-delay: .06s; }
+.sheet__body > *:nth-child(2) { animation-delay: .12s; }
+.sheet__body > *:nth-child(3) { animation-delay: .18s; }
+.sheet__body > *:nth-child(4) { animation-delay: .24s; }
+.sheet__body > *:nth-child(5) { animation-delay: .30s; }
+.sheet__body > *:nth-child(6) { animation-delay: .36s; }
+.sheet__body > *:nth-child(7) { animation-delay: .42s; }
+.sheet__body > *:nth-child(8) { animation-delay: .48s; }
+@keyframes sheetIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: none; }
+}
 
 .sheet__cat {
     font-size: .58rem;
@@ -2254,6 +2311,29 @@ body.is-ready .accent.is-flowing .char {
 }
 
 .sheet__links { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* the actions land last, after the reader has the context */
+.sheet__links .btn {
+    position: relative;
+    overflow: hidden;
+    animation: sheetIn .5s cubic-bezier(.22, 1, .36, 1) both;
+}
+.sheet__links .btn:nth-child(1) { animation-delay: .52s; }
+.sheet__links .btn:nth-child(2) { animation-delay: .60s; }
+
+/* a shine crosses the button on hover */
+.sheet__links .btn:not(.btn--off)::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .3) 50%, transparent 65%);
+    transform: translateX(-120%);
+    transition: transform .7s cubic-bezier(.22, 1, .36, 1);
+    pointer-events: none;
+}
+.sheet__links .btn:not(.btn--off):hover::after { transform: translateX(120%); }
+.sheet__links .btn svg { transition: transform .35s ease; }
+.sheet__links .btn:hover svg { transform: translate(3px, -3px); }
 
 /* Shown for projects that are not deployed, so the row still reads complete */
 .btn--off {
@@ -3046,6 +3126,7 @@ body.is-ready .accent.is-flowing .char {
     .reveal, .char, [data-reveal] { opacity: 1 !important; transform: none !important; }
 
     .foot::before,
+    .sheet__body > *, .sheet__links .btn,
     .practice__bullet::after,
     .solar__core,
     .edu__orbit, .skills__orbit, .tl__ring,
