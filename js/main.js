@@ -510,6 +510,108 @@
     }
 
 
+    /* Skills — the featured core cycles through each technology, and any chip
+       can take it over. The skill list lives in the markup, so there is one
+       source of truth rather than a copy of it in here. */
+    var core = document.getElementById("core");
+
+    if (core) {
+        var coreUse = document.getElementById("coreUse");
+        var coreLogo = document.getElementById("coreLogo");
+        var coreName = document.getElementById("coreName");
+        var coreRole = document.getElementById("coreRole");
+        var coreDots = document.getElementById("coreDots");
+
+        // only the first copy of each marquee row — the duplicate is decorative
+        var techs = Array.prototype.slice.call(
+            document.querySelectorAll('.tech:not([aria-hidden="true"])'));
+
+        var focused = 0;
+        var coreTimer = null;
+        var coreHeld = false;
+
+        function paintCore(i) {
+            var el = techs[i];
+            if (!el) return;
+
+            core.style.setProperty("--acc", el.style.getPropertyValue("--acc") || "#818cf8");
+            coreUse.setAttribute("href", "#" + el.dataset.icon);
+            coreName.textContent = el.dataset.name;
+            coreRole.textContent = el.dataset.role;
+
+            techs.forEach(function (t, k) { t.classList.toggle("is-focus", k === i); });
+            Array.prototype.forEach.call(coreDots.children, function (d, k) {
+                d.classList.toggle("is-on", k === i);
+                d.setAttribute("aria-selected", String(k === i));
+            });
+        }
+
+        function focus(i, manual) {
+            focused = (i + techs.length) % techs.length;
+
+            if (reduced) {
+                paintCore(focused);
+            } else {
+                coreLogo.classList.add("is-swapping");
+                setTimeout(function () {
+                    paintCore(focused);
+                    coreLogo.classList.remove("is-swapping");
+                }, 240);
+            }
+            if (manual) restartCore();
+        }
+
+        function restartCore() {
+            clearInterval(coreTimer);
+            if (reduced) return;
+            coreTimer = setInterval(function () {
+                if (!coreHeld) focus(focused + 1);
+            }, 2800);
+        }
+
+        techs.forEach(function (el, i) {
+            var dot = document.createElement("button");
+            dot.type = "button";
+            dot.setAttribute("role", "tab");
+            dot.setAttribute("aria-label", el.dataset.name);
+            dot.addEventListener("click", function () { focus(i, true); });
+            coreDots.appendChild(dot);
+
+            el.addEventListener("click", function () { focus(i, true); });
+            el.addEventListener("mouseenter", function () { focus(i, true); });
+        });
+
+        // pause the rotation while someone is reading the panel
+        core.addEventListener("mouseenter", function () { coreHeld = true; });
+        core.addEventListener("mouseleave", function () { coreHeld = false; });
+
+        paintCore(0);
+        restartCore();
+    }
+
+
+    /* Skills — a light that follows the pointer across the section */
+    var skillsSection = document.querySelector(".skills");
+
+    if (skillsSection && !reduced && window.matchMedia("(pointer: fine)").matches) {
+        var spotQueued = false;
+        var lastEvent = null;
+
+        skillsSection.addEventListener("mousemove", function (e) {
+            lastEvent = e;
+            if (spotQueued) return;
+            spotQueued = true;
+
+            requestAnimationFrame(function () {
+                spotQueued = false;
+                var box = skillsSection.getBoundingClientRect();
+                skillsSection.style.setProperty("--mx", (lastEvent.clientX - box.left) + "px");
+                skillsSection.style.setProperty("--my", (lastEvent.clientY - box.top) + "px");
+            });
+        });
+    }
+
+
     /* Navbar */
     var nav = document.getElementById("nav");
     var bar = document.getElementById("scrollProgress");

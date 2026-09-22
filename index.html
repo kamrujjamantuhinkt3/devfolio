@@ -285,7 +285,7 @@
                             <p class="tl__years">2022 &mdash; 2026 <span class="tl__badge">Ongoing</span></p>
                             <h3 class="tl__school">Daffodil International University</h3>
                             <p class="tl__degree">B.Sc. in Computer Science &amp; Engineering</p>
-                            <p class="tl__meta">CGPA 3.25</p>
+                            <p class="tl__meta">CGPA 3.50</p>
                         </div>
                     </article>
                 </li>
@@ -322,6 +322,119 @@
 
             </ol>
         </div>
+    </section>
+
+    <!-- Skills -->
+    <section class="section skills" id="skills">
+        <span class="skills__aura" aria-hidden="true"></span>
+        <span class="skills__spot" aria-hidden="true"></span>
+
+        <svg class="sprite" aria-hidden="true" focusable="false"><defs>
+            <symbol id="l-html" viewBox="0 0 24 24"><path fill="#E34F26" d="M3.6 2 5.2 20.1 12 22l6.8-1.9L20.4 2z"/><path fill="#EF652A" d="M12 3.4v17.1l5.5-1.5L18.8 3.4z"/><text x="12" y="15.6" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">5</text></symbol>
+            <symbol id="l-css" viewBox="0 0 24 24"><path fill="#1572B6" d="M3.6 2 5.2 20.1 12 22l6.8-1.9L20.4 2z"/><path fill="#33A9DC" d="M12 3.4v17.1l5.5-1.5L18.8 3.4z"/><text x="12" y="15.6" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">3</text></symbol>
+            <symbol id="l-js" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.4" fill="#F7DF1E"/><text x="12" y="16" text-anchor="middle" font-size="9.5" font-weight="700" fill="#101010">JS</text></symbol>
+            <symbol id="l-ts" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="3.2" fill="#3178C6"/><text x="12" y="16" text-anchor="middle" font-size="9.5" font-weight="700" fill="#fff">TS</text></symbol>
+            <symbol id="l-react" viewBox="0 0 24 24"><g fill="none" stroke="#61DAFB" stroke-width="1.25"><ellipse cx="12" cy="12" rx="10" ry="3.9"/><ellipse cx="12" cy="12" rx="10" ry="3.9" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="3.9" transform="rotate(120 12 12)"/></g><circle cx="12" cy="12" r="2.1" fill="#61DAFB"/></symbol>
+            <symbol id="l-tailwind" viewBox="0 0 24 24"><path fill="#38BDF8" d="M12 6c-2.67 0-4.33 1.33-5 4 1-1.33 2.17-1.83 3.5-1.5.76.19 1.31.74 1.91 1.35.98 1 2.11 2.15 4.59 2.15 2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.3-.74-1.91-1.35C15.61 7.15 14.48 6 12 6zM7 12c-2.67 0-4.33 1.33-5 4 1-1.33 2.17-1.83 3.5-1.5.76.19 1.3.74 1.91 1.35C8.39 16.85 9.52 18 12 18c2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.3-.74-1.91-1.35C10.61 13.15 9.48 12 7 12z"/></symbol>
+            <symbol id="l-next" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10.6" fill="#fff"/><path fill="#000" d="M8.8 7.3h1.7v9.4H8.8zm2 0h2l4.5 7V7.3h1.6v9.4h-1.9l-4.6-7.2v7.2h-1.6z"/></symbol>
+            <symbol id="l-node" viewBox="0 0 24 24"><path fill="#539E43" d="M12 2.3 20.4 7.1v9.8L12 21.7 3.6 16.9V7.1z"/><path fill="#3C873A" d="M12 2.3 20.4 7.1v9.8L12 21.7z"/><text x="12" y="14.6" text-anchor="middle" font-size="5.6" font-weight="700" fill="#fff">node</text></symbol>
+            <symbol id="l-mongo" viewBox="0 0 24 24"><path fill="#4DB33D" d="M12 1.8c1.9 2.6 4.6 6.4 4.6 10.3 0 3.6-2 6.2-4.6 7.6-2.6-1.4-4.6-4-4.6-7.6 0-3.9 2.7-7.7 4.6-10.3z"/><path fill="#3F9639" d="M12 1.8v17.9c-2.6-1.4-4.6-4-4.6-7.6 0-3.9 2.7-7.7 4.6-10.3z"/><path fill="#B8C4C2" d="M11.5 19.4h1v2.8h-1z"/></symbol>
+            <symbol id="l-mongoose" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" fill="#880000"/><text x="12" y="16.2" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff">M</text></symbol>
+            <symbol id="l-auth" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" fill="#0F172A"/><path fill="#818CF8" d="M12 5.6 7.6 7.3v3.6c0 2.8 1.9 5.2 4.4 6.2 2.5-1 4.4-3.4 4.4-6.2V7.3z"/><circle cx="12" cy="10.4" r="1.15" fill="#0F172A"/><path fill="#0F172A" d="M11.55 11.2h.9v2.3h-.9z"/></symbol>
+            <symbol id="l-git" viewBox="0 0 24 24"><g fill="none" stroke="#F05032" stroke-width="1.6" stroke-linecap="round"><path d="M6.5 8.6v6.8M8.8 6.6c4 .6 5.9 2.1 6.3 4.2M15 13.9c-.6 2.1-2.6 3.2-6.1 3.7"/></g><g fill="#F05032"><circle cx="6.5" cy="6.1" r="2.4"/><circle cx="6.5" cy="17.9" r="2.4"/><circle cx="17.4" cy="11.6" r="2.4"/></g></symbol>
+            <symbol id="l-github" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#181717"/><path fill="#fff" d="M12 3.6a8.4 8.4 0 0 0-2.66 16.37c.42.08.57-.18.57-.4l-.01-1.43c-2.33.5-2.83-1.13-2.83-1.13-.39-.97-.94-1.23-.94-1.23-.76-.52.06-.51.06-.51.84.06 1.29.87 1.29.87.75 1.28 1.97.91 2.46.7.08-.55.29-.92.53-1.13-1.86-.21-3.82-.93-3.82-4.15 0-.92.33-1.66.87-2.25-.09-.21-.38-1.07.08-2.22 0 0 .71-.23 2.31.86a8 8 0 0 1 4.2 0c1.6-1.09 2.31-.86 2.31-.86.46 1.15.17 2.01.08 2.22.54.59.86 1.33.86 2.25 0 3.23-1.96 3.93-3.83 4.14.3.26.57.77.57 1.55l-.01 2.31c0 .22.15.49.58.4A8.4 8.4 0 0 0 12 3.6z"/></symbol>
+            <symbol id="i-ai" viewBox="0 0 24 24"><path d="M10.4 2.8 12 7.6l4.8 1.6-4.8 1.6-1.6 4.8-1.6-4.8L4 9.2l4.8-1.6z"/><path d="M17.6 14.2l.9 2.5 2.5.9-2.5.9-.9 2.5-.9-2.5-2.5-.9 2.5-.9z"/></symbol>
+        </defs></svg>
+
+        <header class="section__head">
+            <p class="section__label" data-reveal><span class="section__rule"></span>Skills</p>
+            <h2 class="section__title" data-reveal="words" data-words>The tools I build with</h2>
+        </header>
+
+        <!-- Featured core: whichever technology is currently in focus -->
+        <div class="core" data-reveal="zoom" id="core">
+            <div class="core__stage">
+                <span class="core__ring core__ring--1" aria-hidden="true"></span>
+                <span class="core__ring core__ring--2" aria-hidden="true"></span>
+                <span class="core__halo" aria-hidden="true"></span>
+                <span class="core__logo" id="coreLogo"><svg><use href="#l-react" id="coreUse"></use></svg></span>
+            </div>
+
+            <div class="core__info">
+                <p class="core__eyebrow">In focus</p>
+                <h3 class="core__name" id="coreName">React</h3>
+                <p class="core__role" id="coreRole">Component-driven interfaces</p>
+                <div class="core__dots" id="coreDots" role="tablist" aria-label="Technologies"></div>
+            </div>
+        </div>
+
+        <div class="flows">
+
+            <div class="flow" data-reveal style="--rd:.04s">
+                <p class="flow__cap"><span class="flow__num">01</span> Frontend</p>
+                <div class="marquee">
+                    <ul class="marquee__track">
+                        <li class="tech" style="--acc:#E34F26" data-icon="l-html" data-name="HTML" data-role="Structure &amp; semantics"><span class="tech__logo"><svg><use href="#l-html"></use></svg></span><span class="tech__name">HTML</span></li>
+                        <li class="tech" style="--acc:#1572B6" data-icon="l-css" data-name="CSS" data-role="Layout, motion &amp; theming"><span class="tech__logo"><svg><use href="#l-css"></use></svg></span><span class="tech__name">CSS</span></li>
+                        <li class="tech" style="--acc:#F7DF1E" data-icon="l-js" data-name="JavaScript" data-role="The language of the web"><span class="tech__logo"><svg><use href="#l-js"></use></svg></span><span class="tech__name">JavaScript</span></li>
+                        <li class="tech" style="--acc:#3178C6" data-icon="l-ts" data-name="TypeScript" data-role="JavaScript with types"><span class="tech__logo"><svg><use href="#l-ts"></use></svg></span><span class="tech__name">TypeScript</span></li>
+                        <li class="tech" style="--acc:#61DAFB" data-icon="l-react" data-name="React" data-role="Component-driven interfaces"><span class="tech__logo"><svg><use href="#l-react"></use></svg></span><span class="tech__name">React</span></li>
+                        <li class="tech" style="--acc:#38BDF8" data-icon="l-tailwind" data-name="Tailwind CSS" data-role="Utility-first styling"><span class="tech__logo"><svg><use href="#l-tailwind"></use></svg></span><span class="tech__name">Tailwind CSS</span></li>
+                        <li class="tech" style="--acc:#E8E8E8" data-icon="l-next" data-name="Next.js" data-role="Routing, SSR &amp; the app shell"><span class="tech__logo"><svg><use href="#l-next"></use></svg></span><span class="tech__name">Next.js</span></li>
+                        <li class="tech" style="--acc:#E34F26" aria-hidden="true" tabindex="-1" data-icon="l-html" data-name="HTML" data-role="Structure &amp; semantics"><span class="tech__logo"><svg><use href="#l-html"></use></svg></span><span class="tech__name">HTML</span></li>
+                        <li class="tech" style="--acc:#1572B6" aria-hidden="true" tabindex="-1" data-icon="l-css" data-name="CSS" data-role="Layout, motion &amp; theming"><span class="tech__logo"><svg><use href="#l-css"></use></svg></span><span class="tech__name">CSS</span></li>
+                        <li class="tech" style="--acc:#F7DF1E" aria-hidden="true" tabindex="-1" data-icon="l-js" data-name="JavaScript" data-role="The language of the web"><span class="tech__logo"><svg><use href="#l-js"></use></svg></span><span class="tech__name">JavaScript</span></li>
+                        <li class="tech" style="--acc:#3178C6" aria-hidden="true" tabindex="-1" data-icon="l-ts" data-name="TypeScript" data-role="JavaScript with types"><span class="tech__logo"><svg><use href="#l-ts"></use></svg></span><span class="tech__name">TypeScript</span></li>
+                        <li class="tech" style="--acc:#61DAFB" aria-hidden="true" tabindex="-1" data-icon="l-react" data-name="React" data-role="Component-driven interfaces"><span class="tech__logo"><svg><use href="#l-react"></use></svg></span><span class="tech__name">React</span></li>
+                        <li class="tech" style="--acc:#38BDF8" aria-hidden="true" tabindex="-1" data-icon="l-tailwind" data-name="Tailwind CSS" data-role="Utility-first styling"><span class="tech__logo"><svg><use href="#l-tailwind"></use></svg></span><span class="tech__name">Tailwind CSS</span></li>
+                        <li class="tech" style="--acc:#E8E8E8" aria-hidden="true" tabindex="-1" data-icon="l-next" data-name="Next.js" data-role="Routing, SSR &amp; the app shell"><span class="tech__logo"><svg><use href="#l-next"></use></svg></span><span class="tech__name">Next.js</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="flow" data-reveal style="--rd:.14s">
+                <p class="flow__cap"><span class="flow__num">02</span> Backend, Data &amp; Tooling</p>
+                <div class="marquee marquee--rev">
+                    <ul class="marquee__track">
+                        <li class="tech" style="--acc:#539E43" data-icon="l-node" data-name="Node.js" data-role="JavaScript on the server"><span class="tech__logo"><svg><use href="#l-node"></use></svg></span><span class="tech__name">Node.js</span></li>
+                        <li class="tech" style="--acc:#4DB33D" data-icon="l-mongo" data-name="MongoDB" data-role="Document database"><span class="tech__logo"><svg><use href="#l-mongo"></use></svg></span><span class="tech__name">MongoDB</span></li>
+                        <li class="tech" style="--acc:#C6403C" data-icon="l-mongoose" data-name="Mongoose" data-role="Schemas, models &amp; validation"><span class="tech__logo"><svg><use href="#l-mongoose"></use></svg></span><span class="tech__name">Mongoose</span></li>
+                        <li class="tech" style="--acc:#818CF8" data-icon="l-auth" data-name="BetterAuth" data-role="Sessions &amp; authentication"><span class="tech__logo"><svg><use href="#l-auth"></use></svg></span><span class="tech__name">BetterAuth</span></li>
+                        <li class="tech" style="--acc:#F05032" data-icon="l-git" data-name="Git" data-role="Version control"><span class="tech__logo"><svg><use href="#l-git"></use></svg></span><span class="tech__name">Git</span></li>
+                        <li class="tech" style="--acc:#E6EDF3" data-icon="l-github" data-name="GitHub" data-role="Collaboration &amp; review"><span class="tech__logo"><svg><use href="#l-github"></use></svg></span><span class="tech__name">GitHub</span></li>
+                        <li class="tech" style="--acc:#539E43" aria-hidden="true" tabindex="-1" data-icon="l-node" data-name="Node.js" data-role="JavaScript on the server"><span class="tech__logo"><svg><use href="#l-node"></use></svg></span><span class="tech__name">Node.js</span></li>
+                        <li class="tech" style="--acc:#4DB33D" aria-hidden="true" tabindex="-1" data-icon="l-mongo" data-name="MongoDB" data-role="Document database"><span class="tech__logo"><svg><use href="#l-mongo"></use></svg></span><span class="tech__name">MongoDB</span></li>
+                        <li class="tech" style="--acc:#C6403C" aria-hidden="true" tabindex="-1" data-icon="l-mongoose" data-name="Mongoose" data-role="Schemas, models &amp; validation"><span class="tech__logo"><svg><use href="#l-mongoose"></use></svg></span><span class="tech__name">Mongoose</span></li>
+                        <li class="tech" style="--acc:#818CF8" aria-hidden="true" tabindex="-1" data-icon="l-auth" data-name="BetterAuth" data-role="Sessions &amp; authentication"><span class="tech__logo"><svg><use href="#l-auth"></use></svg></span><span class="tech__name">BetterAuth</span></li>
+                        <li class="tech" style="--acc:#F05032" aria-hidden="true" tabindex="-1" data-icon="l-git" data-name="Git" data-role="Version control"><span class="tech__logo"><svg><use href="#l-git"></use></svg></span><span class="tech__name">Git</span></li>
+                        <li class="tech" style="--acc:#E6EDF3" aria-hidden="true" tabindex="-1" data-icon="l-github" data-name="GitHub" data-role="Collaboration &amp; review"><span class="tech__logo"><svg><use href="#l-github"></use></svg></span><span class="tech__name">GitHub</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <article class="ai" data-reveal="zoom" style="--rd:.1s">
+            <span class="ai__glow" aria-hidden="true"></span>
+            <div class="ai__inner">
+                <p class="ai__badge">Most importantly</p>
+                <h3 class="ai__title">
+                    <span class="ai__mark"><svg><use href="#i-ai"></use></svg></span>
+                    AI Mindset &amp; Engineering
+                </h3>
+                <p class="ai__text">
+                    I treat AI as part of the toolchain, not a shortcut around it. That means
+                    knowing what is worth delegating, what has to be verified, and where the
+                    judgement stays mine. Used well it compresses the distance between an idea
+                    and a working thing &mdash; used carelessly it just produces confident nonsense
+                    faster.
+                </p>
+                <ul class="ai__points">
+                    <li style="--ci:0"><span class="ai__dot"></span>Prompt &amp; context design</li>
+                    <li style="--ci:1"><span class="ai__dot"></span>Verify before trusting</li>
+                    <li style="--ci:2"><span class="ai__dot"></span>AI in the loop, judgement on my side</li>
+                </ul>
+            </div>
+        </article>
     </section>
 
     </main>

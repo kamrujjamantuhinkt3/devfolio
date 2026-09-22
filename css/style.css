@@ -1304,6 +1304,363 @@ body.is-ready .accent.is-flowing .char {
 .tl__meta { font-size: .78rem; color: var(--muted); margin-top: 2px; }
 
 
+/* Skills */
+.skills__aura {
+    position: absolute;
+    top: 22%; left: -10%;
+    width: 560px; height: 560px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--indigo-700) 0%, transparent 66%);
+    opacity: .2;
+    filter: blur(120px);
+    pointer-events: none;
+    animation: drift1 26s ease-in-out infinite;
+}
+:root[data-theme="light"] .skills__aura { opacity: .12; }
+
+/* A light that follows the pointer across the section */
+.skills__spot {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(460px circle at var(--mx, 50%) var(--my, 30%),
+                rgba(129, 140, 248, .11), transparent 68%);
+    opacity: 0;
+    transition: opacity .5s ease;
+    pointer-events: none;
+}
+.skills:hover .skills__spot { opacity: 1; }
+
+/* The logo sprite is markup, not layout — keep it out of the flow */
+.sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+
+/* Skills — the featured core. Whichever technology is in focus sits inside
+   the orbit rings, echoing the portrait in the hero. */
+.core {
+    --acc: var(--indigo-400);
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 30px 38px;
+    margin-bottom: 34px;
+    border-radius: 22px;
+    border: 1px solid var(--border);
+    background: linear-gradient(120deg, rgba(129, 140, 248, .07), transparent 60%);
+    overflow: hidden;
+    transition: border-color .8s ease;
+}
+.core:hover { border-color: rgba(165, 180, 252, .34); }
+
+.core__stage {
+    position: relative;
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 132px; height: 132px;
+}
+
+.core__ring {
+    position: absolute;
+    left: 50%; top: 50%;
+    border-radius: 50%;
+    border: 1px solid var(--acc);
+    opacity: .45;
+    transition: border-color .8s ease;
+}
+.core__ring--1 {
+    width: 108%; aspect-ratio: 1;
+    transform: translate(-50%, -50%) rotate(-20deg) scaleY(.44);
+    animation: coreSpin 14s linear infinite;
+}
+.core__ring--2 {
+    width: 86%; aspect-ratio: 1;
+    transform: translate(-50%, -50%) rotate(28deg) scaleY(.36);
+    opacity: .28;
+    animation: coreSpin 20s linear infinite reverse;
+}
+@keyframes coreSpin {
+    to { transform: translate(-50%, -50%) rotate(340deg) scaleY(.44); }
+}
+
+.core__halo {
+    position: absolute;
+    width: 78%; aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--acc);
+    opacity: .22;
+    filter: blur(26px);
+    transition: background .8s ease;
+    animation: breathe 6s ease-in-out infinite;
+}
+
+.core__logo {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 76px; height: 76px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .95);
+    box-shadow: 0 12px 30px rgba(2, 4, 16, .6), 0 0 0 1px rgba(255, 255, 255, .18);
+    transition: opacity .24s ease, transform .24s cubic-bezier(.22, 1, .36, 1);
+}
+.core__logo svg { width: 46px; height: 46px; display: block; }
+.core__logo text { font-family: var(--font-body); }
+
+/* Held briefly while the next logo is swapped in */
+.core__logo.is-swapping { opacity: 0; transform: scale(.72) rotate(-14deg); }
+
+.core__info { min-width: 0; }
+.core__eyebrow {
+    font-size: .6rem;
+    font-weight: 600;
+    letter-spacing: 2.6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+.core__name {
+    font-size: clamp(1.5rem, 3.2vw, 2.2rem);
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    color: var(--acc);
+    transition: color .5s ease;
+}
+.core__role {
+    font-size: .92rem;
+    font-weight: 300;
+    color: var(--muted);
+    margin-top: 4px;
+}
+
+.core__dots { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+.core__dots button {
+    width: 20px; height: 3px;
+    border-radius: 2px;
+    background: var(--border);
+    transition: background .35s ease, width .35s ease;
+}
+.core__dots button.is-on { width: 34px; background: var(--acc); }
+
+
+/* Skills — grouped flows */
+.flows { display: grid; gap: 26px; }
+
+.flow__cap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: .66rem;
+    font-weight: 600;
+    letter-spacing: 2.6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+}
+.flow__num { color: var(--indigo-300); }
+
+
+/* Skills — the logos fly across the screen on a loop. The track holds the
+   list twice, so shifting it by exactly half its width repeats seamlessly. */
+.marquee {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
+.marquee__track {
+    list-style: none;
+    display: flex;
+    width: max-content;
+    gap: 14px;
+    padding: 6px 0;
+    animation: marquee 34s linear infinite;
+}
+.marquee--rev .marquee__track { animation-direction: reverse; }
+
+@keyframes marquee { to { transform: translateX(calc(-50% - 7px)); } }
+
+/* Let people stop it to actually read a name */
+.marquee:hover .marquee__track { animation-play-state: paused; }
+
+
+/* Skills — a single technology */
+.tech {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    flex: none;
+    padding: 12px 20px 12px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    transition: transform .35s cubic-bezier(.34, 1.45, .64, 1),
+                border-color .35s ease, background .35s ease, box-shadow .35s ease;
+}
+
+/* Each chip lights in its own brand colour rather than a single indigo */
+.tech:hover,
+.tech.is-focus {
+    transform: translateY(-5px) scale(1.05);
+    border-color: color-mix(in srgb, var(--acc) 70%, transparent);
+    background: color-mix(in srgb, var(--acc) 14%, transparent);
+    box-shadow: 0 14px 32px rgba(2, 4, 16, .5),
+                0 0 22px color-mix(in srgb, var(--acc) 35%, transparent);
+}
+
+@supports not (color: color-mix(in srgb, red, blue)) {
+    .tech:hover, .tech.is-focus {
+        border-color: rgba(165, 180, 252, .55);
+        background: rgba(99, 102, 241, .14);
+    }
+}
+
+/* Full-colour brand marks, sat on a light disc so the darker ones
+   (Next.js, GitHub, Mongoose) keep their contrast against the navy */
+.tech__logo {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .92);
+    box-shadow: 0 4px 12px rgba(2, 4, 16, .4);
+    transition: transform .45s cubic-bezier(.34, 1.5, .64, 1);
+}
+.tech__logo svg { width: 22px; height: 22px; display: block; }
+.tech__logo text { font-family: var(--font-body); }
+.tech:hover .tech__logo,
+.tech.is-focus .tech__logo { transform: rotate(-8deg) scale(1.1); }
+
+.tech__name {
+    font-size: .86rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+
+/* Skills — the AI panel, deliberately the loudest thing in the section */
+.ai {
+    position: relative;
+    margin-top: 22px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, rgba(67, 56, 202, .22), rgba(30, 64, 175, .12) 60%, transparent);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+/* A highlight travels around the edge, the way it does on the hero crystal */
+@supports ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
+    .ai::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: conic-gradient(from 0deg,
+            transparent 0 62%, var(--indigo-400) 78%, #ffffff 84%, var(--indigo-400) 90%, transparent 100%);
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        mask-composite: exclude;
+        animation: orbit 5s linear infinite;
+        pointer-events: none;
+    }
+}
+
+.ai__glow {
+    position: absolute;
+    right: -6%;
+    top: -60%;
+    width: 420px; height: 420px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--indigo-500) 0%, transparent 65%);
+    opacity: .3;
+    filter: blur(80px);
+    animation: breathe 7s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.ai__inner { position: relative; padding: 34px 36px; max-width: 74ch; }
+
+.ai__badge {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(129, 140, 248, .34);
+    background: rgba(99, 102, 241, .12);
+    font-size: .6rem;
+    font-weight: 600;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    color: var(--indigo-300);
+    margin-bottom: 14px;
+}
+
+.ai__title {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+}
+.ai__mark {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--indigo-600), var(--navy-500));
+    color: #fff;
+    box-shadow: 0 10px 26px rgba(79, 70, 229, .45);
+}
+.ai__mark svg {
+    width: 23px; height: 23px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    animation: twinkle 3.6s ease-in-out infinite;
+}
+@keyframes twinkle {
+    0%, 100% { opacity: .85; transform: scale(1) rotate(0deg); }
+    50%      { opacity: 1;   transform: scale(1.1) rotate(8deg); }
+}
+.ai__text {
+    font-size: .95rem;
+    font-weight: 300;
+    color: var(--muted);
+    margin-bottom: 22px;
+}
+
+.ai__points { list-style: none; display: flex; flex-wrap: wrap; gap: 10px 22px; }
+.ai__points li {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: .82rem;
+    font-weight: 500;
+}
+.js .ai__points li {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity .6s ease, transform .6s cubic-bezier(.22, 1, .36, 1);
+    transition-delay: calc(var(--ci) * .1s + .35s);
+}
+.ai.is-in .ai__points li { opacity: 1; transform: none; }
+
+.ai__dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--indigo-300);
+    box-shadow: 0 0 9px var(--indigo-400);
+}
+
+
 /* Responsive */
 @media (max-width: 1080px) {
     .nav__links { display: none; }
@@ -1339,7 +1696,18 @@ body.is-ready .accent.is-flowing .char {
     .hero__cta, .hero__social { justify-content: center; }
 }
 
+@media (max-width: 860px) {
+    .core { flex-direction: column; text-align: center; gap: 22px; padding: 28px 24px; }
+    .core__dots { justify-content: center; }
+    .ai__inner { padding: 28px 24px; }
+}
+
 @media (max-width: 620px) {
+    .tech { padding: 10px 17px 10px 12px; }
+    .tech__logo { width: 32px; height: 32px; }
+    .tech__logo svg { width: 19px; height: 19px; }
+    .tech__name { font-size: .8rem; }
+    .ai__points { flex-direction: column; gap: 10px; }
     .tl { padding-left: 0; }
     .timeline__rail { display: none; }
     .tl__node { display: none; }
@@ -1368,4 +1736,9 @@ body.is-ready .accent.is-flowing .char {
         transition-duration: .001ms !important;
     }
     .reveal, .char, [data-reveal] { opacity: 1 !important; transform: none !important; }
+
+    /* Stop the logo flow and let it be scrolled by hand instead */
+    .marquee { overflow-x: auto; }
+    .marquee__track { animation: none !important; transform: none !important; }
+    .core__ring, .core__halo { animation: none !important; }
 }
