@@ -2638,7 +2638,7 @@ body.is-ready .accent.is-flowing .char {
 .reach__cv {
     width: 100%;
     justify-content: center;
-    margin-bottom: 18px;
+    margin-top: auto;           /* pinned to the foot of the panel */
 }
 .reach__cv:hover svg { transform: translateY(2px); }
 
@@ -2681,36 +2681,47 @@ body.is-ready .accent.is-flowing .char {
 
 .reach {
     display: grid;
-    grid-template-columns: .92fr 1.08fr;
-    align-items: start;
-    gap: 40px;
+    grid-template-columns: 1fr 1.12fr;
+    align-items: stretch;
+    gap: 22px;
 }
 
-
-/* Contact — availability */
-.status {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 18px 9px 14px;
-    border-radius: 999px;
-    border: 1px solid rgba(61, 220, 132, .3);
-    background: rgba(61, 220, 132, .09);
-    font-size: .76rem;
-    font-weight: 500;
-    color: #7ae2a8;
-    margin-bottom: 24px;
+/* Both routes are presented as matching panels, numbered, so it reads as a
+   choice between two options rather than one column running into another. */
+.reach__side {
+    display: flex;
+    flex-direction: column;
+    padding: 28px 30px 26px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: linear-gradient(150deg, rgba(129, 140, 248, .06), transparent 62%);
 }
-.status__dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #3ddc84;
-    animation: ping 2.2s ease-out infinite;
+
+.panel__head { margin-bottom: 22px; }
+.panel__no {
+    display: block;
+    font-size: .62rem;
+    font-weight: 700;
+    letter-spacing: 2.4px;
+    color: var(--indigo-300);
+    margin-bottom: 8px;
+}
+.panel__title {
+    font-size: 1.14rem;
+    font-weight: 600;
+    letter-spacing: -.3px;
+    margin-bottom: 5px;
+}
+.panel__note {
+    font-size: .78rem;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--muted);
 }
 
 
 /* Contact — the direct routes */
-.lines { list-style: none; display: grid; gap: 10px; }
+.lines { list-style: none; display: grid; gap: 9px; margin-bottom: 22px; }
 
 .line {
     display: flex;
@@ -2794,11 +2805,42 @@ body.is-ready .accent.is-flowing .char {
 
 /* Contact — the message form */
 .note {
+    position: relative;
+    z-index: 0;
     padding: 28px 30px 26px;
     border-radius: 20px;
     border: 1px solid var(--border);
     background: linear-gradient(135deg, rgba(129, 140, 248, .07), transparent 62%);
 }
+
+/* A light runs the border of the form, because it is the action that matters
+   most on this page. Same approach as the AI panel: the ring holds still and
+   the gradient angle is what moves. */
+@supports ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
+    .note::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: conic-gradient(from 0deg,
+            transparent 0 64%, var(--indigo-400) 79%, #ffffff 86%, var(--indigo-400) 91%, transparent 100%);
+        background: conic-gradient(from var(--ai-angle),
+            transparent 0 64%, var(--indigo-400) 79%, #ffffff 86%, var(--indigo-400) 91%, transparent 100%);
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        mask-composite: exclude;
+        animation: aiRun 7s linear infinite;
+        pointer-events: none;
+    }
+}
+.note { display: flex; flex-direction: column; }
+
+/* the message field takes up whatever height is left, so the form ends level
+   with the panel beside it rather than leaving a gap under the button */
+.field--grow { flex: 1; display: flex; flex-direction: column; min-height: 150px; }
+.field--grow .field__input { flex: 1; }
 .note__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 
 .field { position: relative; margin-bottom: 16px; }
@@ -3059,7 +3101,8 @@ body.is-ready .accent.is-flowing .char {
 
 @media (max-width: 820px) {
     .projects__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .reach { grid-template-columns: 1fr; gap: 28px; }
+    .reach { grid-template-columns: 1fr; gap: 16px; }
+    .reach__cv { margin-top: 4px; }
     .contact__orbit { display: none; }
 }
 
@@ -3070,7 +3113,7 @@ body.is-ready .accent.is-flowing .char {
 }
 
 @media (max-width: 620px) {
-    .note { padding: 22px 20px 20px; }
+    .note, .reach__side { padding: 22px 20px 20px; }
     .note__grid { grid-template-columns: 1fr; }
     .foot__top { flex-direction: column; text-align: center; }
     .foot__base { flex-direction: column-reverse; text-align: center; }

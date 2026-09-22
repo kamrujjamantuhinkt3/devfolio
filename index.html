@@ -1074,17 +1074,12 @@
         <div class="reach">
 
             <!-- Left: the direct routes -->
-            <div class="reach__side">
-
-                <p class="status" data-reveal style="--rd:.06s">
-                    <span class="status__dot" aria-hidden="true"></span>
-                    Available for work &amp; internships
-                </p>
-
-                <a href="assets/docs/Kamrujjaman-Tuhin-CV.pdf" class="btn btn--primary reach__cv" id="cvContact" download>
-                    <span>Download CV</span>
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5v11M7.5 10.5 12 15l4.5-4.5M4.5 18.5h15"/></svg>
-                </a>
+            <div class="reach__side" data-reveal style="--rd:.06s">
+                <header class="panel__head">
+                    <span class="panel__no">01</span>
+                    <h3 class="panel__title">Reach me directly</h3>
+                    <p class="panel__note">Email is fastest. Everything else works too.</p>
+                </header>
 
                 <ul class="lines">
                     <li class="line" data-reveal style="--rd:.12s">
@@ -1133,14 +1128,25 @@
                         </span>
                         <span class="line__body">
                             <span class="line__label">Based in</span>
-                            <span class="line__value">Savar, Dhaka &middot; <span class="line__time" id="localTime">--:--</span> local</span>
+                            <span class="line__value">Savar, Dhaka &middot; <span class="line__time" id="localTime">--:--</span> Local</span>
                         </span>
                     </li>
                 </ul>
+
+                <a href="assets/docs/Kamrujjaman-Tuhin-CV.pdf" class="btn btn--ghost reach__cv" id="cvContact" download>
+                    <span>Download CV</span>
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5v11M7.5 10.5 12 15l4.5-4.5M4.5 18.5h15"/></svg>
+                </a>
             </div>
 
             <!-- Right: write the message here -->
             <form class="note" id="contactForm" novalidate data-reveal="zoom" style="--rd:.16s">
+                <header class="panel__head">
+                    <span class="panel__no">02</span>
+                    <h3 class="panel__title">Or write to me here</h3>
+                    <p class="panel__note">Tell me what you are building and I will come back to you.</p>
+                </header>
+
                 <div class="note__grid">
                     <p class="field">
                         <input class="field__input" type="text" id="cName" name="name" placeholder=" " required autocomplete="name">
@@ -1160,7 +1166,7 @@
                     <label class="field__label" for="cSubject">Subject <span>(optional)</span></label>
                 </p>
 
-                <p class="field">
+                <p class="field field--grow">
                     <textarea class="field__input field__input--area" id="cBody" name="message" rows="5" placeholder=" " required></textarea>
                     <label class="field__label" for="cBody">Your message</label>
                     <span class="field__error" data-for="cBody"></span>
