@@ -893,6 +893,304 @@
     }
 
 
+    /* Contact — live local time in Dhaka, so the clock is right whoever is
+       reading and wherever they are. */
+    var clockEl = document.getElementById("localTime");
+
+    if (clockEl) {
+        var fmt;
+        try {
+            fmt = new Intl.DateTimeFormat("en-US", {
+                timeZone: "Asia/Dhaka", hour: "numeric", minute: "2-digit", hour12: true
+            });
+        } catch (e) { fmt = null; }   // no zone data: leave the placeholder alone
+
+        if (fmt) {
+            (function tickClock() {
+                clockEl.textContent = fmt.format(new Date());
+                setTimeout(tickClock, 20000);
+            })();
+        }
+    }
+
+
+    /* Contact — copy the address rather than make people select it */
+    var copyBtn = document.getElementById("copyMail");
+    var mailValue = document.getElementById("mailValue");
+
+    if (copyBtn && mailValue) {
+        copyBtn.addEventListener("click", function () {
+            var address = mailValue.textContent.trim();
+
+            function confirmCopy() {
+                copyBtn.classList.add("is-done");
+                copyBtn.setAttribute("aria-label", "Email address copied");
+                setTimeout(function () {
+                    copyBtn.classList.remove("is-done");
+                    copyBtn.setAttribute("aria-label", "Copy email address");
+                }, 2000);
+            }
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(address).then(confirmCopy, fallbackCopy);
+            } else {
+                fallbackCopy();
+            }
+
+            // older browsers, and any page not served over https
+            function fallbackCopy() {
+                var tmp = document.createElement("textarea");
+                tmp.value = address;
+                tmp.setAttribute("readonly", "");
+                tmp.style.position = "fixed";
+                tmp.style.opacity = "0";
+                document.body.appendChild(tmp);
+                tmp.select();
+                try { document.execCommand("copy"); confirmCopy(); } catch (e) { /* give up quietly */ }
+                document.body.removeChild(tmp);
+            }
+        });
+    }
+
+
+    /* Contact — deliver the message straight to the inbox.
+       Web3Forms posts the form to its API and forwards it by email, so a static
+       page needs no server of its own. Paste the access key below (free, from
+       web3forms.com, no account needed) and the form starts delivering.
+       Until then it falls back to composing the mail locally, so the button
+       never does nothing. */
+    var FORM_KEY = "";                                   // <-- your Web3Forms access key
+    var FORM_API = "https://api.web3forms.com/submit";
+
+    var form = document.getElementById("contactForm");
+
+    if (form) {
+        var sendBtn = document.getElementById("sendBtn");
+        var sendText = form.querySelector(".note__send-text");
+        var hint = document.getElementById("formHint");
+        var hintDefault = hint.textContent;
+
+        var msgField = document.getElementById("cBody");
+        var count = document.getElementById("cCount");
+        var MAX = 1000;
+
+        msgField.addEventListener("input", function () {
+            if (msgField.value.length > MAX) msgField.value = msgField.value.slice(0, MAX);
+            count.textContent = msgField.value.length;
+        });
+
+        function fieldOf(input) { return input.closest(".field"); }
+
+        function complain(input, message) {
+            var wrap = fieldOf(input);
+            wrap.classList.add("is-bad");
+            var slot = wrap.querySelector(".field__error");
+            if (slot) slot.textContent = message;
+        }
+
+        function clear(input) {
+            var wrap = fieldOf(input);
+            wrap.classList.remove("is-bad");
+            var slot = wrap.querySelector(".field__error");
+            if (slot) slot.textContent = "";
+        }
+
+        function checkField(input) {
+            var v = input.value.trim();
+
+            if (input.required && !v) {
+                complain(input, "This one is needed.");
+                return false;
+            }
+            if (input.type === "email" && v && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) {
+                complain(input, "That does not look like an email address.");
+                return false;
+            }
+            if (input === msgField && v.length < 10) {
+                complain(input, "A little more detail would help.");
+                return false;
+            }
+            clear(input);
+            return true;
+        }
+
+        var checked = [
+            document.getElementById("cName"),
+            document.getElementById("cMail"),
+            msgField
+        ];
+
+        checked.forEach(function (input) {
+            input.addEventListener("blur", function () { if (input.value.trim()) checkField(input); });
+            input.addEventListener("input", function () { if (fieldOf(input).classList.contains("is-bad")) checkField(input); });
+        });
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            var ok = true;
+            checked.forEach(function (input) { if (!checkField(input)) ok = false; });
+
+            if (!ok) {
+                hint.textContent = "Nearly \u2014 a couple of fields need a look.";
+                hint.classList.remove("is-good");
+                checked.some(function (input) {
+                    if (fieldOf(input).classList.contains("is-bad")) { input.focus(); return true; }
+                    return false;
+                });
+                return;
+            }
+
+            var name = document.getElementById("cName").value.trim();
+            var from = document.getElementById("cMail").value.trim();
+            var subj = document.getElementById("cSubject").value.trim() || ("Portfolio enquiry from " + name);
+            var text = msgField.value.trim();
+
+            function resetSoon(ms) {
+                setTimeout(function () {
+                    sendBtn.classList.remove("is-done");
+                    sendText.textContent = "Send message";
+                    hint.textContent = hintDefault;
+                    hint.classList.remove("is-good", "is-bad");
+                }, ms);
+            }
+
+            function succeeded() {
+                sendBtn.disabled = false;
+                sendBtn.classList.add("is-done");
+                sendText.textContent = "Message sent";
+                hint.textContent = "Thank you \u2014 your message is in my inbox. I will reply to " + from + ".";
+                hint.classList.add("is-good");
+                form.reset();
+                count.textContent = "0";
+                resetSoon(8000);
+            }
+
+            function failed() {
+                sendBtn.disabled = false;
+                sendText.textContent = "Send message";
+                hint.textContent = "That did not go through. You can email me directly at kamrujjamantuhinkt3@gmail.com.";
+                hint.classList.add("is-bad");
+                resetSoon(9000);
+            }
+
+            sendBtn.disabled = true;
+            sendText.textContent = "Sending";
+
+            if (!FORM_KEY) {
+                // no key configured yet: compose it locally rather than fail silently
+                window.location.href = "mailto:kamrujjamantuhinkt3@gmail.com"
+                    + "?subject=" + encodeURIComponent(subj)
+                    + "&body=" + encodeURIComponent(text + "\n\n\u2014 " + name + "\n" + from);
+
+                setTimeout(function () {
+                    sendBtn.disabled = false;
+                    sendBtn.classList.add("is-done");
+                    sendText.textContent = "Ready to send";
+                    hint.textContent = "Your message is waiting in your email app \u2014 press send there and it reaches me.";
+                    hint.classList.add("is-good");
+                    resetSoon(7000);
+                }, 900);
+                return;
+            }
+
+            fetch(FORM_API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                body: JSON.stringify({
+                    access_key: FORM_KEY,
+                    subject: subj,
+                    name: name,
+                    email: from,
+                    message: text,
+                    from_name: "Portfolio contact form"
+                })
+            })
+                .then(function (res) { return res.json(); })
+                .then(function (data) { if (data && data.success) succeeded(); else failed(); })
+                .catch(failed);
+        });
+    }
+
+
+    /* Footer year, so it never goes stale */
+    var yearEl = document.getElementById("year");
+    if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+
+    /* Showreel — decorative footage, so it only plays when it is actually on
+       screen, and not at all for anyone who has asked for less motion. */
+    var reel = document.querySelector(".reel__video");
+
+    if (reel) {
+        reel.muted = true;          // some browsers need this set in script too
+
+        if (reduced) {
+            reel.removeAttribute("autoplay");
+            reel.pause();
+        } else if ("IntersectionObserver" in window) {
+            var reelObs = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        var playing = reel.play();
+                        // autoplay can still be refused; the tinted band stands on its own
+                        if (playing && playing.catch) playing.catch(function () {});
+                    } else {
+                        reel.pause();
+                    }
+                });
+            }, { threshold: .15 });
+
+            reelObs.observe(reel);
+        }
+    }
+
+
+    /* Experience — accordion. Heights are measured rather than guessed, so a
+       row animates smoothly whatever length its content turns out to be. */
+    var xps = Array.prototype.slice.call(document.querySelectorAll(".xp"));
+
+    if (xps.length) {
+        function setOpen(xp, open) {
+            var panel = xp.querySelector(".xp__panel");
+            var toggle = xp.querySelector(".xp__toggle");
+
+            xp.classList.toggle("is-open", open);
+            toggle.setAttribute("aria-expanded", String(open));
+            panel.style.maxHeight = open ? panel.scrollHeight + "px" : "";
+        }
+
+        xps.forEach(function (xp) {
+            var toggle = xp.querySelector(".xp__toggle");
+
+            // the first row ships open, so the section never looks empty
+            if (toggle.getAttribute("aria-expanded") === "true") setOpen(xp, true);
+
+            toggle.addEventListener("click", function () {
+                var willOpen = !xp.classList.contains("is-open");
+                xps.forEach(function (other) { if (other !== xp) setOpen(other, false); });
+                setOpen(xp, willOpen);
+            });
+        });
+
+        // a reflow (fonts loading, window resizing) changes how tall the text is
+        function remeasure() {
+            xps.forEach(function (xp) {
+                if (!xp.classList.contains("is-open")) return;
+                var panel = xp.querySelector(".xp__panel");
+                panel.style.maxHeight = panel.scrollHeight + "px";
+            });
+        }
+
+        var xpResize;
+        window.addEventListener("resize", function () {
+            clearTimeout(xpResize);
+            xpResize = setTimeout(remeasure, 150);
+        });
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
+    }
+
+
     /* Navbar */
     var nav = document.getElementById("nav");
     var bar = document.getElementById("scrollProgress");
