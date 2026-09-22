@@ -3158,6 +3158,127 @@ body.is-ready .accent.is-flowing .char {
     .logo__name { font-size: 1.15rem; }
 }
 
+/* Responsive - second pass
+   The blocks above handle each section as it was built. These cover the two
+   ends that were missing (large desktops and the smallest phones), plus the
+   things that only go wrong on a touch screen. They sit last on purpose:
+   equal-specificity media queries resolve in source order. */
+
+
+/* Large desktops - the 1180px column looks stranded on a wide monitor */
+@media (min-width: 1440px) {
+    :root { --maxw: 1320px; }
+
+    .hero__title { font-size: clamp(3rem, 4.8vw, 4.6rem); }
+    .hero__role { font-size: 1.2rem; max-width: 50ch; }
+    .section__title { font-size: clamp(2.1rem, 3.2vw, 3rem); }
+    .solar { width: 520px; }
+    .projects__grid { gap: 18px; }
+    .reach { gap: 26px; }
+}
+
+@media (min-width: 1800px) {
+    :root { --maxw: 1440px; }
+}
+
+
+/* Tablet - between the phone rules and the desktop ones a few rows get tight */
+@media (max-width: 1024px) and (min-width: 621px) {
+    .xp__toggle { gap: 16px; }
+    .xp__when { font-size: .64rem; }
+    .xp__kind { font-size: .6rem; }
+    .chip, .tech__name { font-size: .8rem; }
+    .sheet__panel { width: min(560px, 100%); }
+}
+
+@media (max-width: 760px) {
+    .hero__proof { font-size: .72rem; }
+    .cap { font-size: .72rem; padding: 4px 11px; margin: 0 4px; }
+    .facts { grid-template-columns: 1fr; }
+    .about__badge { right: -8px; bottom: 16px; }
+}
+
+
+/* Touch screens - a tap leaves :hover stuck on, so the lifted state would
+   stay applied to whatever was last touched. Better to have none of it. */
+@media (hover: none) {
+    .proj__open,
+    .proj__open:hover,
+    .proj__open:focus-visible { transform: none; }
+
+    .proj__glow { display: none; }
+    .proj__open:hover .proj__cover,
+    .proj__open:hover .proj__no { transform: none; }
+
+    .tech:hover,
+    .fact:hover,
+    .line:hover,
+    .social:hover,
+    .foot__social a:hover,
+    .icon-btn:hover,
+    .filter:hover,
+    .ghost-link:hover svg,
+    .tl:hover .tl__card { transform: none; }
+
+    .tech:hover { animation: none; }
+    .skills__spot { display: none; }
+}
+
+
+/* Small phones */
+@media (max-width: 400px) {
+    .section { padding: 38px 14px; }
+    .hero { padding: 104px 14px 62px; }
+
+    .nav { padding: 10px 12px; }
+    .nav__inner { padding: 8px 10px 8px 8px; gap: 10px; }
+    .mark { --mark-h: 38px; }
+    .logo__name { font-size: .92rem; }
+
+    .hero__title { font-size: 2rem; letter-spacing: -.4px; }
+    .hero__role { font-size: .95rem; }
+    .hero__status { font-size: .7rem; padding: 7px 13px; }
+
+    /* the employer names are long; let them break rather than overflow */
+    .hero__proof { gap: 8px 12px; line-height: 1.7; }
+    .cap { white-space: normal; font-size: .7rem; padding: 4px 10px; margin: 0 3px; }
+
+    .btn { padding: 12px 18px; font-size: .86rem; }
+    .hero__cta { gap: 10px 14px; }
+
+    .stage { width: min(260px, 76vw); }
+    .solar { width: min(290px, 88vw); }
+    .sat { width: 42px; height: 42px; }
+    .sat svg { width: 23px; height: 23px; }
+
+    .sheet { padding: 10px; }
+    .sheet__panel { padding: 24px 16px 20px; max-height: 90vh; }
+    .sheet__close { top: 10px; right: 10px; }
+
+    .foot__line { font-size: 1rem; }
+    .foot { padding: 34px 16px 24px; }
+}
+
+
+/* Very small phones - the wordmark stops fitting beside the controls, so the
+   monogram carries the brand on its own */
+@media (max-width: 360px) {
+    .logo__text { display: none; }
+    .nav__actions { gap: 8px; }
+    .hero__title { font-size: 1.86rem; }
+    .foot__mark .mark { --mark-h: 26px; }
+}
+
+
+/* Landscape phones - 100svh plus a full hero will not fit */
+@media (max-height: 560px) and (orientation: landscape) {
+    .hero { min-height: auto; padding: 96px 20px 54px; }
+    .reel { min-height: 280px; padding: 48px 20px; }
+    .mobile { padding-top: 84px; }
+    .sheet__panel { max-height: 92vh; }
+}
+
+
 /* Motion Prefrence */
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
