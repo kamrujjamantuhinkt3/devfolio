@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Great+Vibes&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="css/style.css">
-    <noscript><style>.preloader{display:none!important}.reveal,.char{opacity:1!important;transform:none!important}</style></noscript>
+    <noscript><style>.preloader{display:none!important}.reveal,.char,[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body class="is-loading">
 
@@ -179,6 +179,149 @@
             </div>
         </div>
 
+    </section>
+
+    <!-- About -->
+    <section class="section about" id="about">
+        <span class="about__aura" aria-hidden="true"></span>
+
+        <header class="section__head">
+            <p class="section__label" data-reveal><span class="section__rule"></span>About me</p>
+            <h2 class="section__title" data-reveal="words" data-words>The person behind the code</h2>
+        </header>
+
+        <div class="about__grid">
+
+            <figure class="about__figure">
+                <span class="about__outline" data-reveal="zoom" style="--rd:.24s" aria-hidden="true"></span>
+
+                <div class="about__photo" data-reveal="zoom">
+                    <img src="assets/images/tuhin-casual.jpg" alt="Kamrujjaman Tuhin on campus" loading="lazy" width="640" height="640">
+                    <span class="about__tint" aria-hidden="true"></span>
+                </div>
+
+                <figcaption class="about__badge" data-reveal="pop" style="--rd:.52s">
+                    <span class="about__badge-value" data-count="3.50">0.00</span>
+                    <span class="about__badge-label">Current CGPA</span>
+                </figcaption>
+            </figure>
+
+            <div class="about__body">
+                <p class="about__lead" data-reveal style="--rd:.12s">
+                    I&rsquo;m a full-stack developer from Savar, Dhaka, completing my
+                    <strong>B.Sc. in Computer Science and Engineering</strong> at
+                    Daffodil International University.
+                </p>
+
+                <p class="about__text" data-reveal style="--rd:.18s">
+                    Becoming a developer was never a fallback for me &mdash; it was the goal.
+                    That passion is what pulled me toward web development: it is the one place
+                    where an idea can go from a blank file to something a stranger can open
+                    and use on the same day.
+                </p>
+
+                <p class="about__text" data-reveal style="--rd:.24s">
+                    So I build across the whole stack, the part people click and the part that
+                    keeps it running. My degree gave me the fundamentals &mdash; data structures,
+                    algorithms, how machines actually think. Everything after that came from
+                    building things that did not exist yet, breaking them, and sitting with the
+                    error until it made sense.
+                </p>
+
+                <ul class="facts">
+                    <li class="fact" data-reveal="left" style="--rd:.30s">
+                        <span class="fact__label">Degree</span>
+                        <span class="fact__value">B.Sc. in Computer Science &amp; Engineering</span>
+                    </li>
+                    <li class="fact" data-reveal="left" style="--rd:.36s">
+                        <span class="fact__label">University</span>
+                        <span class="fact__value">Daffodil International University</span>
+                    </li>
+                    <li class="fact" data-reveal="left" style="--rd:.42s">
+                        <span class="fact__label">Duration</span>
+                        <span class="fact__value">2022 &mdash; 2026</span>
+                    </li>
+                    <li class="fact" data-reveal="left" style="--rd:.48s">
+                        <span class="fact__label">Based in</span>
+                        <span class="fact__value">Savar, Dhaka</span>
+                    </li>
+                </ul>
+
+                <div class="about__links" data-reveal style="--rd:.54s">
+                    <a class="ghost-link" href="https://www.linkedin.com/in/kamrujjamantuhinkt3" target="_blank" rel="noopener">
+                        <span>LinkedIn</span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
+                    </a>
+                    <a class="ghost-link" href="https://www.github.com/kamrujjamantuhinkt3" target="_blank" rel="noopener">
+                        <span>GitHub</span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education -->
+    <section class="section edu" id="education">
+        <span class="edu__aura" aria-hidden="true"></span>
+
+        <header class="section__head">
+            <p class="section__label" data-reveal><span class="section__rule"></span>Education</p>
+            <h2 class="section__title" data-reveal="words" data-words>Where the foundation was built</h2>
+        </header>
+
+        <div class="timeline">
+            <span class="timeline__rail" aria-hidden="true"><span class="timeline__progress"></span></span>
+
+            <ol class="timeline__list">
+
+                <li class="tl">
+                    <span class="tl__node tl__node--live" aria-hidden="true"></span>
+                    <article class="tl__card">
+                        <span class="tl__logo">
+                            <img src="assets/images/diu-logo.svg" alt="Daffodil International University logo" loading="lazy" width="80" height="80">
+                        </span>
+                        <div class="tl__copy">
+                            <p class="tl__years">2022 &mdash; 2026 <span class="tl__badge">Ongoing</span></p>
+                            <h3 class="tl__school">Daffodil International University</h3>
+                            <p class="tl__degree">B.Sc. in Computer Science &amp; Engineering</p>
+                            <p class="tl__meta">CGPA 3.25</p>
+                        </div>
+                    </article>
+                </li>
+
+                <li class="tl">
+                    <span class="tl__node" aria-hidden="true"></span>
+                    <article class="tl__card">
+                        <span class="tl__logo">
+                            <img src="assets/images/mgc.jpg" alt="Madaripur Government College logo" loading="lazy" width="80" height="80">
+                        </span>
+                        <div class="tl__copy">
+                            <p class="tl__years">2018 &mdash; 2020</p>
+                            <h3 class="tl__school">Madaripur Government College</h3>
+                            <p class="tl__degree">Higher Secondary Certificate</p>
+                            <p class="tl__meta">Madaripur, Bangladesh</p>
+                        </div>
+                    </article>
+                </li>
+
+                <li class="tl">
+                    <span class="tl__node" aria-hidden="true"></span>
+                    <article class="tl__card">
+                        <span class="tl__logo">
+                            <img src="assets/images/uighs.jpg" alt="United Islamia Govt. High School logo" loading="lazy" width="80" height="80">
+                        </span>
+                        <div class="tl__copy">
+                            <p class="tl__years">2013 &mdash; 2018</p>
+                            <h3 class="tl__school">United Islamia Govt. High School</h3>
+                            <p class="tl__degree">Secondary School Certificate</p>
+                            <p class="tl__meta">Madaripur, Bangladesh</p>
+                        </div>
+                    </article>
+                </li>
+
+            </ol>
+        </div>
     </section>
 
     </main>

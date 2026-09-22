@@ -3,6 +3,7 @@
     "use strict";
 
     var root = document.documentElement;
+    root.classList.add("js");
     var body = document.body;
     var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -348,6 +349,166 @@
         restart();
     }
     paint(0);
+
+    /* Split headings into words so each can rise out from behind a mask */
+    document.querySelectorAll("[data-words]").forEach(function (el) {
+        var words = el.textContent.trim().split(/\s+/);
+        el.textContent = "";
+
+        words.forEach(function (word, i) {
+            var outer = document.createElement("span");
+            outer.className = "word";
+
+            var inner = document.createElement("span");
+            inner.className = "word__in";
+            inner.style.setProperty("--wi", i);
+            inner.textContent = word;
+
+            outer.appendChild(inner);
+            el.appendChild(outer);
+            if (i < words.length - 1) el.appendChild(document.createTextNode(" "));
+        });
+    });
+
+
+    /* Scroll reveals — elements fade up the first time they enter view */
+    var revealEls = document.querySelectorAll("[data-reveal]");
+
+    function revealAll() {
+        revealEls.forEach(function (el) { el.classList.add("is-in"); });
+    }
+
+    if (revealEls.length) {
+        if (reduced || !("IntersectionObserver" in window)) {
+            revealAll();
+        } else {
+            var revealObs = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add("is-in");
+                    revealObs.unobserve(entry.target);   // play once, not on every pass
+                });
+            }, { threshold: .15, rootMargin: "0px 0px -6% 0px" });
+
+            revealEls.forEach(function (el) { revealObs.observe(el); });
+
+            // Safety net: if nothing has been revealed a few seconds in, the
+            // observer never fired — show the content rather than hide it.
+            setTimeout(function () {
+                if (!document.querySelector("[data-reveal].is-in")) revealAll();
+            }, 3000);
+        }
+    }
+
+
+    /* Education timeline — the rail fills as you scroll and each milestone
+       lights up as the line reaches it, so the section reads like a story
+       being told rather than a list that is simply there. */
+    var timeline = document.querySelector(".timeline");
+
+    if (timeline) {
+        var milestones = Array.prototype.slice.call(timeline.querySelectorAll(".tl"));
+        var progress = timeline.querySelector(".timeline__progress");
+
+        function litAll() {
+            milestones.forEach(function (li) { li.classList.add("is-lit"); });
+            if (progress) progress.style.transform = "scaleY(1)";
+        }
+
+        if (reduced) {
+            litAll();
+        } else {
+            var queued = false;
+
+            function drawTimeline() {
+                queued = false;
+
+                var vh = window.innerHeight;
+                var y = window.scrollY;
+                var docMax = Math.max(document.documentElement.scrollHeight - vh, 0);
+
+                var rect = timeline.getBoundingClientRect();
+                var absTop = rect.top + y;
+                var height = rect.height || 1;
+
+                // Where the rail starts and finishes filling, as scroll positions.
+                // The finish is clamped to the furthest the page can actually
+                // scroll — otherwise the last milestone sits too close to the
+                // bottom to ever be reached, and never appears at all.
+                var startY = absTop - vh * 0.85;
+                var endY = Math.min(absTop + height - vh * 0.45, docMax);
+                if (endY <= startY) endY = startY + 1;
+
+                var pct = (y - startY) / (endY - startY);
+                if (pct < 0) pct = 0;
+                if (pct > 1) pct = 1;
+                if (y >= docMax - 2) pct = 1;      // at the end of the page the story is fully told
+
+                progress.style.transform = "scaleY(" + pct.toFixed(4) + ")";
+
+                milestones.forEach(function (li) {
+                    // measured from the item itself, not its dot — the dot is
+                    // hidden on narrow screens and would report no position
+                    var mid = li.getBoundingClientRect().top + y + li.offsetHeight * 0.35;
+                    var ratio = (mid - absTop) / height;
+                    // once lit it stays lit — a story does not un-tell itself
+                    if (pct >= ratio * 0.95) li.classList.add("is-lit");
+                });
+            }
+
+            function queueDraw() {
+                if (queued) return;
+                queued = true;
+                requestAnimationFrame(drawTimeline);
+            }
+
+            window.addEventListener("scroll", queueDraw, { passive: true });
+            window.addEventListener("resize", queueDraw);
+            drawTimeline();
+
+            // Safety net, same reasoning as the scroll reveals
+            setTimeout(function () {
+                if (!timeline.querySelector(".tl.is-lit") && timeline.getBoundingClientRect().top < window.innerHeight) litAll();
+            }, 3000);
+        }
+    }
+
+
+    /* Count-up figures */
+    function countUp(el) {
+        var target = parseFloat(el.dataset.count);
+        var decimals = (el.dataset.count.split(".")[1] || "").length;
+        var started = null;
+        var duration = 1400;
+
+        function step(now) {
+            if (started === null) started = now;
+            var p = Math.min((now - started) / duration, 1);
+            var eased = 1 - Math.pow(1 - p, 3);          // ease-out, settles gently
+            el.textContent = (target * eased).toFixed(decimals);
+            if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+    }
+
+    var counters = document.querySelectorAll("[data-count]");
+
+    if (counters.length) {
+        if (reduced) {
+            counters.forEach(function (el) { el.textContent = el.dataset.count; });
+        } else {
+            var countObs = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (!entry.isIntersecting) return;
+                    countUp(entry.target);
+                    countObs.unobserve(entry.target);
+                });
+            }, { threshold: .6 });
+
+            counters.forEach(function (el) { countObs.observe(el); });
+        }
+    }
+
 
     /* Navbar */
     var nav = document.getElementById("nav");
