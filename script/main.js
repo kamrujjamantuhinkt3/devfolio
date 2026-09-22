@@ -510,83 +510,241 @@
     }
 
 
-    /* Skills — the featured core cycles through each technology, and any chip
-       can take it over. The skill list lives in the markup, so there is one
-       source of truth rather than a copy of it in here. */
-    var core = document.getElementById("core");
+    /* Skills — the technologies orbit a core on the right, and whichever one
+       is in focus is read out on the left. Positions are computed here rather
+       than in CSS so every logo stays upright as it travels, and so the ones
+       sweeping across the front can come forward over the ones behind. */
+    var solar = document.getElementById("solar");
 
-    if (core) {
-        var coreUse = document.getElementById("coreUse");
-        var coreLogo = document.getElementById("coreLogo");
-        var coreName = document.getElementById("coreName");
-        var coreRole = document.getElementById("coreRole");
-        var coreDots = document.getElementById("coreDots");
+    if (solar) {
+        var focusUse = document.getElementById("focusUse");
+        var focusLogo = document.getElementById("focusLogo");
+        var focusName = document.getElementById("focusName");
+        var focusCat = document.getElementById("focusCat");
+        var focusExp = document.getElementById("focusExp");
+        var focusDots = document.getElementById("focusDots");
+        var focusPanel = document.querySelector(".focus");
 
-        // only the first copy of each marquee row — the duplicate is decorative
-        var techs = Array.prototype.slice.call(
-            document.querySelectorAll('.tech:not([aria-hidden="true"])'));
+        // radius as a fraction of the stage, and how fast each ring travels
+        var RINGS = [
+            { r: 0.24, speed: 0.000074 },
+            { r: 0.34, speed: 0.000055 },
+            { r: 0.44, speed: 0.000041 }
+        ];
+        var TILT = 0.42;          // flattens the circle into a viewed-from-above ellipse
 
-        var focused = 0;
-        var coreTimer = null;
-        var coreHeld = false;
+        var sats = Array.prototype.slice.call(solar.querySelectorAll(".sat")).map(function (el) {
+            return {
+                el: el,
+                ring: RINGS[parseInt(el.dataset.ring, 10)] || RINGS[0],
+                base: parseFloat(el.dataset.angle) * Math.PI / 180
+            };
+        });
 
-        function paintCore(i) {
-            var el = techs[i];
-            if (!el) return;
+        var beam = document.getElementById("solarBeam");
+        var filters = Array.prototype.slice.call(document.querySelectorAll(".filter"));
 
-            core.style.setProperty("--acc", el.style.getPropertyValue("--acc") || "#818cf8");
-            coreUse.setAttribute("href", "#" + el.dataset.icon);
-            coreName.textContent = el.dataset.name;
-            coreRole.textContent = el.dataset.role;
+        var inFocus = 0;
+        var focusTimer = null;
+        var held = false;
+        var activeCat = "all";
 
-            techs.forEach(function (t, k) { t.classList.toggle("is-focus", k === i); });
-            Array.prototype.forEach.call(coreDots.children, function (d, k) {
+        function inCategory(i) {
+            return activeCat === "all" || sats[i].el.dataset.cat === activeCat;
+        }
+
+        // the indices the rotation is allowed to visit under the current filter
+        function pool() {
+            var out = [];
+            for (var i = 0; i < sats.length; i++) if (inCategory(i)) out.push(i);
+            return out.length ? out : [0];
+        }
+
+        function nextInPool(from) {
+            var list = pool();
+            for (var k = 0; k < list.length; k++) if (list[k] > from) return list[k];
+            return list[0];
+        }
+
+        function paintFocus(i) {
+            var el = sats[i].el;
+
+            var acc = el.style.getPropertyValue("--acc") || "#818cf8";
+            focusPanel.style.setProperty("--acc", acc);
+            solar.style.setProperty("--acc", acc);
+            focusUse.setAttribute("href", "#" + el.dataset.icon);
+            focusName.textContent = el.dataset.name;
+            focusCat.textContent = el.dataset.cat;
+            focusExp.textContent = el.dataset.exp;
+
+            sats.forEach(function (s2, k) { s2.el.classList.toggle("is-focus", k === i); });
+            Array.prototype.forEach.call(focusDots.children, function (d, k) {
                 d.classList.toggle("is-on", k === i);
                 d.setAttribute("aria-selected", String(k === i));
             });
         }
 
-        function focus(i, manual) {
-            focused = (i + techs.length) % techs.length;
+        function setFocus(i, manual) {
+            inFocus = (i + sats.length) % sats.length;
 
             if (reduced) {
-                paintCore(focused);
+                paintFocus(inFocus);
             } else {
-                coreLogo.classList.add("is-swapping");
+                focusLogo.classList.add("is-swapping");
+                focusExp.classList.add("is-swapping");
                 setTimeout(function () {
-                    paintCore(focused);
-                    coreLogo.classList.remove("is-swapping");
-                }, 240);
+                    paintFocus(inFocus);
+                    focusLogo.classList.remove("is-swapping");
+                    focusExp.classList.remove("is-swapping");
+                }, 230);
             }
-            if (manual) restartCore();
+            if (manual) restartFocus();
         }
 
-        function restartCore() {
-            clearInterval(coreTimer);
+        function restartFocus() {
+            clearInterval(focusTimer);
             if (reduced) return;
-            coreTimer = setInterval(function () {
-                if (!coreHeld) focus(focused + 1);
-            }, 2800);
+            focusTimer = setInterval(function () {
+                if (!held) setFocus(nextInPool(inFocus));
+            }, 3600);
         }
 
-        techs.forEach(function (el, i) {
+        filters.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                activeCat = btn.dataset.cat;
+
+                filters.forEach(function (b) {
+                    var on = b === btn;
+                    b.classList.toggle("is-on", on);
+                    b.setAttribute("aria-selected", String(on));
+                });
+
+                sats.forEach(function (s2, k) { s2.el.classList.toggle("is-dim", !inCategory(k)); });
+                Array.prototype.forEach.call(focusDots.children, function (d, k) {
+                    d.hidden = !inCategory(k);
+                });
+
+                if (!inCategory(inFocus)) setFocus(pool()[0], true);
+                else restartFocus();
+            });
+        });
+
+        sats.forEach(function (s2, i) {
             var dot = document.createElement("button");
             dot.type = "button";
             dot.setAttribute("role", "tab");
-            dot.setAttribute("aria-label", el.dataset.name);
-            dot.addEventListener("click", function () { focus(i, true); });
-            coreDots.appendChild(dot);
+            dot.setAttribute("aria-label", s2.el.dataset.name);
+            dot.addEventListener("click", function () { setFocus(i, true); });
+            focusDots.appendChild(dot);
 
-            el.addEventListener("click", function () { focus(i, true); });
-            el.addEventListener("mouseenter", function () { focus(i, true); });
+            s2.el.addEventListener("click", function () { setFocus(i, true); });
+            s2.el.addEventListener("mouseenter", function () { setFocus(i, true); });
+            s2.el.addEventListener("focus", function () { setFocus(i, true); });
         });
 
-        // pause the rotation while someone is reading the panel
-        core.addEventListener("mouseenter", function () { coreHeld = true; });
-        core.addEventListener("mouseleave", function () { coreHeld = false; });
+        // hold the system still while someone is reaching for a logo
+        solar.addEventListener("mouseenter", function () { held = true; });
+        solar.addEventListener("mouseleave", function () { held = false; });
+        focusPanel.addEventListener("mouseenter", function () { held = true; });
+        focusPanel.addEventListener("mouseleave", function () { held = false; });
 
-        paintCore(0);
-        restartCore();
+        var stage = solar.clientWidth || 420;
+
+        // Each satellite flies out from the core when the section first arrives,
+        // one after another, then settles into its orbit.
+        var INTRO_STEP = 70;     // ms between satellites
+        var INTRO_RUN = 900;     // ms for one to travel out
+
+        function introEase(i, introT) {
+            if (introT < 0) return 0;
+            var t = (introT - i * INTRO_STEP) / INTRO_RUN;
+            if (t <= 0) return 0;
+            if (t >= 1) return 1;
+            return 1 - Math.pow(1 - t, 3);
+        }
+
+        function place(elapsed, introT) {
+            var size = stage;
+            var bx = 50, by = 50;
+
+            sats.forEach(function (s2, i) {
+                var a = s2.base + elapsed * s2.ring.speed;
+                var out = introT === undefined ? 1 : introEase(i, introT);
+
+                var x = Math.cos(a) * s2.ring.r * size * out;
+                var y = Math.sin(a) * s2.ring.r * size * TILT * out;
+
+                // 0 at the back of the sweep, 1 at the front
+                var depth = (Math.sin(a) + 1) / 2;
+                var scale = (0.74 + depth * 0.26) * (0.25 + out * 0.75);
+                if (i === inFocus) scale *= 1.22;
+
+                var dim = s2.el.classList.contains("is-dim");
+                var alpha = i === inFocus ? 1 : (0.6 + depth * 0.4) * (dim ? 0.35 : 1);
+
+                s2.el.style.transform =
+                    "translate(-50%, -50%) translate(" + x.toFixed(1) + "px, " + y.toFixed(1) + "px)" +
+                    " scale(" + scale.toFixed(3) + ")";
+                s2.el.style.zIndex = String(Math.round(depth * 10) + (i === inFocus ? 20 : 1));
+                s2.el.style.opacity = (alpha * out).toFixed(2);
+
+                if (i === inFocus) {
+                    bx = 50 + (x / size) * 100;
+                    by = 50 + (y / size) * 100;
+                }
+            });
+
+            if (beam) {
+                beam.setAttribute("x2", bx.toFixed(2));
+                beam.setAttribute("y2", by.toFixed(2));
+            }
+        }
+
+        if (reduced) {
+            place(0);
+        } else {
+            var clock = 0;
+            var last = 0;
+            var introT = -1;        // negative until the section is actually seen
+
+            // hold the satellites in the core until the section comes into view,
+            // so the entrance is not wasted above the fold
+            if ("IntersectionObserver" in window) {
+                var introObs = new IntersectionObserver(function (entries) {
+                    if (!entries[0].isIntersecting) return;
+                    if (introT < 0) introT = 0;
+                    introObs.disconnect();
+                }, { threshold: .25 });
+                introObs.observe(solar);
+                setTimeout(function () { if (introT < 0) introT = 0; }, 4000);
+            } else {
+                introT = 0;
+            }
+
+            (function spinOrbit(now) {
+                if (!last) last = now;
+                var dt = now - last;
+                last = now;
+
+                if (!held) clock += dt;             // freezing the clock freezes the system
+                if (introT >= 0) introT += dt;
+
+                place(clock, introT);
+                requestAnimationFrame(spinOrbit);
+            })(0);
+        }
+
+        paintFocus(0);
+        restartFocus();
+
+        var solarResize;
+        window.addEventListener("resize", function () {
+            clearTimeout(solarResize);
+            solarResize = setTimeout(function () {
+                stage = solar.clientWidth || 420;
+                if (reduced) place(0);     // otherwise the next frame picks it up
+            }, 160);
+        });
     }
 
 
