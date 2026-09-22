@@ -1532,7 +1532,7 @@ body.is-ready .accent.is-flowing .char {
 
 
 /* Skills — grouped flows */
-.flows { display: grid; gap: 26px; }
+.flows { display: grid; gap: 10px; }
 
 .flow__cap {
     display: flex;
@@ -1550,9 +1550,12 @@ body.is-ready .accent.is-flowing .char {
 
 /* Skills — the logos fly across the screen on a loop. The track holds the
    list twice, so shifting it by exactly half its width repeats seamlessly. */
-/* A faint orbital path for the logos to ride along */
+/* A faint orbital path for the logos to ride along. The vertical padding is
+   headroom: overflow clips to the padding box, so a lifted chip and its glow
+   stay inside instead of being sliced off at the top. */
 .marquee {
     position: relative;
+    padding: 22px 0;
     overflow: hidden;
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
     mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
@@ -1563,7 +1566,6 @@ body.is-ready .accent.is-flowing .char {
     display: flex;
     width: max-content;
     gap: 14px;
-    padding: 6px 0;
     animation: marquee 34s linear infinite;
 }
 .marquee--rev .marquee__track { animation-direction: reverse; }
@@ -1607,9 +1609,9 @@ body.is-ready .accent.is-flowing .char {
     transform: translateY(-5px) scale(1.05);
     border-color: color-mix(in srgb, var(--acc) 70%, transparent);
     background: color-mix(in srgb, var(--acc) 14%, transparent);
-    box-shadow: 0 14px 32px rgba(2, 4, 16, .5), 0 0 22px rgba(129, 140, 248, .35);
-    box-shadow: 0 14px 32px rgba(2, 4, 16, .5),
-                0 0 22px color-mix(in srgb, var(--acc) 35%, transparent);
+    box-shadow: 0 10px 24px rgba(2, 4, 16, .5), 0 0 18px rgba(129, 140, 248, .35);
+    box-shadow: 0 10px 24px rgba(2, 4, 16, .5),
+                0 0 18px color-mix(in srgb, var(--acc) 35%, transparent);
 }
 
 @supports not (color: color-mix(in srgb, red, blue)) {
