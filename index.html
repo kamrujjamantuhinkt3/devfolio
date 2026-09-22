@@ -15,6 +15,9 @@
 </head>
 <body class="is-loading">
 
+    <!-- Starfield behind the entire page -->
+    <div class="space" aria-hidden="true"><canvas class="stars" id="stars"></canvas></div>
+
     <!-- Preloader -->
     <div class="preloader" id="preloader">
         <div class="preloader__inner">
@@ -102,7 +105,6 @@
     <section class="hero" id="home">
 
         <div class="hero__bg" aria-hidden="true">
-            <canvas class="stars" id="stars"></canvas>
             <span class="nebula nebula--1"></span>
             <span class="nebula nebula--2"></span>
             <span class="hero__vignette"></span>
@@ -170,8 +172,8 @@
                         <span class="portrait__sheen" aria-hidden="true"></span>
                     </div>
                     <svg class="portrait__outline" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                        <polygon class="edge-base" points="50,0 100,25 100,75 50,100 0,75 0,25"/>
-                        <polygon class="edge-run"  points="50,0 100,25 100,75 50,100 0,75 0,25"/>
+                        <circle class="edge-base" cx="50" cy="50" r="49.7"/>
+                        <circle class="edge-run" cx="50" cy="50" r="49.7"/>
                     </svg>
                 </figure>
 
@@ -264,6 +266,8 @@
     <!-- Education -->
     <section class="section edu" id="education">
         <span class="edu__aura" aria-hidden="true"></span>
+        <span class="edu__orbit edu__orbit--1" aria-hidden="true"></span>
+        <span class="edu__orbit edu__orbit--2" aria-hidden="true"></span>
 
         <header class="section__head">
             <p class="section__label" data-reveal><span class="section__rule"></span>Education</p>
@@ -279,6 +283,7 @@
                     <span class="tl__node tl__node--live" aria-hidden="true"></span>
                     <article class="tl__card">
                         <span class="tl__logo">
+                            <span class="tl__ring" aria-hidden="true"></span>
                             <img src="assets/images/diu-logo.svg" alt="Daffodil International University logo" loading="lazy" width="80" height="80">
                         </span>
                         <div class="tl__copy">
@@ -294,6 +299,7 @@
                     <span class="tl__node" aria-hidden="true"></span>
                     <article class="tl__card">
                         <span class="tl__logo">
+                            <span class="tl__ring" aria-hidden="true"></span>
                             <img src="assets/images/mgc.jpg" alt="Madaripur Government College logo" loading="lazy" width="80" height="80">
                         </span>
                         <div class="tl__copy">
@@ -309,6 +315,7 @@
                     <span class="tl__node" aria-hidden="true"></span>
                     <article class="tl__card">
                         <span class="tl__logo">
+                            <span class="tl__ring" aria-hidden="true"></span>
                             <img src="assets/images/uighs.jpg" alt="United Islamia Govt. High School logo" loading="lazy" width="80" height="80">
                         </span>
                         <div class="tl__copy">
@@ -328,6 +335,7 @@
     <section class="section skills" id="skills">
         <span class="skills__aura" aria-hidden="true"></span>
         <span class="skills__spot" aria-hidden="true"></span>
+        <span class="skills__orbit" aria-hidden="true"></span>
 
         <svg class="sprite" aria-hidden="true" focusable="false"><defs>
             <symbol id="l-html" viewBox="0 0 24 24"><path fill="#E34F26" d="M3.6 2 5.2 20.1 12 22l6.8-1.9L20.4 2z"/><path fill="#EF652A" d="M12 3.4v17.1l5.5-1.5L18.8 3.4z"/><text x="12" y="15.6" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">5</text></symbol>

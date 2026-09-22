@@ -412,7 +412,7 @@
 
         function litAll() {
             milestones.forEach(function (li) { li.classList.add("is-lit"); });
-            if (progress) progress.style.transform = "scaleY(1)";
+            if (progress) progress.style.height = "100%";
         }
 
         if (reduced) {
@@ -444,7 +444,7 @@
                 if (pct > 1) pct = 1;
                 if (y >= docMax - 2) pct = 1;      // at the end of the page the story is fully told
 
-                progress.style.transform = "scaleY(" + pct.toFixed(4) + ")";
+                progress.style.height = (pct * 100).toFixed(2) + "%";
 
                 milestones.forEach(function (li) {
                     // measured from the item itself, not its dot — the dot is
