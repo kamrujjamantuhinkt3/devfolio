@@ -542,7 +542,7 @@
         });
 
         var beam = document.getElementById("solarBeam");
-        var filters = Array.prototype.slice.call(document.querySelectorAll(".filter"));
+        var filters = Array.prototype.slice.call(document.querySelectorAll(".skills .filter"));
 
         var inFocus = 0;
         var focusTimer = null;
@@ -766,6 +766,129 @@
                 skillsSection.style.setProperty("--mx", (lastEvent.clientX - box.left) + "px");
                 skillsSection.style.setProperty("--my", (lastEvent.clientY - box.top) + "px");
             });
+        });
+    }
+
+
+    /* Projects — filter the grid, and open a card in the detail sheet */
+    var projGrid = document.getElementById("projGrid");
+    var sheet = document.getElementById("sheet");
+
+    if (projGrid && sheet) {
+        var sheetBody = document.getElementById("sheetBody");
+        var sheetLinks = document.getElementById("sheetLinks");
+        var projects = Array.prototype.slice.call(projGrid.querySelectorAll(".proj"));
+        var projFilters = Array.prototype.slice.call(document.querySelectorAll(".projects .filter"));
+        var lastOpener = null;
+
+        /* Filtering */
+        projFilters.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                var cat = btn.dataset.cat;
+
+                projFilters.forEach(function (b) {
+                    var on = b === btn;
+                    b.classList.toggle("is-on", on);
+                    b.setAttribute("aria-selected", String(on));
+                });
+
+                projects.forEach(function (card) {
+                    card.classList.toggle("is-hidden", cat !== "all" && card.dataset.cat !== cat);
+                });
+            });
+        });
+
+        /* The sheet */
+        function linkButton(href, label, primary) {
+            var a = document.createElement("a");
+            a.className = "btn " + (primary ? "btn--primary" : "btn--ghost");
+            a.href = href;
+            a.target = "_blank";
+            a.rel = "noopener";
+            a.innerHTML = "<span>" + label + "</span>";
+            return a;
+        }
+
+        function openSheet(card) {
+            var detail = card.querySelector(".proj__detail");
+            sheetBody.innerHTML = "";
+            sheetBody.appendChild(detail.content.cloneNode(true));
+
+            // the heading has to carry the id the dialog is labelled by
+            var title = sheetBody.querySelector(".sheet__name");
+            if (title) title.id = "sheetTitle";
+
+            // Both buttons always show. Without a demo URL the first one renders
+            // as a plain disabled control rather than a link that goes nowhere.
+            sheetLinks.innerHTML = "";
+
+            if (card.dataset.demo) {
+                sheetLinks.appendChild(linkButton(card.dataset.demo, "Live Demo", true));
+            } else {
+                var off = document.createElement("button");
+                off.type = "button";
+                off.className = "btn btn--off";
+                off.disabled = true;
+                off.innerHTML = "<span>Live Demo</span>";
+                off.title = "Not deployed yet";
+                sheetLinks.appendChild(off);
+            }
+
+            if (card.dataset.repo) sheetLinks.appendChild(linkButton(card.dataset.repo, "View Code", false));
+
+            lastOpener = card.querySelector(".proj__open");
+            sheet.hidden = false;
+            document.body.style.overflow = "hidden";
+            requestAnimationFrame(function () { sheet.classList.add("is-open"); });
+            sheet.querySelector(".sheet__close").focus();
+        }
+
+        function closeSheet() {
+            sheet.classList.remove("is-open");
+            document.body.style.overflow = "";
+            setTimeout(function () {
+                sheet.hidden = true;
+                sheetBody.innerHTML = "";
+                if (lastOpener) lastOpener.focus();   // put focus back where it came from
+            }, 320);
+        }
+
+        projects.forEach(function (card) {
+            card.querySelector(".proj__open").addEventListener("click", function () { openSheet(card); });
+
+            // A screenshot replaces the placeholder number. CSS `:has()` already
+            // covers this; the class is the fallback for browsers without it.
+            var cover = card.querySelector(".proj__cover");
+            var shot = cover && cover.querySelector("img");
+            if (!shot) return;
+
+            cover.classList.add("has-shot");
+            shot.addEventListener("error", function () {
+                // a missing file must not leave an empty cover behind
+                cover.classList.remove("has-shot");
+                shot.remove();
+            });
+        });
+
+        sheet.querySelectorAll("[data-sheet-close]").forEach(function (el) {
+            el.addEventListener("click", closeSheet);
+        });
+
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && !sheet.hidden) closeSheet();
+        });
+
+        // keep tabbing inside the sheet while it is open
+        sheet.addEventListener("keydown", function (e) {
+            if (e.key !== "Tab") return;
+            var focusable = sheet.querySelectorAll("button, a[href]");
+            if (!focusable.length) return;
+
+            var first = focusable[0];
+            var last = focusable[focusable.length - 1];
+
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
         });
     }
 

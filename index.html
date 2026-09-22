@@ -190,6 +190,12 @@
         <header class="section__head">
             <p class="section__label" data-reveal><span class="section__rule"></span>About me</p>
             <h2 class="section__title" data-reveal="words" data-words>The person behind the code</h2>
+            <p class="section__lede" data-reveal style="--rd:.14s">
+                I would rather understand a system than memorise a framework. Most of what I know
+                did not arrive in a lecture &mdash; it came from building something that refused to
+                work, staying with it, and understanding exactly why it finally did. That habit is
+                what I would bring to a team; the stack is just how I get there.
+            </p>
         </header>
 
         <div class="about__grid">
@@ -272,6 +278,10 @@
         <header class="section__head">
             <p class="section__label" data-reveal><span class="section__rule"></span>Education</p>
             <h2 class="section__title" data-reveal="words" data-words>Where the foundation was built</h2>
+            <p class="section__lede" data-reveal style="--rd:.14s">
+                Three institutions, from secondary school in Madaripur to a Computer Science and
+                Engineering degree in Dhaka &mdash; the groundwork everything since has been built on.
+            </p>
         </header>
 
         <div class="timeline">
@@ -538,8 +548,397 @@
         </article>
     </section>
 
+    <!-- Projects
+         NOTE: these entries are sample data so the section can be seen working.
+         Replace the name, blurb, highlights, data-repo and data-demo on each
+         <article class="proj"> with your real projects. Leaving data-demo
+         empty simply hides the demo button for that project. -->
+    <section class="section projects" id="projects">
+        <span class="skills__aura" aria-hidden="true"></span>
+
+        <header class="section__head">
+            <p class="section__label" data-reveal><span class="section__rule"></span>Projects</p>
+            <h2 class="section__title" data-reveal="words" data-words>Things I have built</h2>
+            <p class="section__lede" data-reveal style="--rd:.14s">
+                A mix of full-stack applications, front-end work and the odd tool built to scratch
+                my own itch. Open any card for what it does, how it was put together and where the
+                code lives.
+            </p>
+        </header>
+
+        <div class="filters projects__filters" role="tablist" aria-label="Filter projects" data-reveal style="--rd:.02s">
+            <button class="filter is-on" type="button" role="tab" data-cat="all" aria-selected="true">All</button>
+            <button class="filter" type="button" role="tab" data-cat="Full-stack" aria-selected="false">Full-stack</button>
+            <button class="filter" type="button" role="tab" data-cat="Frontend" aria-selected="false">Frontend</button>
+            <button class="filter" type="button" role="tab" data-cat="Tooling" aria-selected="false">Tooling</button>
+        </div>
+
+        <div class="projects__grid" id="projGrid">
+                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.05s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                        <span class="proj__cover" style="--c1:#4338ca; --c2:#1e40af" aria-hidden="true">
+                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (the number hides itself) -->
+                            <span class="proj__no">01</span>
+                        </span>
+                        <span class="proj__body">
+                            <span class="proj__cat">Full-stack</span>
+                            <span class="proj__name">RTGS Management System</span>
+                            <span class="proj__blurb">An internal system for recording, tracking and settling real-time gross settlement entries.</span>
+                            <span class="proj__tags"><i>Next.js</i><i>TypeScript</i><i>Node.js</i></span>
+                        </span>
+                        <span class="proj__cue">View details</span>
+                    </button>
+
+                    <template class="proj__detail">
+                        <p class="sheet__cat">Full-stack</p>
+                        <h3 class="sheet__name">RTGS Management System</h3>
+                        <p class="sheet__lede">An internal system for recording, tracking and settling real-time gross settlement entries.</p>
+                        <h4 class="sheet__sub">Highlights</h4>
+                        <ul class="sheet__list">
+                                <li>Role-based access so operators and reviewers see different views</li>
+                                <li>Every entry is auditable, with a full trail of who changed what</li>
+                                <li>Server-rendered tables that stay fast as the ledger grows</li>
+                        </ul>
+                        <h4 class="sheet__sub">Built with</h4>
+                        <p class="sheet__stack"><span>Next.js</span><span>TypeScript</span><span>Node.js</span><span>MongoDB</span></p>
+                    </template>
+                </article>
+                <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.10s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                        <span class="proj__cover" style="--c1:#4f46e5; --c2:#22b8d6" aria-hidden="true">
+                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (the number hides itself) -->
+                            <span class="proj__no">02</span>
+                        </span>
+                        <span class="proj__body">
+                            <span class="proj__cat">Frontend</span>
+                            <span class="proj__name">Devfolio</span>
+                            <span class="proj__blurb">This portfolio. A space-themed single page built from scratch with no framework and no UI library.</span>
+                            <span class="proj__tags"><i>HTML</i><i>CSS</i><i>JavaScript</i></span>
+                        </span>
+                        <span class="proj__cue">View details</span>
+                    </button>
+
+                    <template class="proj__detail">
+                        <p class="sheet__cat">Frontend</p>
+                        <h3 class="sheet__name">Devfolio</h3>
+                        <p class="sheet__lede">This portfolio. A space-themed single page built from scratch with no framework and no UI library.</p>
+                        <h4 class="sheet__sub">Highlights</h4>
+                        <ul class="sheet__list">
+                                <li>Canvas starfield and an orbital skill system, both hand-written</li>
+                                <li>Every animation respects prefers-reduced-motion</li>
+                                <li>No build step — three files, opens straight in a browser</li>
+                        </ul>
+                        <h4 class="sheet__sub">Built with</h4>
+                        <p class="sheet__stack"><span>HTML</span><span>CSS</span><span>JavaScript</span></p>
+                    </template>
+                </article>
+                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.15s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                        <span class="proj__cover" style="--c1:#6366f1; --c2:#8b5cf6" aria-hidden="true">
+                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (the number hides itself) -->
+                            <span class="proj__no">03</span>
+                        </span>
+                        <span class="proj__body">
+                            <span class="proj__cat">Full-stack</span>
+                            <span class="proj__name">TaskOrbit</span>
+                            <span class="proj__blurb">A task board where work moves through columns and nothing gets lost between them.</span>
+                            <span class="proj__tags"><i>React</i><i>Node.js</i><i>MongoDB</i></span>
+                        </span>
+                        <span class="proj__cue">View details</span>
+                    </button>
+
+                    <template class="proj__detail">
+                        <p class="sheet__cat">Full-stack</p>
+                        <h3 class="sheet__name">TaskOrbit</h3>
+                        <p class="sheet__lede">A task board where work moves through columns and nothing gets lost between them.</p>
+                        <h4 class="sheet__sub">Highlights</h4>
+                        <ul class="sheet__list">
+                                <li>Drag and drop between columns with optimistic updates</li>
+                                <li>Per-board membership and invitations</li>
+                                <li>Activity feed so a team can see what moved and when</li>
+                        </ul>
+                        <h4 class="sheet__sub">Built with</h4>
+                        <p class="sheet__stack"><span>React</span><span>Node.js</span><span>MongoDB</span><span>Mongoose</span></p>
+                    </template>
+                </article>
+                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.20s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                        <span class="proj__cover" style="--c1:#1e40af; --c2:#0ea5e9" aria-hidden="true">
+                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (the number hides itself) -->
+                            <span class="proj__no">04</span>
+                        </span>
+                        <span class="proj__body">
+                            <span class="proj__cat">Full-stack</span>
+                            <span class="proj__name">ShopStack</span>
+                            <span class="proj__blurb">A storefront with a cart, checkout flow and an admin side for stock and orders.</span>
+                            <span class="proj__tags"><i>Next.js</i><i>TypeScript</i><i>MongoDB</i></span>
+                        </span>
+                        <span class="proj__cue">View details</span>
+                    </button>
+
+                    <template class="proj__detail">
+                        <p class="sheet__cat">Full-stack</p>
+                        <h3 class="sheet__name">ShopStack</h3>
+                        <p class="sheet__lede">A storefront with a cart, checkout flow and an admin side for stock and orders.</p>
+                        <h4 class="sheet__sub">Highlights</h4>
+                        <ul class="sheet__list">
+                                <li>Cart that survives a refresh and a sign-in</li>
+                                <li>Admin dashboard for products, stock and order status</li>
+                                <li>Order history tied to the authenticated account</li>
+                        </ul>
+                        <h4 class="sheet__sub">Built with</h4>
+                        <p class="sheet__stack"><span>Next.js</span><span>TypeScript</span><span>MongoDB</span><span>BetterAuth</span></p>
+                    </template>
+                </article>
+                <article class="proj" data-cat="Tooling" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.25s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                        <span class="proj__cover" style="--c1:#4338ca; --c2:#6366f1" aria-hidden="true">
+                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (the number hides itself) -->
+                            <span class="proj__no">05</span>
+                        </span>
+                        <span class="proj__body">
+                            <span class="proj__cat">Tooling</span>
+                            <span class="proj__name">AuthKit Starter</span>
+                            <span class="proj__blurb">A starting point for projects that need real authentication on day one rather than week three.</span>
+                            <span class="proj__tags"><i>Next.js</i><i>BetterAuth</i><i>TypeScript</i></span>
+                        </span>
+                        <span class="proj__cue">View details</span>
+                    </button>
+
+                    <template class="proj__detail">
+                        <p class="sheet__cat">Tooling</p>
+                        <h3 class="sheet__name">AuthKit Starter</h3>
+                        <p class="sheet__lede">A starting point for projects that need real authentication on day one rather than week three.</p>
+                        <h4 class="sheet__sub">Highlights</h4>
+                        <ul class="sheet__list">
+                                <li>Email and OAuth sign-in wired up and working</li>
+                                <li>Protected routes and session handling out of the box</li>
+                                <li>Typed helpers so the session is never an `any`</li>
+                        </ul>
+                        <h4 class="sheet__sub">Built with</h4>
+                        <p class="sheet__stack"><span>Next.js</span><span>BetterAuth</span><span>TypeScript</span></p>
+                    </template>
+                </article>
+                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.30s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                        <span class="proj__cover" style="--c1:#7c3aed; --c2:#4f46e5" aria-hidden="true">
+                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (the number hides itself) -->
+                            <span class="proj__no">06</span>
+                        </span>
+                        <span class="proj__body">
+                            <span class="proj__cat">Full-stack</span>
+                            <span class="proj__name">NoteNebula</span>
+                            <span class="proj__blurb">Notes that organise themselves by tag instead of by folder, with search that actually finds things.</span>
+                            <span class="proj__tags"><i>React</i><i>Node.js</i><i>MongoDB</i></span>
+                        </span>
+                        <span class="proj__cue">View details</span>
+                    </button>
+
+                    <template class="proj__detail">
+                        <p class="sheet__cat">Full-stack</p>
+                        <h3 class="sheet__name">NoteNebula</h3>
+                        <p class="sheet__lede">Notes that organise themselves by tag instead of by folder, with search that actually finds things.</p>
+                        <h4 class="sheet__sub">Highlights</h4>
+                        <ul class="sheet__list">
+                                <li>Full-text search across titles and bodies</li>
+                                <li>Tags rather than folders, so a note can live in several places</li>
+                                <li>Markdown editing with a live preview</li>
+                        </ul>
+                        <h4 class="sheet__sub">Built with</h4>
+                        <p class="sheet__stack"><span>React</span><span>Node.js</span><span>MongoDB</span></p>
+                    </template>
+                </article>
+                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.35s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                        <span class="proj__cover" style="--c1:#2563eb; --c2:#22d3ee" aria-hidden="true">
+                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (the number hides itself) -->
+                            <span class="proj__no">07</span>
+                        </span>
+                        <span class="proj__body">
+                            <span class="proj__cat">Full-stack</span>
+                            <span class="proj__name">DevChat</span>
+                            <span class="proj__blurb">A realtime chat room built to understand websockets properly rather than to reinvent Slack.</span>
+                            <span class="proj__tags"><i>Node.js</i><i>React</i><i>MongoDB</i></span>
+                        </span>
+                        <span class="proj__cue">View details</span>
+                    </button>
+
+                    <template class="proj__detail">
+                        <p class="sheet__cat">Full-stack</p>
+                        <h3 class="sheet__name">DevChat</h3>
+                        <p class="sheet__lede">A realtime chat room built to understand websockets properly rather than to reinvent Slack.</p>
+                        <h4 class="sheet__sub">Highlights</h4>
+                        <ul class="sheet__list">
+                                <li>Live messages over a socket connection, no polling</li>
+                                <li>Presence indicators and typing state</li>
+                                <li>History persisted so a refresh does not lose the room</li>
+                        </ul>
+                        <h4 class="sheet__sub">Built with</h4>
+                        <p class="sheet__stack"><span>Node.js</span><span>React</span><span>MongoDB</span></p>
+                    </template>
+                </article>
+                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.40s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                        <span class="proj__cover" style="--c1:#4f46e5; --c2:#3b82f6" aria-hidden="true">
+                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (the number hides itself) -->
+                            <span class="proj__no">08</span>
+                        </span>
+                        <span class="proj__body">
+                            <span class="proj__cat">Full-stack</span>
+                            <span class="proj__name">TrackMate</span>
+                            <span class="proj__blurb">An expense tracker that answers one question well: where did the money actually go?</span>
+                            <span class="proj__tags"><i>Next.js</i><i>TypeScript</i><i>MongoDB</i></span>
+                        </span>
+                        <span class="proj__cue">View details</span>
+                    </button>
+
+                    <template class="proj__detail">
+                        <p class="sheet__cat">Full-stack</p>
+                        <h3 class="sheet__name">TrackMate</h3>
+                        <p class="sheet__lede">An expense tracker that answers one question well: where did the money actually go?</p>
+                        <h4 class="sheet__sub">Highlights</h4>
+                        <ul class="sheet__list">
+                                <li>Category breakdowns with month-on-month comparison</li>
+                                <li>Recurring expenses handled without duplicate entries</li>
+                                <li>CSV export for anything that needs a spreadsheet</li>
+                        </ul>
+                        <h4 class="sheet__sub">Built with</h4>
+                        <p class="sheet__stack"><span>Next.js</span><span>TypeScript</span><span>MongoDB</span><span>Mongoose</span></p>
+                    </template>
+                </article>
+                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.40s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                        <span class="proj__cover" style="--c1:#5b21b6; --c2:#6366f1" aria-hidden="true">
+                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (the number hides itself) -->
+                            <span class="proj__no">09</span>
+                        </span>
+                        <span class="proj__body">
+                            <span class="proj__cat">Full-stack</span>
+                            <span class="proj__name">BlogVerse</span>
+                            <span class="proj__blurb">A publishing platform with drafts, scheduling and a reading experience that gets out of the way.</span>
+                            <span class="proj__tags"><i>Next.js</i><i>MongoDB</i><i>Tailwind CSS</i></span>
+                        </span>
+                        <span class="proj__cue">View details</span>
+                    </button>
+
+                    <template class="proj__detail">
+                        <p class="sheet__cat">Full-stack</p>
+                        <h3 class="sheet__name">BlogVerse</h3>
+                        <p class="sheet__lede">A publishing platform with drafts, scheduling and a reading experience that gets out of the way.</p>
+                        <h4 class="sheet__sub">Highlights</h4>
+                        <ul class="sheet__list">
+                                <li>Draft, schedule and publish states</li>
+                                <li>Server-rendered posts for fast first loads and clean sharing</li>
+                                <li>Comment threads with moderation</li>
+                        </ul>
+                        <h4 class="sheet__sub">Built with</h4>
+                        <p class="sheet__stack"><span>Next.js</span><span>MongoDB</span><span>Tailwind CSS</span></p>
+                    </template>
+                </article>
+                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.40s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                        <span class="proj__cover" style="--c1:#1d4ed8; --c2:#818cf8" aria-hidden="true">
+                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (the number hides itself) -->
+                            <span class="proj__no">10</span>
+                        </span>
+                        <span class="proj__body">
+                            <span class="proj__cat">Full-stack</span>
+                            <span class="proj__name">EventHorizon</span>
+                            <span class="proj__blurb">Event listings and booking, with capacity that cannot be oversold by two people clicking at once.</span>
+                            <span class="proj__tags"><i>Next.js</i><i>Node.js</i><i>MongoDB</i></span>
+                        </span>
+                        <span class="proj__cue">View details</span>
+                    </button>
+
+                    <template class="proj__detail">
+                        <p class="sheet__cat">Full-stack</p>
+                        <h3 class="sheet__name">EventHorizon</h3>
+                        <p class="sheet__lede">Event listings and booking, with capacity that cannot be oversold by two people clicking at once.</p>
+                        <h4 class="sheet__sub">Highlights</h4>
+                        <ul class="sheet__list">
+                                <li>Seat holds so concurrent bookings cannot oversell</li>
+                                <li>Organiser dashboard for attendees and check-in</li>
+                                <li>Confirmation emails on successful booking</li>
+                        </ul>
+                        <h4 class="sheet__sub">Built with</h4>
+                        <p class="sheet__stack"><span>Next.js</span><span>Node.js</span><span>MongoDB</span><span>BetterAuth</span></p>
+                    </template>
+                </article>
+                <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.40s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                        <span class="proj__cover" style="--c1:#0891b2; --c2:#4f46e5" aria-hidden="true">
+                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (the number hides itself) -->
+                            <span class="proj__no">11</span>
+                        </span>
+                        <span class="proj__body">
+                            <span class="proj__cat">Frontend</span>
+                            <span class="proj__name">LinkVault</span>
+                            <span class="proj__blurb">A bookmark manager for the links you save and then never find again.</span>
+                            <span class="proj__tags"><i>React</i><i>TypeScript</i><i>Tailwind CSS</i></span>
+                        </span>
+                        <span class="proj__cue">View details</span>
+                    </button>
+
+                    <template class="proj__detail">
+                        <p class="sheet__cat">Frontend</p>
+                        <h3 class="sheet__name">LinkVault</h3>
+                        <p class="sheet__lede">A bookmark manager for the links you save and then never find again.</p>
+                        <h4 class="sheet__sub">Highlights</h4>
+                        <ul class="sheet__list">
+                                <li>Instant client-side filtering across hundreds of links</li>
+                                <li>Keyboard-first: everything reachable without the mouse</li>
+                                <li>Import from the browser's own bookmark export</li>
+                        </ul>
+                        <h4 class="sheet__sub">Built with</h4>
+                        <p class="sheet__stack"><span>React</span><span>TypeScript</span><span>Tailwind CSS</span></p>
+                    </template>
+                </article>
+                <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.40s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                        <span class="proj__cover" style="--c1:#7c3aed; --c2:#38bdf8" aria-hidden="true">
+                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (the number hides itself) -->
+                            <span class="proj__no">12</span>
+                        </span>
+                        <span class="proj__body">
+                            <span class="proj__cat">Frontend</span>
+                            <span class="proj__name">RecipeBox</span>
+                            <span class="proj__blurb">Recipes with the ingredient list scaled to however many people are actually eating.</span>
+                            <span class="proj__tags"><i>React</i><i>Tailwind CSS</i></span>
+                        </span>
+                        <span class="proj__cue">View details</span>
+                    </button>
+
+                    <template class="proj__detail">
+                        <p class="sheet__cat">Frontend</p>
+                        <h3 class="sheet__name">RecipeBox</h3>
+                        <p class="sheet__lede">Recipes with the ingredient list scaled to however many people are actually eating.</p>
+                        <h4 class="sheet__sub">Highlights</h4>
+                        <ul class="sheet__list">
+                                <li>Serving-size scaling that recalculates every quantity</li>
+                                <li>Step-by-step cooking mode with the screen kept awake</li>
+                                <li>Saved favourites stored on the device</li>
+                        </ul>
+                        <h4 class="sheet__sub">Built with</h4>
+                        <p class="sheet__stack"><span>React</span><span>Tailwind CSS</span></p>
+                    </template>
+                </article>
+        </div>
+    </section>
+
     </main>
 
+
+    <!-- Project sheet -->
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
+        <div class="sheet__scrim" data-sheet-close></div>
+        <div class="sheet__panel" role="document">
+            <button class="sheet__close" type="button" data-sheet-close aria-label="Close project details">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+            </button>
+            <div class="sheet__body" id="sheetBody"></div>
+            <div class="sheet__links" id="sheetLinks"></div>
+        </div>
+    </div>
     <script src="script/main.js"></script>
 </body>
 </html>
