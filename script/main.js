@@ -248,26 +248,26 @@
     var chapters = [
         {
             name: "Curiosity",
-            text: "One question I could never put down — how does any of this actually work? " +
-                  "It cost me a lot of sleep. I have never regretted it.",
+            text: "It started with one question I could not put down: how does any of this " +
+                  "actually work? I have been chasing that answer ever since.",
             x: 8, y: 22, pos: "top"
         },
         {
             name: "Learning",
-            text: "No shortcuts. I broke things, read the docs until they made sense, " +
-                  "and rebuilt the same thing until it finally worked.",
+            text: "I learn by building, breaking and rebuilding. No shortcuts — which is why " +
+                  "the fundamentals stuck instead of just the syntax.",
             x: 92, y: 16, pos: "top"
         },
         {
             name: "Struggle",
-            text: "Some nights the bug won. Some weeks the progress did not show. " +
-                  "I kept going, because quitting was the only guaranteed failure.",
+            text: "I do not leave a problem half-understood. The bugs that cost me a week " +
+                  "taught me more than the features that took an hour.",
             x: 94, y: 74, pos: "bottom"
         },
         {
             name: "Today",
-            text: "I still choose the harder path every day — build, break, fix, learn. " +
-                  "This place was earned one stubborn day at a time.",
+            text: "Today I ship production software end to end — and still open every project " +
+                  "asking the same question I started with.",
             x: 10, y: 86, pos: "bottom"
         }
     ];

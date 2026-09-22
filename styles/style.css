@@ -467,19 +467,45 @@ figure { margin: 0; }
 body.is-ready .reveal { animation: rise-in .85s cubic-bezier(.22, 1, .36, 1) forwards; animation-delay: var(--d, 0s); }
 @keyframes rise-in { to { opacity: 1; transform: translateY(0); } }
 
-/* Eyebrow */
-.eyebrow {
-    display: flex;
+/* Status: the two things a recruiter filters on before reading a word */
+.hero__status {
+    display: inline-flex;
     align-items: center;
-    gap: 14px;
-    font-size: .7rem;
+    gap: 10px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(61, 220, 132, .28);
+    background: rgba(61, 220, 132, .08);
+    font-size: .74rem;
     font-weight: 500;
-    letter-spacing: 3.4px;
-    text-transform: uppercase;
-    color: var(--indigo-300);
+    color: #86e6ae;
     margin-bottom: 22px;
 }
-.eyebrow__rule { width: 40px; height: 1px; background: linear-gradient(90deg, transparent, var(--indigo-400)); }
+.hero__live {
+    position: relative;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: #3ddc84;
+    box-shadow: 0 0 10px rgba(61, 220, 132, .9);
+    animation: liveBlink 1.6s ease-in-out infinite;
+}
+.hero__live::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 1px solid #3ddc84;
+    animation: liveHalo 2.2s ease-out infinite;
+}
+@keyframes liveBlink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: .32; }
+}
+@keyframes liveHalo {
+    0%   { transform: scale(.7); opacity: .85; }
+    100% { transform: scale(2.4); opacity: 0; }
+}
+
 
 /* Title */
 .hero__title {
@@ -534,6 +560,93 @@ body.is-ready .accent.is-flowing .char {
 }
 @keyframes charIn { to { opacity: 1; transform: translateY(0); } }
 
+/* What I do, said plainly, right under the name */
+.hero__role {
+    max-width: 46ch;
+    font-size: clamp(1rem, 1.9vw, 1.14rem);
+    font-weight: 300;
+    line-height: 1.6;
+    color: #c8cfeb;
+    margin-bottom: 14px;
+}
+
+/* Proof before claim. This is the highest-value line in the hero: it turns a
+   self-description into a track record a recruiter can go and verify. */
+.hero__proof {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 18px;
+    font-size: .74rem;
+    font-weight: 300;
+    line-height: 1.9;
+    color: var(--muted);
+    margin-bottom: 24px;
+}
+.hero__proof span { display: inline-flex; align-items: center; }
+.hero__proof span + span::before {
+    content: "";
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--indigo-400);
+    opacity: .6;
+    margin-right: 14px;
+}
+.hero__proof b { font-weight: 600; color: var(--text); }
+
+/* Employer capsules. The light is a conic gradient spinning on a square
+   behind the pill; the pill clips it, and an inner fill leaves only a 1px
+   rim showing. Masking a ring and rotating that instead would spin the
+   outline itself, which on a wide pill reads as a wobbling ellipse. */
+.cap {
+    position: relative;
+    z-index: 0;                       /* own stacking context for the layers below */
+    display: inline-flex;
+    align-items: center;
+    margin: 0 5px;
+    padding: 5px 14px;
+    border-radius: 999px;
+    overflow: hidden;
+    font-size: .74rem;
+    font-weight: 600;
+    letter-spacing: .1px;
+    line-height: 1.25;
+    white-space: nowrap;
+    color: var(--text);
+}
+
+/* the travelling light */
+.cap::before {
+    content: "";
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 240%;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    z-index: -2;
+    background: conic-gradient(
+        rgba(129, 140, 248, .18) 0 58%,
+        var(--indigo-400) 74%,
+        #ffffff 82%,
+        var(--indigo-400) 88%,
+        rgba(129, 140, 248, .18) 100%);
+    animation: capRun 3.6s linear infinite;
+    animation-delay: var(--capd, 0s);
+}
+
+/* the inner fill, inset by a pixel so only the rim of the light shows */
+.cap::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--bg-soft);
+}
+
+@keyframes capRun { to { rotate: 360deg; } }
+
+
 /* The story, chapter by chapter */
 .story {
     position: relative;
@@ -570,7 +683,7 @@ body.is-ready .accent.is-flowing .char {
 .story__no { color: var(--muted); }
 
 .story__text {
-    min-height: 5.2em;
+    min-height: 4.4em;
     font-size: .92rem;
     font-weight: 400;
     line-height: 1.65;
@@ -597,7 +710,14 @@ body.is-ready .accent.is-flowing .char {
 .story__dots button.is-on { width: 44px; background: var(--indigo-400); }
 
 /* CTA + Social */
-.hero__cta { display: flex; flex-wrap: wrap; gap: 13px; margin-bottom: 36px; }
+.hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 13px 20px;
+    margin-bottom: 30px;
+}
+.hero__talk { font-size: .88rem; }
 
 .hero__social { display: flex; align-items: center; gap: 10px; }
 .social {
@@ -1652,7 +1772,16 @@ body.is-ready .accent.is-flowing .char {
     overflow: hidden;
 }
 
-/* A highlight travels around the edge, the way it does on the hero crystal */
+/* A highlight travels around the edge, the way it does on the hero crystal.
+   The ring itself stays put and the gradient's angle is what animates -
+   rotating the ring instead would spin the outline, which on a wide panel
+   sweeps across it rather than running along its border. */
+@property --ai-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
 @supports ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
     .ai::before {
         content: "";
@@ -1660,16 +1789,21 @@ body.is-ready .accent.is-flowing .char {
         inset: 0;
         border-radius: inherit;
         padding: 1px;
+        /* plain first, so a browser without registered properties keeps a
+           static gradient border rather than losing the edge entirely */
         background: conic-gradient(from 0deg,
+            transparent 0 62%, var(--indigo-400) 78%, #ffffff 84%, var(--indigo-400) 90%, transparent 100%);
+        background: conic-gradient(from var(--ai-angle),
             transparent 0 62%, var(--indigo-400) 78%, #ffffff 84%, var(--indigo-400) 90%, transparent 100%);
         -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
         -webkit-mask-composite: xor;
         mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
         mask-composite: exclude;
-        animation: orbit 5s linear infinite;
+        animation: aiRun 6s linear infinite;
         pointer-events: none;
     }
 }
+@keyframes aiRun { to { --ai-angle: 360deg; } }
 
 .ai__glow {
     position: absolute;
@@ -2777,17 +2911,6 @@ body.is-ready .accent.is-flowing .char {
     color: var(--text);
 }
 
-.foot__by {
-    margin-top: 16px;
-    font-size: .7rem;
-    font-weight: 600;
-    letter-spacing: 2.4px;
-    text-transform: uppercase;
-    color: var(--indigo-300);
-}
-.foot__by::before { content: "\2014\00a0"; }
-
-
 /* Footer — base row */
 .foot__base {
     display: flex;
@@ -2837,8 +2960,6 @@ body.is-ready .accent.is-flowing .char {
     .hero__inner { grid-template-columns: 1fr; gap: 50px; }
     .stage { order: -1; width: min(300px, 70vw); }
     .stage__lines, .nodes { display: none; }
-    .eyebrow { justify-content: center; }
-    .eyebrow__rule { display: none; }
     .story {
         border-left: 0;
         padding-left: 0;
@@ -2848,6 +2969,8 @@ body.is-ready .accent.is-flowing .char {
     .story::before { display: none; }
     .story__marker, .story__dots { justify-content: center; }
     .hero__cta, .hero__social { justify-content: center; }
+    .hero__proof { justify-content: center; }
+    .hero__role { margin-inline: auto; }
 }
 
 @media (max-width: 1100px) {
