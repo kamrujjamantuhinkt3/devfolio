@@ -3365,9 +3365,20 @@ body.is-ready .accent.is-flowing .char {
 }
 
 
-/* Below this the name and the controls genuinely stop fitting together */
+/* Smallest phones: the name stays. Everything around it is scaled down
+   instead, which buys more room than dropping the wordmark did. */
 @media (max-width: 380px) {
-    .logo__text { display: none; }
+    .nav__inner { padding: 10px 12px; }
+
+    .logo { gap: 8px; }
+    .mark { --mark-h: 34px; }
+    .logo__name { font-size: .86rem; }
+
+    .nav__actions { gap: 6px; }
+    .icon-btn { width: 34px; height: 34px; }
+    .icon-btn svg { width: 16px; height: 16px; }
+    .burger { width: 36px; height: 34px; }
+    .burger span { width: 15px; gap: 4px; }
 }
 
 @media (max-width: 360px) {
