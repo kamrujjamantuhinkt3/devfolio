@@ -48,7 +48,12 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 96px;
+    overflow-x: hidden;     /* fallback for older engines */
+    overflow-x: clip;       /* no scroll container, so smooth scroll still works */
+}
 
 body {
     font-family: var(--font-body);
@@ -57,6 +62,7 @@ body {
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    overflow-x: clip;
     transition: background .45s ease, color .45s ease;
 }
 body.is-loading { overflow: hidden; }
@@ -274,7 +280,7 @@ figure { margin: 0; }
     background-clip: text;
 }
 
-.logo { display: flex; align-items: center; gap: 13px; }
+.logo { display: flex; align-items: center; gap: 13px; min-width: 0; }
 .logo:hover .mark__ring { opacity: 1; }
 
 .logo__text { display: flex; flex-direction: column; line-height: 1.2; }
@@ -322,7 +328,12 @@ figure { margin: 0; }
 }
 
 /* Actions */
-.nav__actions { display: flex; align-items: center; gap: 10px; }
+.nav__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: none;            /* never let the wordmark squeeze the controls out */
+}
 
 .icon-btn {
     display: grid;
@@ -742,7 +753,9 @@ body.is-ready .accent.is-flowing .char {
 /* The portrait + constellation */
 .stage {
     position: relative;
-    width: min(440px, 82vw);
+    /* 100% caps against the grid column; a vw cap does not, so the stage
+       used to spill out of its column between 900px and 1080px */
+    width: min(440px, 82vw, 100%);
     aspect-ratio: 1;
     justify-self: center;
     display: grid;
@@ -1681,7 +1694,7 @@ body.is-ready .accent.is-flowing .char {
 .solar {
     --acc: var(--indigo-400);
     position: relative;
-    width: min(460px, 84vw);
+    width: min(460px, 84vw, 100%);
     aspect-ratio: 1;
     justify-self: center;
 }
@@ -3087,7 +3100,7 @@ body.is-ready .accent.is-flowing .char {
     .about__aura { display: none; }
     .hero { padding: 132px 20px 110px; text-align: center; }
     .hero__inner { grid-template-columns: 1fr; gap: 50px; }
-    .stage { order: -1; width: min(300px, 70vw); }
+    .stage { order: -1; width: min(300px, 70vw, 100%); }
     .stage__lines, .nodes { display: none; }
     .story {
         border-left: 0;
@@ -3115,7 +3128,7 @@ body.is-ready .accent.is-flowing .char {
 
 @media (max-width: 860px) {
     .system { grid-template-columns: 1fr; gap: 30px; }
-    .solar { width: min(420px, 82vw); }
+    .solar { width: min(420px, 82vw, 100%); }
     .ai__inner { padding: 28px 24px; }
 }
 
@@ -3195,7 +3208,7 @@ body.is-ready .accent.is-flowing .char {
     .hero__title { font-size: clamp(3rem, 4.8vw, 4.6rem); }
     .hero__role { font-size: 1.2rem; max-width: 50ch; }
     .section__title { font-size: clamp(2.1rem, 3.2vw, 3rem); }
-    .solar { width: 520px; }
+    .solar { width: min(520px, 100%); }
     .projects__grid { gap: 18px; }
     .reach { gap: 26px; }
 }
@@ -3206,6 +3219,11 @@ body.is-ready .accent.is-flowing .char {
 
 
 /* Tablet - between the phone rules and the desktop ones a few rows get tight */
+@media (max-width: 1100px) {
+    /* below this the form column is too narrow for two inputs side by side */
+    .note__grid { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 1024px) and (min-width: 621px) {
     .xp__toggle { gap: 16px; }
     .xp__when { font-size: .64rem; }
@@ -3269,8 +3287,8 @@ body.is-ready .accent.is-flowing .char {
     .btn { padding: 12px 18px; font-size: .86rem; }
     .hero__cta { gap: 10px 14px; }
 
-    .stage { width: min(260px, 76vw); }
-    .solar { width: min(290px, 88vw); }
+    .stage { width: min(260px, 76vw, 100%); }
+    .solar { width: min(290px, 88vw, 100%); }
     .sat { width: 42px; height: 42px; }
     .sat svg { width: 23px; height: 23px; }
 
@@ -3283,11 +3301,76 @@ body.is-ready .accent.is-flowing .char {
 }
 
 
-/* Very small phones - the wordmark stops fitting beside the controls, so the
-   monogram carries the brand on its own */
-@media (max-width: 360px) {
-    .logo__text { display: none; }
+/* Phones: the navbar stops floating.
+   An inset capsule leaves a gap above, below and either side of itself, and
+   page content scrolls through those gaps - which on a narrow screen reads as
+   the header being broken. Edge to edge, nothing can show around it. */
+@media (max-width: 620px) {
+    html { scroll-padding-top: 78px; }
+
+    .nav, .nav.is-stuck { padding: 0; }
+
+    .nav__inner {
+        max-width: none;
+        border: 0;
+        border-radius: 0;
+        padding: 11px 16px;
+    }
+    .nav.is-stuck .nav__inner {
+        border-radius: 0;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 10px 28px rgba(2, 4, 16, .55);
+    }
+
+    /* the name stays; only the job title drops, which is the part that does
+       not fit beside the controls */
+    .logo { gap: 10px; }
+    .logo__text { display: flex; }
+    .logo__name { font-size: .98rem; white-space: nowrap; }
+    .logo__role { display: none; }
+
+    /* Re-stated here rather than relied on from the 1080px block above. These
+       are the only two controls a phone has, so they are declared in the last
+       block that applies and given enough contrast to be found on a dark hero. */
     .nav__actions { gap: 8px; }
+
+    .icon-btn { display: grid; width: 38px; height: 38px; }
+    .icon-btn svg { width: 17px; height: 17px; }
+
+    .burger {
+        display: flex;
+        width: 40px; height: 38px;
+        border-color: rgba(129, 140, 248, .34);
+        background: rgba(129, 140, 248, .12);
+    }
+    .burger span { width: 17px; }
+    .nav__cta { display: none; }
+}
+
+/* The big background decorations are drawn far wider than a phone. They are
+   only atmosphere, so on a small screen the rings come out and the glows are
+   scaled to the viewport rather than relying on a clip to hide them. */
+@media (max-width: 620px) {
+    .edu__orbit,
+    .skills__orbit,
+    .contact__orbit,
+    .foot__orbit { display: none; }
+
+    .skills__aura,
+    .contact__aura,
+    .edu__aura,
+    .about__aura { width: 74vw; height: 74vw; }
+
+    .preloader::after { width: 72vw; height: 72vw; }
+}
+
+
+/* Below this the name and the controls genuinely stop fitting together */
+@media (max-width: 380px) {
+    .logo__text { display: none; }
+}
+
+@media (max-width: 360px) {
     .hero__title { font-size: 1.86rem; }
     .foot__mark .mark { --mark-h: 26px; }
 }
