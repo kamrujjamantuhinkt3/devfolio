@@ -57,7 +57,10 @@
         mark.className = "fallback";
         mark.setAttribute("aria-hidden", "true");
         if (FALLBACK_ICONS[key]) mark.innerHTML = FALLBACK_ICONS[key];
-        else mark.textContent = key;          // initials
+        else {
+            mark.textContent = key;           // initials
+            if (key.length > 2) mark.classList.add("fallback--long");
+        }
 
         holder.appendChild(mark);
         holder.classList.add("has-fallback");
