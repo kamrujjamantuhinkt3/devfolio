@@ -1308,6 +1308,20 @@
     }
 
 
+    /* Activities - a soft light follows the pointer across each role card */
+    var clubsGrid = document.querySelector(".clubs");
+
+    if (clubsGrid && pointerFx) {
+        clubsGrid.addEventListener("pointermove", function (e) {
+            var card = e.target.closest(".club__card");
+            if (!card) return;
+            var box = card.getBoundingClientRect();
+            card.style.setProperty("--mx", (e.clientX - box.left).toFixed(0) + "px");
+            card.style.setProperty("--my", (e.clientY - box.top).toFixed(0) + "px");
+        }, { passive: true });
+    }
+
+
     /* Contact — live local time in Dhaka, so the clock is right whoever is
        reading and wherever they are. */
     var clockEl = document.getElementById("localTime");

@@ -2598,8 +2598,8 @@ body.is-ready .accent.is-flowing .char {
 .award__card {
     position: relative;
     height: 100%;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: minmax(0, 44%) minmax(0, 1fr);
     padding: 10px;
     border-radius: 24px;
     border: 1px solid var(--border);
@@ -2632,7 +2632,7 @@ body.is-ready .accent.is-flowing .char {
     position: relative;
     display: grid;
     place-items: center;
-    aspect-ratio: 16 / 10;
+    min-height: 270px;
     border-radius: 16px;
     overflow: hidden;
     isolation: isolate;
@@ -2671,9 +2671,9 @@ body.is-ready .accent.is-flowing .char {
 /* The year, set large and outlined behind the exhibit */
 .award__year {
     position: absolute;
-    left: 18px; bottom: -.17em;
+    left: 14px; bottom: -.17em;
     z-index: -1;
-    font-size: clamp(4rem, 7.2vw, 6.4rem);
+    font-size: clamp(3.2rem, 4.4vw, 4.2rem);
     font-weight: 700;
     line-height: 1;
     letter-spacing: -3px;
@@ -2688,7 +2688,7 @@ body.is-ready .accent.is-flowing .char {
     position: absolute;
     left: 50%; top: 50%;
     z-index: 0;
-    width: 84%;
+    width: 100%;
     translate: -50% -50%;
     rotate: -12deg;
     overflow: visible;
@@ -2703,14 +2703,15 @@ body.is-ready .accent.is-flowing .char {
 :root[data-theme="light"] .award__orbit ellipse { stroke: rgba(67, 56, 202, .3); }
 :root[data-theme="light"] .award__moon { fill: var(--indigo-600); filter: none; }
 
-/* The badge itself, mounted on a glass mat. Tilt is written by script. */
+/* The badge itself, set in a round glass medallion - the same circle the
+   portrait and the crests use. Tilt is written by script. */
 .award__plate {
     position: relative;
     z-index: 1;
-    width: clamp(150px, 44%, 232px);
+    width: min(74%, 186px);
     aspect-ratio: 1;
-    padding: 7px;
-    border-radius: 22px;
+    padding: 6px;
+    border-radius: 50%;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, .16);
     background: linear-gradient(150deg, rgba(255, 255, 255, .22), rgba(255, 255, 255, .04) 42%, rgba(129, 140, 248, .16));
@@ -2728,7 +2729,7 @@ body.is-ready .accent.is-flowing .char {
 .award__plate img {
     width: 100%; height: 100%;
     object-fit: cover;
-    border-radius: 16px;
+    border-radius: 50%;
 }
 .award__card:hover .award__plate { box-shadow: 0 34px 60px rgba(2, 4, 16, .62), 0 0 90px rgba(99, 102, 241, .36); }
 
@@ -2763,9 +2764,9 @@ body.is-ready .accent.is-flowing .char {
 .award__plate::after {
     content: "";
     position: absolute;
-    inset: 7px;
+    inset: 6px;
     z-index: 2;
-    border-radius: 16px;
+    border-radius: 50%;
     background: radial-gradient(circle at var(--gx, 30%) var(--gy, 20%), rgba(255, 255, 255, .36), transparent 55%);
     opacity: 0;
     transition: opacity .4s ease;
@@ -2776,11 +2777,11 @@ body.is-ready .accent.is-flowing .char {
 /* The seal - a line of text turning slowly around the one fact that matters */
 .award__seal {
     position: absolute;
-    top: 14px; right: 14px;
+    top: 10px; right: 10px;
     z-index: 2;
     display: grid;
     place-items: center;
-    width: 96px;
+    width: 76px;
     aspect-ratio: 1;
     border-radius: 50%;
     border: 1px solid rgba(165, 180, 252, .28);
@@ -2802,21 +2803,21 @@ body.is-ready .accent.is-flowing .char {
 }
 .award__seal text {
     font-family: var(--font-body);
-    font-size: 8.6px;
+    font-size: 10px;
     font-weight: 600;
     fill: var(--indigo-300);
 }
 :root[data-theme="light"] .award__seal text { fill: var(--indigo-600); }
 .award__seal b {
     font-family: var(--font-brand);
-    font-size: 1.5rem;
+    font-size: 1.15rem;
     line-height: 1;
     color: var(--text);
 }
 .award__seal sup { position: relative; top: -.2em; margin-left: 1px; font-size: .5em; vertical-align: top; }
 
 .award__spark {
-    width: 22px; height: 22px;
+    width: 17px; height: 17px;
     fill: var(--indigo-300);
     filter: drop-shadow(0 0 6px rgba(165, 180, 252, .7));
     animation: sparkPulse 3.2s ease-in-out infinite;
@@ -2831,10 +2832,10 @@ body.is-ready .accent.is-flowing .char {
 
 /* Achievements - the write-up under each exhibit */
 .award__body {
-    flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 20px 16px 14px;
+    min-width: 0;
+    padding: 14px 12px 10px 24px;
 }
 .award__meta {
     display: flex;
@@ -2857,7 +2858,7 @@ body.is-ready .accent.is-flowing .char {
 
 .award__title {
     margin-top: 10px;
-    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    font-size: clamp(1.15rem, 1.6vw, 1.32rem);
     font-weight: 700;
     line-height: 1.25;
     letter-spacing: -.5px;
@@ -2884,8 +2885,8 @@ body.is-ready .accent.is-flowing .char {
 :root[data-theme="light"] .award__school svg { stroke: var(--indigo-600); }
 
 .award__text {
-    margin-top: 12px;
-    font-size: .88rem;
+    margin-top: 10px;
+    font-size: .86rem;
     font-weight: 300;
     line-height: 1.7;
     color: var(--muted);
@@ -2987,6 +2988,225 @@ body.is-ready .accent.is-flowing .char {
     border-color: rgba(129, 140, 248, .45);
     background: rgba(99, 102, 241, .12);
 }
+
+
+/* Activities */
+.clubs {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    padding-top: 28px;          /* room for the rail the cards hang from */
+}
+
+/* The rail the three roles hang from, running centre to centre. It draws
+   itself in once, then a light keeps travelling along it. */
+.clubs__rail {
+    position: absolute;
+    top: 0;
+    left: calc((100% - 44px) / 6);
+    right: calc((100% - 44px) / 6);
+    height: 1px;
+    overflow: hidden;
+    background: linear-gradient(90deg, rgba(129, 140, 248, .2), rgba(129, 140, 248, .55), rgba(129, 140, 248, .2));
+}
+.js .clubs__rail[data-reveal] {
+    opacity: 1;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 1.4s cubic-bezier(.22, 1, .36, 1);
+}
+.js .clubs__rail.is-in { transform: none; }
+
+.clubs__beam {
+    position: absolute;
+    top: 0; left: 0;
+    width: 22%; height: 100%;
+    background: linear-gradient(90deg, transparent, #fff, transparent);
+    animation: clubsBeam 5s cubic-bezier(.45, 0, .2, 1) infinite;
+}
+:root[data-theme="light"] .clubs__beam { background: linear-gradient(90deg, transparent, var(--indigo-500), transparent); }
+@keyframes clubsBeam {
+    0%        { translate: -100% 0; }
+    70%, 100% { translate: 460% 0; }
+}
+
+.club { position: relative; min-width: 0; }
+
+/* The reveal leaves a clip-path on the card when it lands, which would cut
+   off the stem and node that sit above it */
+.club.is-in { clip-path: none; }
+
+/* the stem down from the rail, and the node where it meets it */
+.club::before {
+    content: "";
+    position: absolute;
+    left: 50%; top: -28px;
+    width: 1px; height: 28px;
+    background: linear-gradient(var(--indigo-400), rgba(129, 140, 248, .1));
+    opacity: .7;
+}
+.club::after {
+    content: "";
+    position: absolute;
+    left: 50%; top: -28px;
+    width: 11px; height: 11px;
+    translate: -50% -50%;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    transition: border-color .5s ease, background .5s ease, box-shadow .5s ease;
+    transition-delay: calc(var(--rd, 0s) + .5s);
+}
+.club.is-in::after {
+    border-color: var(--indigo-400);
+    background: var(--indigo-600);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, .14), 0 0 14px rgba(129, 140, 248, .6);
+}
+
+/* The card is an inner layer, so its hover lift never fights the reveal */
+.club__card {
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 24px 20px;
+    border-radius: 22px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    overflow: hidden;
+    isolation: isolate;
+    transition: transform .5s cubic-bezier(.22, 1, .36, 1), border-color .45s ease, box-shadow .45s ease;
+}
+.club__card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(129, 140, 248, .42);
+    box-shadow: 0 28px 60px rgba(2, 4, 16, .5);
+}
+:root[data-theme="light"] .club__card:hover { box-shadow: 0 24px 54px rgba(30, 41, 110, .15); }
+
+/* a light that follows the pointer across the card */
+.club__card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), rgba(129, 140, 248, .16), transparent 70%);
+    opacity: 0;
+    transition: opacity .4s ease;
+}
+.club__card:hover::before { opacity: 1; }
+
+/* a hairline of light along the top edge */
+.club__card::after {
+    content: "";
+    position: absolute;
+    left: 18%; right: 18%; top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .5), transparent);
+    opacity: .3;
+    transition: opacity .45s ease;
+}
+.club__card:hover::after { opacity: 1; }
+
+.club__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+.club__no {
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--muted);
+    opacity: .7;
+}
+
+/* The emblem - a small planet with its own ring, like the education crests */
+.club__icon {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, var(--indigo-400), var(--indigo-700) 62%, var(--navy-800));
+    box-shadow: 0 12px 26px rgba(79, 70, 229, .35), inset 0 1px 0 rgba(255, 255, 255, .25);
+    transition: transform .5s cubic-bezier(.34, 1.4, .64, 1);
+}
+.club__icon svg {
+    position: relative;
+    width: 24px; height: 24px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.club__ring {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 150%;
+    aspect-ratio: 1;
+    border: 1px solid rgba(165, 180, 252, .45);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) rotate(-24deg) scaleY(.36);
+    animation: clubOrbit 14s linear infinite;
+    pointer-events: none;
+}
+:root[data-theme="light"] .club__ring { border-color: rgba(67, 56, 202, .4); }
+.club:nth-child(3) .club__ring { animation-delay: -5s; }
+.club:nth-child(4) .club__ring { animation-delay: -9s; }
+@keyframes clubOrbit {
+    to { transform: translate(-50%, -50%) rotate(336deg) scaleY(.36); }
+}
+.club__card:hover .club__icon { transform: translateY(-3px) scale(1.06); }
+
+/* Activities - the role first, since that is what a reader scans for */
+.club__role {
+    margin-top: 22px;
+    font-size: 1.32rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -.4px;
+    background: linear-gradient(120deg, #fff 10%, var(--indigo-300) 90%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+:root[data-theme="light"] .club__role { background-image: linear-gradient(120deg, var(--indigo-700), var(--indigo-500)); }
+
+.club__name { margin-top: 6px; font-size: .98rem; font-weight: 600; letter-spacing: -.2px; }
+
+.club__text {
+    margin: 12px 0 20px;
+    font-size: .86rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--muted);
+}
+
+.club__org {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+    font-size: .74rem;
+    font-weight: 500;
+    letter-spacing: .3px;
+    color: var(--muted);
+}
+.club__org svg {
+    flex: none;
+    width: 15px; height: 15px;
+    fill: none;
+    stroke: var(--indigo-300);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+:root[data-theme="light"] .club__org svg { stroke: var(--indigo-600); }
 
 
 /* Showreel — a full-bleed band, so it breaks the rhythm of the sections
@@ -3709,6 +3929,8 @@ body.is-ready .accent.is-flowing .char {
     .ghost-link:hover svg,
     .tl:hover .tl__card,
     .award__card:hover,
+    .club__card:hover,
+    .club__card:hover .club__icon,
     .scout__values li:hover { transform: none; }
 
     .tech:hover { animation: none; }
@@ -3848,6 +4070,11 @@ body.is-ready .accent.is-flowing .char {
 
 
 /* Achievements - tablet and phones */
+@media (max-width: 1080px) {
+    .awards { grid-template-columns: 1fr; }
+    .award__card { grid-template-columns: minmax(220px, 34%) minmax(0, 1fr); }
+}
+
 @media (max-width: 980px) {
     .scout { grid-template-columns: auto minmax(0, 1fr); }
     .scout__values {
@@ -3857,23 +4084,60 @@ body.is-ready .accent.is-flowing .char {
     }
 }
 
-@media (max-width: 760px) {
-    .awards { grid-template-columns: 1fr; }
-    .award__stage { aspect-ratio: 16 / 11; }
+@media (max-width: 640px) {
+    .award__card { grid-template-columns: 1fr; padding: 8px; border-radius: 20px; }
+    .award__stage { min-height: 0; aspect-ratio: 16 / 11; border-radius: 14px; }
+    .award__plate { width: 50%; }
+    .award__seal { width: 68px; }
+    .award__seal b { font-size: 1.02rem; }
+    .award__spark { width: 15px; height: 15px; }
+    .award__year { left: 12px; }
+    .award__body { padding: 18px 12px 12px; }
 }
 
 @media (max-width: 560px) {
-    .award__card { padding: 8px; border-radius: 20px; }
-    .award__stage { aspect-ratio: 1 / .82; border-radius: 14px; }
-    .award__plate { width: 50%; }
-    .award__seal { top: 10px; right: 10px; width: 70px; }
-    .award__seal b { font-size: 1.18rem; }
-    .award__spark { width: 18px; height: 18px; }
-    .award__year { left: 12px; }
-    .award__body { padding: 18px 12px 12px; }
-
     .scout { grid-template-columns: 1fr; gap: 18px; padding: 22px 20px; }
     .scout__years { padding: 0 0 16px; border-right: 0; border-bottom: 1px solid var(--border); }
+}
+
+
+/* Activities - tablet and phones. One column, so the rail turns and runs
+   down the left edge instead, like the experience list. */
+@media (max-width: 900px) {
+    .clubs { grid-template-columns: 1fr; gap: 16px; padding: 0 0 0 30px; }
+
+    .clubs__rail {
+        top: 12px; bottom: 12px;
+        left: 5px; right: auto;
+        width: 1px; height: auto;
+        background: linear-gradient(rgba(129, 140, 248, .55), rgba(129, 140, 248, .12));
+    }
+    .js .clubs__rail[data-reveal] { transform: scaleY(0); transform-origin: center top; }
+    .js .clubs__rail.is-in { transform: none; }
+
+    .clubs__beam {
+        width: 100%; height: 22%;
+        background: linear-gradient(transparent, #fff, transparent);
+        animation-name: clubsBeamDown;
+    }
+    :root[data-theme="light"] .clubs__beam { background: linear-gradient(transparent, var(--indigo-500), transparent); }
+
+    .club::before { left: -25px; top: 40px; width: 25px; height: 1px; background: linear-gradient(90deg, var(--indigo-400), rgba(129, 140, 248, .1)); }
+    .club::after { left: -25px; top: 40px; }
+
+    .club__role { margin-top: 18px; }
+}
+@keyframes clubsBeamDown {
+    0%        { translate: 0 -100%; }
+    70%, 100% { translate: 0 460%; }
+}
+
+@media (max-width: 560px) {
+    .clubs { padding-left: 22px; }
+    .club::before { left: -17px; width: 17px; }
+    .club::after { left: -17px; }
+    .club__card { padding: 20px 18px 18px; }
+    .club__role { font-size: 1.2rem; }
 }
 
 
@@ -3894,7 +4158,8 @@ body.is-ready .accent.is-flowing .char {
     .edu__orbit, .skills__orbit, .tl__ring,
     .tl__badge, .tl.is-lit .tl__logo,
     .honors__aura, .award__plate, .award__plate::before,
-    .award__seal > svg:first-child, .award__spark, .scout::before { animation: none !important; }
+    .award__seal > svg:first-child, .award__spark, .scout::before,
+    .club__ring, .clubs__beam { animation: none !important; }
 
     /* SMIL ignores the rules above, so the moon is simply taken out */
     .award__moon { display: none; }
