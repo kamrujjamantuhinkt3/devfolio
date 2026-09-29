@@ -1135,6 +1135,191 @@
         var projects = Array.prototype.slice.call(projGrid.querySelectorAll(".proj"));
         var projFilters = Array.prototype.slice.call(document.querySelectorAll(".projects .filter"));
         var lastOpener = null;
+        var currentCat = "all";
+        var showAll = false;
+        var FOLD_AFTER = 8;          // cards shown before "Show all projects"
+        var moreBtn = document.getElementById("projMore");
+
+        // One place decides what is visible: the filter, and whether the list
+        // is folded. Folding only applies to "All"; a filter shows every match.
+        function layoutProjects() {
+            var folding = currentCat === "all" && !showAll;
+            projects.forEach(function (card, i) {
+                card.classList.toggle("is-hidden", currentCat !== "all" && card.dataset.cat !== currentCat);
+                card.classList.toggle("is-folded", folding && i >= FOLD_AFTER);
+            });
+            if (!moreBtn) return;
+            moreBtn.parentNode.hidden = currentCat !== "all" || projects.length <= FOLD_AFTER;
+            moreBtn.setAttribute("aria-expanded", String(showAll));
+            moreBtn.querySelector(".more__label").textContent = showAll ? "Show fewer" : "Show all projects";
+        }
+
+        if (moreBtn) {
+            moreBtn.querySelector(".more__n").textContent = projects.length;
+            moreBtn.addEventListener("click", function () {
+                showAll = !showAll;
+                layoutProjects();
+                // folding the list away can leave the reader far below it
+                if (!showAll) moreBtn.scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" });
+            });
+        }
+
+        // each filter shows how many projects it holds
+        projFilters.forEach(function (btn) {
+            var cat = btn.dataset.cat;
+            var count = projects.filter(function (p) { return cat === "all" || p.dataset.cat === cat; }).length;
+            var badge = document.createElement("span");
+            badge.className = "filter__n";
+            badge.textContent = count;
+            btn.appendChild(badge);
+        });
+
+        /* Covers - until there are screenshots, each cover shows a browser
+           window with a sketch of that kind of app, chosen by data-ui. A real
+           <img> placed in the cover is moved into the window, over the sketch. */
+        function sk(w, h, cls) {
+            return '<i class="sk' + (cls ? " " + cls : "") + '" style="--w:' + w + (h ? ";--h:" + h : "") + '"></i>';
+        }
+        function rep(n, fn) {
+            var out = "";
+            for (var i = 0; i < n; i++) out += fn(i);
+            return out;
+        }
+        function sketchBox(inner, hi) { return '<span class="ui-box' + (hi ? " is-hi" : "") + '">' + inner + "</span>"; }
+        function taskCard(hi) { return sketchBox(sk("80%", ".35em") + sk("50%", ".35em", "soft") + sk("1.6em", ".5em", "round hi"), hi); }
+
+        var SKETCH = {
+            table: function () {
+                return '<span class="ui-col" style="--g:.55em">' +
+                    '<span class="ui-row ui-spread">' + sk("34%", ".55em") + sk("18%", "1.1em", "hi round") + "</span>" +
+                    '<span class="ui-grid">' + rep(3, function () { return sketchBox(sk("50%", ".35em", "soft") + sk("70%", ".7em")); }) + "</span>" +
+                    rep(4, function (i) {
+                        return '<span class="ui-row">' + sk(".8em", ".8em", "round soft") + sk("32%") + sk("22%", null, "soft") +
+                            sk("14%", ".8em", "round push " + (i === 1 ? "hi" : "soft")) + "</span>";
+                    }) + "</span>";
+            },
+            landing: function () {
+                return '<span class="ui-col" style="--g:.9em">' +
+                    '<span class="ui-row ui-spread">' + sk(".9em", ".9em", "round hi") +
+                        '<span class="ui-row" style="--g:.4em">' + rep(3, function () { return sk("1.6em", ".35em", "soft"); }) + "</span></span>" +
+                    '<span class="ui-row" style="--g:1em">' +
+                        '<span class="ui-col ui-grow" style="--g:.45em">' + sk("85%", ".7em") + sk("60%", ".7em", "hi") +
+                            sk("90%", ".35em", "soft") + sk("70%", ".35em", "soft") +
+                            '<span class="ui-row">' + sk("38%", "1.1em", "hi round") + sk("28%", "1.1em", "round soft") + "</span></span>" +
+                        sk("4.6em", "4.6em", "orb") + "</span></span>";
+            },
+            board: function () {
+                return '<span class="ui-col" style="--g:.55em">' +
+                    '<span class="ui-row ui-spread">' + sk("30%", ".55em") +
+                        '<span class="ui-row" style="--g:.25em">' + rep(3, function () { return sk("1em", "1em", "round soft"); }) + "</span></span>" +
+                    '<span class="ui-grid" style="--g:.45em">' +
+                        '<span class="ui-col" style="--g:.4em">' + sk("55%", ".35em", "soft") + taskCard() + taskCard() + taskCard() + "</span>" +
+                        '<span class="ui-col" style="--g:.4em">' + sk("55%", ".35em", "soft") + taskCard(true) + taskCard() + "</span>" +
+                        '<span class="ui-col" style="--g:.4em">' + sk("55%", ".35em", "soft") + taskCard() + "</span>" +
+                    "</span></span>";
+            },
+            store: function () {
+                return '<span class="ui-col" style="--g:.55em">' +
+                    '<span class="ui-row ui-spread">' + sk("28%", ".55em") +
+                        '<span class="ui-row" style="--g:.35em">' + sk("4em", ".9em", "round soft") + sk(".9em", ".9em", "round hi") + "</span></span>" +
+                    '<span class="ui-grid">' + rep(6, function (i) {
+                        return sketchBox(sk("100%", "3.1em", "img") + sk("70%", ".35em") +
+                            '<span class="ui-row ui-spread">' + sk("35%", ".35em", "soft") + sk("24%", ".6em", "round " + (i === 1 ? "hi" : "soft")) + "</span>");
+                    }) + "</span></span>";
+            },
+            form: function () {
+                return '<span class="ui-center"><span class="ui-box" style="width:52%;gap:.5em;padding:.9em">' +
+                    sk("2em", "2em", "round hi mid") + sk("60%", ".45em", "mid") +
+                    sk("100%", "1.3em", "card") + sk("100%", "1.3em", "card") + sk("100%", "1.3em", "hi") +
+                    sk("50%", ".35em", "soft mid") + "</span></span>";
+            },
+            notes: function () {
+                return '<span class="ui-row ui-fill" style="--g:.7em;align-items:stretch">' +
+                    '<span class="ui-col ui-side" style="--g:.5em">' + sk("70%", ".5em") +
+                        rep(6, function (i) { return '<span class="ui-row" style="--g:.35em">' + sk(".5em", ".5em", "round " + (i === 2 ? "hi" : "soft")) + sk((60 + (i * 7) % 30) + "%", ".35em", "soft") + "</span>"; }) + "</span>" +
+                    '<span class="ui-col ui-grow" style="--g:.45em">' + sk("55%", ".75em") +
+                        '<span class="ui-row" style="--g:.3em">' + sk("18%", ".7em", "round hi") + sk("18%", ".7em", "round soft") + "</span>" +
+                        sk("95%", ".35em", "soft") + sk("100%", ".35em", "soft") + sk("82%", ".35em", "soft") +
+                        sk("100%", ".35em", "soft") + sk("64%", ".35em", "soft") + "</span></span>";
+            },
+            chat: function () {
+                return '<span class="ui-col ui-fill" style="--g:.5em">' +
+                    '<span class="ui-row">' + sk("1.3em", "1.3em", "round soft") + sk("48%", "1.3em", "bubble") + "</span>" +
+                    '<span class="ui-row ui-end">' + sk("40%", "1.3em", "bubble hi") + "</span>" +
+                    '<span class="ui-row">' + sk("1.3em", "1.3em", "round soft") + sk("58%", "1.3em", "bubble") + "</span>" +
+                    '<span class="ui-row ui-end">' + sk("30%", "1.3em", "bubble hi") + "</span>" +
+                    '<span class="ui-row" style="margin-top:auto">' + sk("84%", "1.4em", "card round") + sk("1.4em", "1.4em", "round hi push") + "</span></span>";
+            },
+            chart: function () {
+                var bars = [40, 65, 50, 85, 60, 96, 72, 55];
+                return '<span class="ui-col" style="--g:.55em">' +
+                    '<span class="ui-grid">' + rep(3, function (i) { return sketchBox(sk("45%", ".35em", "soft") + sk("65%", ".75em", i === 0 ? "hi" : ""), i === 0); }) + "</span>" +
+                    sketchBox('<span class="ui-bars">' + bars.map(function (b, i) { return sk("auto", b + "%", i === 5 ? "hi" : ""); }).join("") + "</span>") + "</span>";
+            },
+            article: function () {
+                return '<span class="ui-col" style="--g:.5em">' +
+                    '<span class="ui-row">' + sk("1.3em", "1.3em", "round hi") +
+                        '<span class="ui-col" style="--g:.25em">' + sk("4em", ".35em") + sk("3em", ".3em", "soft") + "</span></span>" +
+                    sk("85%", ".8em") + sk("58%", ".8em") + sk("100%", "3.4em", "img") +
+                    sk("100%", ".35em", "soft") + sk("92%", ".35em", "soft") + sk("70%", ".35em", "soft") + "</span>";
+            },
+            calendar: function () {
+                return '<span class="ui-col" style="--g:.5em">' +
+                    '<span class="ui-row ui-spread">' + sk("30%", ".55em") +
+                        '<span class="ui-row" style="--g:.3em">' + sk("1em", "1em", "round soft") + sk("1em", "1em", "round soft") + "</span></span>" +
+                    '<span class="ui-grid" style="--n:7;--g:.3em">' + rep(7, function () { return sk("100%", ".3em", "soft"); }) + "</span>" +
+                    '<span class="ui-grid" style="--n:7;--g:.3em">' + rep(21, function (i) { return sk("100%", null, "cell" + (i === 4 || i === 11 ? " hi" : "")); }) + "</span></span>";
+            },
+            list: function () {
+                return '<span class="ui-col" style="--g:.55em">' + sk("100%", "1.3em", "card round") +
+                    rep(5, function (i) {
+                        return '<span class="ui-row">' + sk("1.1em", "1.1em", "img") +
+                            '<span class="ui-col ui-grow" style="--g:.25em">' + sk((50 + (i * 9) % 25) + "%", ".4em") + sk("32%", ".3em", "soft") + "</span>" +
+                            sk(".8em", ".8em", "round " + (i === 1 ? "hi" : "soft")) + "</span>";
+                    }) + "</span>";
+            }
+        };
+
+        var LOCK = '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+        var GITHUB_MARK = '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>';
+
+        function dressCard(card) {
+            var cover = card.querySelector(".proj__cover");
+            if (!cover) return;
+
+            // the card borrows its cover's colours, for the dot beside the category
+            card.style.setProperty("--c1", cover.style.getPropertyValue("--c1"));
+            card.style.setProperty("--c2", cover.style.getPropertyValue("--c2"));
+
+            var name = (card.querySelector(".proj__name") || { textContent: "" }).textContent;
+            var draw = SKETCH[cover.getAttribute("data-ui")] || SKETCH.landing;
+            var mock = document.createElement("span");
+            mock.className = "mock";
+            mock.innerHTML = '<span class="mock__bar"><i></i><i></i><i></i><span class="mock__url">' + LOCK +
+                name.split(" ")[0].toLowerCase() + '</span></span><span class="mock__view">' + draw() + "</span>";
+            cover.appendChild(mock);
+
+            // a screenshot goes inside the window; if the file is missing, the sketch stays
+            var shot = cover.querySelector(":scope > img");
+            if (shot) {
+                mock.querySelector(".mock__view").appendChild(shot);
+                shot.addEventListener("error", function () { shot.remove(); });
+            }
+
+            // what is behind the card, at a glance: a live site, the code, or both
+            var cue = card.querySelector(".proj__cue");
+            if (cue && (card.dataset.demo || card.dataset.repo)) {
+                var avail = document.createElement("span");
+                avail.className = "proj__avail";
+                avail.setAttribute("aria-hidden", "true");
+                avail.innerHTML = (card.dataset.demo ? '<span class="proj__live">Live</span>' : "") +
+                    (card.dataset.repo ? GITHUB_MARK : "");
+                cue.appendChild(avail);
+            }
+        }
+
+        projects.forEach(dressCard);
+        layoutProjects();
 
         /* Filtering */
         projFilters.forEach(function (btn) {
@@ -1147,9 +1332,8 @@
                     b.setAttribute("aria-selected", String(on));
                 });
 
-                projects.forEach(function (card) {
-                    card.classList.toggle("is-hidden", cat !== "all" && card.dataset.cat !== cat);
-                });
+                currentCat = cat;
+                layoutProjects();
             });
         });
 
@@ -1231,19 +1415,6 @@
             glow.className = "proj__glow";
             glow.setAttribute("aria-hidden", "true");
             opener.appendChild(glow);
-
-            // A screenshot replaces the placeholder number. CSS `:has()` already
-            // covers this; the class is the fallback for browsers without it.
-            var cover = card.querySelector(".proj__cover");
-            var shot = cover && cover.querySelector("img");
-            if (!shot) return;
-
-            cover.classList.add("has-shot");
-            shot.addEventListener("error", function () {
-                // a missing file must not leave an empty cover behind
-                cover.classList.remove("has-shot");
-                shot.remove();
-            });
         });
 
 

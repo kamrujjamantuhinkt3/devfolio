@@ -1314,8 +1314,9 @@ body.is-ready .accent.is-flowing .char {
 
 
 /* About — outbound links */
-.about__links { display: flex; flex-wrap: wrap; gap: 22px; }
+.about__links { display: flex; flex-wrap: wrap; gap: 12px; }
 
+/* The hero's "Get in touch" still uses this quieter text link */
 .ghost-link {
     position: relative;
     display: inline-flex;
@@ -1349,6 +1350,87 @@ body.is-ready .accent.is-flowing .char {
 .ghost-link:hover { color: var(--text); }
 .ghost-link:hover svg { transform: translate(2px, -2px); }
 .ghost-link:hover::after { transform: scaleX(1); transform-origin: left; }
+
+/* Pills with a light running round the edge - the About links and the
+   projects' Show all button. The same technique as the hero capsules: a
+   conic gradient spinning behind the pill, and a fill inset by a pixel so
+   only the rim of the light shows. */
+.plink,
+.more {
+    position: relative;
+    z-index: 0;
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 999px;
+    color: var(--text);
+    transition: transform .35s cubic-bezier(.22, 1, .36, 1), box-shadow .35s ease;
+}
+.plink::before,
+.more::before {
+    content: "";
+    position: absolute;
+    left: 50%; top: 50%;
+    z-index: -2;
+    width: 300%;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    background: conic-gradient(rgba(129, 140, 248, .2) 0 58%, var(--indigo-400) 74%, #fff 82%, var(--indigo-400) 88%, rgba(129, 140, 248, .2) 100%);
+    animation: capRun 3.6s linear infinite;
+    animation-delay: var(--capd, 0s);
+}
+.plink::after,
+.more::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--bg-soft);
+    transition: background .35s ease;
+}
+.plink:hover,
+.more:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(79, 70, 229, .3); }
+.plink:hover::after,
+.more:hover::after { background: #121a42; }
+:root[data-theme="light"] .plink:hover::after,
+:root[data-theme="light"] .more:hover::after { background: #eef0ff; }
+
+.plink {
+    gap: 10px;
+    padding: 7px 16px 7px 7px;
+    font-size: .88rem;
+    font-weight: 600;
+}
+
+/* the logo sits in a small indigo disc, which takes the brand's own
+   colour on hover */
+.plink__icon {
+    display: grid;
+    place-items: center;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    color: #fff;
+    background: radial-gradient(circle at 30% 25%, var(--indigo-400), var(--indigo-700) 65%);
+    box-shadow: 0 6px 14px rgba(79, 70, 229, .35);
+    transition: transform .45s cubic-bezier(.34, 1.4, .64, 1), background .35s ease, color .35s ease;
+}
+.plink__icon svg { width: 15px; height: 15px; fill: currentColor; }
+.plink:hover .plink__icon { transform: rotate(-8deg) scale(1.08); }
+.plink--in:hover .plink__icon { background: #0a66c2; }
+.plink--gh:hover .plink__icon { background: #f0f3ff; color: #0d1117; }
+
+.plink__arrow {
+    width: 14px; height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    color: var(--muted);
+    transition: transform .3s ease, color .3s ease;
+}
+.plink:hover .plink__arrow { transform: translate(2px, -2px); color: var(--text); }
 
 
 /* Education */
@@ -2061,15 +2143,36 @@ body.is-ready .accent.is-flowing .char {
 /* Projects */
 .projects__filters { margin-bottom: 22px; }
 
+/* how many projects sit behind each filter */
+.filter__n {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.75em;
+    height: 1.75em;
+    margin-left: 7px;
+    padding: 0 .45em;
+    border-radius: 999px;
+    background: rgba(129, 140, 248, .14);
+    font-size: .66rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+    transition: background .3s ease, color .3s ease;
+}
+.filter.is-on .filter__n { background: rgba(255, 255, 255, .22); color: #fff; }
+
 .projects__grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px;
+    gap: 16px;
 }
 
 .proj { display: flex; perspective: 1000px; }
-.proj.is-hidden { display: none; }
+.proj.is-hidden,
+.proj.is-folded { display: none; }
 
+/* Tilt follows the pointer; the angles are written by script and kept small
+   so it reads as depth rather than as a gimmick. */
 .proj__open {
     position: relative;
     display: flex;
@@ -2077,37 +2180,63 @@ body.is-ready .accent.is-flowing .char {
     width: 100%;
     padding: 0;
     text-align: left;
-    border-radius: 16px;
+    border-radius: 18px;
     border: 1px solid var(--border);
     background: var(--surface);
     overflow: hidden;
     cursor: pointer;
+    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transform-style: preserve-3d;
     transition: transform .4s cubic-bezier(.22, 1, .36, 1),
                 border-color .4s ease, box-shadow .4s ease;
 }
+.proj__open:hover,
+.proj__open:focus-visible {
+    transform: translateY(-6px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    border-color: rgba(129, 140, 248, .3);
+    box-shadow: 0 26px 54px rgba(2, 4, 16, .6);
+}
+:root[data-theme="light"] .proj__open:hover,
+:root[data-theme="light"] .proj__open:focus-visible { box-shadow: 0 22px 44px rgba(30, 41, 110, .18); }
 
 /* A hairline catch of light along the top edge */
 .proj__open::before {
     content: "";
     position: absolute;
     left: 14%; right: 14%; top: 0;
+    z-index: 3;
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .5), transparent);
     opacity: 0;
     transition: opacity .4s ease;
-    z-index: 2;
 }
-/* Tilt follows the pointer; the angles are written by script and kept small
-   so it reads as depth rather than as a gimmick. */
-.proj__open {
-    transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-    transform-style: preserve-3d;
-}
-.proj__open:hover,
-.proj__open:focus-visible {
-    transform: translateY(-6px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-    border-color: rgba(129, 140, 248, .45);
-    box-shadow: 0 22px 48px rgba(2, 4, 16, .6);
+.proj__open:hover::before,
+.proj__open:focus-visible::before { opacity: 1; }
+
+/* On hover a light runs round the card's border, the same travelling light
+   as the AI panel. It only animates while hovered, so idle cards cost nothing. */
+@supports ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
+    .proj__open::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        border-radius: inherit;
+        padding: 1px;
+        background: conic-gradient(from 0deg,
+            transparent 0 62%, var(--indigo-400) 78%, #ffffff 84%, var(--indigo-400) 90%, transparent 100%);
+        background: conic-gradient(from var(--ai-angle),
+            transparent 0 62%, var(--indigo-400) 78%, #ffffff 84%, var(--indigo-400) 90%, transparent 100%);
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity .4s ease;
+        pointer-events: none;
+    }
+    .proj__open:hover::after,
+    .proj__open:focus-visible::after { opacity: 1; animation: aiRun 3.2s linear infinite; }
 }
 
 /* A soft light that follows the cursor across the card */
@@ -2124,75 +2253,191 @@ body.is-ready .accent.is-flowing .char {
 }
 .proj__open:hover .proj__glow,
 .proj__open:focus-visible .proj__glow { opacity: 1; }
-.proj__open:hover::before,
-.proj__open:focus-visible::before { opacity: 1; }
 
-/* No screenshots yet, so each project gets a generated cover instead of a
-   broken image. The two colours come from the card's own style attribute. */
+/* Projects - the cover. Until there are screenshots each one shows a browser
+   window with a sketch of that kind of app, drawn by script from data-ui and
+   lit by the project's own two colours. A screenshot goes inside the window. */
 .proj__cover {
     position: relative;
-    display: grid;
-    place-items: center;
+    display: block;
     aspect-ratio: 16 / 10;
-    background: linear-gradient(135deg, var(--c1), var(--c2));
     overflow: hidden;
+    container-type: inline-size;
+    background:
+        radial-gradient(75% 90% at 12% 0%, var(--c1), transparent 70%),
+        linear-gradient(160deg, #0d1433, #070b1e);
+    background:
+        radial-gradient(75% 90% at 12% 0%, color-mix(in srgb, var(--c1) 62%, transparent), transparent 70%),
+        radial-gradient(60% 80% at 100% 100%, color-mix(in srgb, var(--c2) 50%, transparent), transparent 72%),
+        linear-gradient(160deg, #0d1433, #070b1e);
 }
-/* Drop a screenshot in here and it fills the box exactly */
-.proj__cover img {
+
+/* a faint dot grid, fading out towards the edges */
+.proj__cover::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(rgba(255, 255, 255, .4) .6px, transparent 1.1px) 0 0 / 14px 14px;
+    -webkit-mask-image: radial-gradient(80% 70% at 50% 18%, #000, transparent 75%);
+    mask-image: radial-gradient(80% 70% at 50% 18%, #000, transparent 75%);
+    opacity: .45;
+}
+
+/* the project's number, as a small glass tag in the corner */
+.proj__no {
+    position: absolute;
+    top: 10px; left: 10px;
+    z-index: 2;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, .16);
+    background: rgba(8, 12, 32, .5);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    font-size: .62rem;
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: 1px;
+    font-variant-numeric: tabular-nums;
+    color: rgba(255, 255, 255, .88);
+}
+
+/* The window leans back a little, then straightens and lifts on hover.
+   Everything inside is sized in em off a font size that follows the cover's
+   width, so the same sketch scales from a card up to the detail sheet. */
+.mock {
+    position: absolute;
+    left: 9%; right: 9%; top: 18%; bottom: -12%;
+    z-index: 1;
+    font-size: 9px;
+    font-size: 3cqi;
+    border-radius: .9em;
+    border: 1px solid rgba(255, 255, 255, .13);
+    background: linear-gradient(180deg, rgba(15, 21, 50, .95), rgba(8, 12, 32, .97));
+    box-shadow: 0 1.8em 3.4em rgba(2, 4, 16, .6);
+    overflow: hidden;
+    transform: perspective(60em) rotateX(var(--tilt, 10deg)) translateY(var(--lift, .5em)) scale(var(--size, .96));
+    transform-origin: 50% 100%;
+    transition: transform .7s cubic-bezier(.22, 1, .36, 1);
+}
+.proj__open:hover .mock,
+.proj__open:focus-visible .mock { --tilt: 0deg; --lift: -.35em; --size: 1; }
+
+.mock__bar {
+    display: flex;
+    align-items: center;
+    gap: .42em;
+    height: 1.9em;
+    padding: 0 .8em;
+    border-bottom: 1px solid rgba(255, 255, 255, .07);
+    background: rgba(255, 255, 255, .03);
+}
+.mock__bar > i { flex: none; width: .55em; height: .55em; border-radius: 50%; background: rgba(255, 255, 255, .2); }
+.mock__bar > i:first-child { background: var(--c2); }
+.mock__url {
+    display: flex;
+    align-items: center;
+    gap: .4em;
+    min-width: 0;
+    width: 52%;
+    height: 1.15em;
+    margin-left: .7em;
+    padding: 0 .7em;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .07);
+    font-size: .72em;
+    white-space: nowrap;
+    overflow: hidden;
+    color: rgba(255, 255, 255, .55);
+}
+.mock__url svg { flex: none; width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+
+.mock__view {
+    position: absolute;
+    top: 1.9em; left: 0; right: 0; bottom: 0;
+    padding: .9em;
+}
+.mock__view > img {
     position: absolute;
     inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
+    object-position: top center;
 }
 
-/* The number is only a stand-in for a screenshot. As soon as a cover holds an
-   <img> it gets out of the way on its own — nothing to remember to delete.
-   `:has()` does it in current browsers; the `.has-shot` class is the same rule
-   applied by script for anything older, and is removed again if the file 404s. */
-.proj__cover:has(img) .proj__no,
-.proj__cover.has-shot .proj__no,
-.proj__cover:has(img)::after,
-.proj__cover.has-shot::after { display: none; }
-.proj__cover::after {
-    content: "";
-    position: absolute;
-    inset: -40% -10% auto auto;
-    width: 150px; height: 150px;
+/* Projects - the sketch kit. Blocks and lines, laid out in rows, columns
+   and grids, and tinted with the card's colours where something is active. */
+.sk {
+    display: block;
+    flex: none;
+    width: var(--w, 100%);
+    height: var(--h, .45em);
+    border-radius: .25em;
+    background: rgba(255, 255, 255, .16);
+}
+.sk.soft { background: rgba(255, 255, 255, .08); }
+.sk.round { border-radius: 999px; }
+.sk.hi { background: linear-gradient(90deg, var(--c1), var(--c2)); }
+.sk.card { border-radius: .45em; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .08); }
+.sk.img { border-radius: .4em; background: linear-gradient(135deg, var(--c1), var(--c2)); opacity: .75; }
+.sk.orb {
     border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, .28);
-    transform: rotate(-18deg) scaleY(.44);
-    transition: transform .8s cubic-bezier(.22, 1, .36, 1);
+    background: radial-gradient(circle at 34% 30%, #fff 0 7%, var(--c2) 32%, var(--c1) 72%);
+    box-shadow: 0 0 1.6em var(--c2);
 }
-.proj__open:hover .proj__cover::after { transform: rotate(-18deg) scaleY(.44) translateX(-26px); }
+.sk.push { margin-left: auto; }
+.sk.mid { align-self: center; }
+.sk.bubble { border-radius: .75em .75em .75em .2em; background: rgba(255, 255, 255, .12); }
+.ui-end .sk.bubble { border-radius: .75em .75em .2em .75em; }
+.sk.cell { height: 1.55em; border-radius: .3em; background: rgba(255, 255, 255, .05); }
 
-/* the cover eases in as the card lifts */
-.proj__cover { transition: transform .7s cubic-bezier(.22, 1, .36, 1); }
-.proj__open:hover .proj__cover { transform: scale(1.05); }
-.proj__no { transition: transform .6s cubic-bezier(.22, 1, .36, 1), opacity .4s ease; }
-.proj__open:hover .proj__no { transform: translateY(-4px) scale(1.06); }
-
-.proj__no {
-    position: relative;
-    font-size: 2.5rem;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -1.6px;
-    font-variant-numeric: tabular-nums;
-    color: rgba(255, 255, 255, .82);
-    text-shadow: 0 3px 16px rgba(0, 0, 0, .3);
+.ui-col { display: flex; flex-direction: column; gap: var(--g, .5em); min-width: 0; }
+.ui-row { display: flex; align-items: center; gap: var(--g, .5em); min-width: 0; }
+.ui-grid { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: var(--g, .5em); }
+.ui-spread { justify-content: space-between; }
+.ui-end { justify-content: flex-end; }
+.ui-grow { flex: 1; }
+.ui-fill { height: 100%; }
+.ui-center { display: flex; align-items: center; justify-content: center; height: 100%; }
+.ui-box {
+    display: flex;
+    flex-direction: column;
+    gap: .35em;
+    min-width: 0;
+    padding: .5em;
+    border-radius: .45em;
+    border: 1px solid rgba(255, 255, 255, .07);
+    background: rgba(255, 255, 255, .045);
 }
+.ui-box.is-hi { border-color: var(--c2); background: rgba(255, 255, 255, .08); }
+.ui-side { width: 30%; padding-right: .7em; border-right: 1px solid rgba(255, 255, 255, .07); }
+.ui-bars { display: flex; align-items: flex-end; gap: .35em; height: 5.2em; }
+.ui-bars .sk { flex: 1 1 0; width: auto; border-radius: .25em .25em 0 0; }
 
-.proj__body { display: flex; flex-direction: column; gap: 5px; padding: 16px 17px 4px; }
+/* Projects - the write-up under the cover */
+.proj__body { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px 14px; }
 
 .proj__cat {
+    display: flex;
+    align-items: center;
+    gap: 7px;
     font-size: .58rem;
     font-weight: 600;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--indigo-300);
 }
+:root[data-theme="light"] .proj__cat { color: var(--indigo-600); }
+.proj__cat::before {
+    content: "";
+    flex: none;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--c1, var(--indigo-500)), var(--c2, var(--indigo-300)));
+    box-shadow: 0 0 8px var(--c2, var(--indigo-400));
+}
 .proj__name {
-    font-size: .98rem;
+    font-size: 1.02rem;
     font-weight: 600;
     letter-spacing: -.2px;
     line-height: 1.3;
@@ -2224,18 +2469,21 @@ body.is-ready .accent.is-flowing .char {
     white-space: nowrap;
 }
 
+/* the foot of the card: the way in, and what is available behind it */
 .proj__cue {
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-top: auto;
-    padding: 13px 17px 16px;
+    margin: auto 18px 0;
+    padding: 13px 0 15px;
+    border-top: 1px dashed var(--border);
     font-size: .72rem;
     font-weight: 600;
     letter-spacing: .4px;
     color: var(--indigo-300);
 }
-.proj__cue svg {
+:root[data-theme="light"] .proj__cue { color: var(--indigo-600); }
+.proj__cue > svg {
     width: 14px; height: 14px;
     fill: none;
     stroke: currentColor;
@@ -2244,7 +2492,65 @@ body.is-ready .accent.is-flowing .char {
     stroke-linejoin: round;
     transition: transform .35s cubic-bezier(.22, 1, .36, 1);
 }
-.proj__open:hover .proj__cue svg { transform: translateX(5px); }
+.proj__open:hover .proj__cue > svg { transform: translateX(5px); }
+
+.proj__avail {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    color: var(--muted);
+    transition: color .3s ease;
+}
+.proj__avail svg { width: 15px; height: 15px; fill: currentColor; }
+.proj__open:hover .proj__avail { color: var(--text); }
+.proj__live {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(61, 220, 132, .35);
+    background: rgba(61, 220, 132, .1);
+    font-size: .56rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #3ddc84;
+}
+.proj__live::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+/* Projects - show the first eight, and the rest on request */
+.projects__more { display: flex; justify-content: center; margin-top: 28px; }
+.projects__more[hidden] { display: none; }
+
+.more {
+    gap: 10px;
+    padding: 11px 16px 11px 22px;
+    font-size: .86rem;
+    font-weight: 600;
+}
+.more__n {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.9em;
+    height: 1.9em;
+    padding: 0 .4em;
+    border-radius: 999px;
+    background: linear-gradient(120deg, var(--indigo-700), var(--indigo-500));
+    font-size: .7rem;
+    font-weight: 700;
+    color: #fff;
+}
+.more svg {
+    width: 16px; height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: transform .45s cubic-bezier(.22, 1, .36, 1);
+}
+.more[aria-expanded="true"] svg { transform: rotate(180deg); }
 
 
 /* Projects — the detail sheet */
@@ -2317,7 +2623,7 @@ body.is-ready .accent.is-flowing .char {
     box-shadow: 0 16px 36px rgba(2, 4, 16, .5);
 }
 .sheet__cover .proj__cover { aspect-ratio: 16 / 7; transform: none; }
-.sheet__cover .proj__no { font-size: 3.2rem; }
+.sheet__cover .mock { --tilt: 0deg; --lift: 0em; --size: 1; }
 
 /* content arrives in reading order rather than all at once */
 .sheet__body > * { animation: sheetIn .55s cubic-bezier(.22, 1, .36, 1) both; }
@@ -4098,8 +4404,8 @@ html:not(.js) .cstory + .cstory { border-top: 1px solid var(--border); }
     .proj__open:focus-visible { transform: none; }
 
     .proj__glow { display: none; }
-    .proj__open:hover .proj__cover,
-    .proj__open:hover .proj__no { transform: none; }
+    .proj__open:hover .mock { --tilt: 10deg; --lift: .5em; --size: .96; }
+    .proj__open:hover::after { opacity: 0; animation: none; }
 
     .tech:hover,
     .fact:hover,
@@ -4109,6 +4415,8 @@ html:not(.js) .cstory + .cstory { border-top: 1px solid var(--border); }
     .icon-btn:hover,
     .filter:hover,
     .ghost-link:hover svg,
+    .plink:hover,
+    .more:hover,
     .tl:hover .tl__card,
     .award__card:hover,
     .clubx__tab:hover .clubx__go,
