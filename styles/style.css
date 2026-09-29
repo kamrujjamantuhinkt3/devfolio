@@ -2581,8 +2581,8 @@ body.is-ready .accent.is-flowing .char {
 
 .sheet__panel {
     position: relative;
-    width: min(620px, 100%);
-    max-height: min(82vh, 760px);
+    width: min(760px, 100%);
+    max-height: min(84vh, 800px);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;      /* stop the page scrolling once the panel ends */
@@ -2622,8 +2622,45 @@ body.is-ready .accent.is-flowing .char {
     margin: 0 0 22px;
     box-shadow: 0 16px 36px rgba(2, 4, 16, .5);
 }
-.sheet__cover .proj__cover { aspect-ratio: 16 / 7; transform: none; }
-.sheet__cover .mock { --tilt: 0deg; --lift: 0em; --size: 1; }
+.sheet__cover .proj__cover { aspect-ratio: 16 / 9; transform: none; }
+
+/* In the sheet the window is the subject: it sits upright and fills the
+   cover, so most of a screenshot shows rather than a strip off its top */
+.sheet__cover .mock {
+    left: 4%; right: 4%; top: 9%; bottom: -3%;
+    font-size: 2.4cqi;
+    --tilt: 0deg; --lift: 0em; --size: 1;
+    /* where the window runs off the bottom it fades out, rather than
+       ending on a hard cut through the middle of the screen */
+    -webkit-mask-image: linear-gradient(#000 64%, rgba(0, 0, 0, .14) 100%);
+    mask-image: linear-gradient(#000 64%, rgba(0, 0, 0, .14) 100%);
+}
+
+/* A light runs round the frame's border, a bright head with a fading tail,
+   over a faint track. The ring stays put and only the gradient's angle
+   turns, so the light follows the edge instead of sweeping across it. */
+@supports ((mask-composite: exclude) or (-webkit-mask-composite: xor)) {
+    .sheet__cover::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        border-radius: inherit;
+        padding: 1.5px;
+        background: conic-gradient(from 0deg,
+            rgba(129, 140, 248, .18) 0 58%, rgba(129, 140, 248, .5) 76%,
+            var(--indigo-300) 86%, #ffffff 89%, rgba(129, 140, 248, .18) 90%);
+        background: conic-gradient(from var(--ai-angle),
+            rgba(129, 140, 248, .18) 0 58%, rgba(129, 140, 248, .5) 76%,
+            var(--indigo-300) 86%, #ffffff 89%, rgba(129, 140, 248, .18) 90%);
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        mask-composite: exclude;
+        animation: aiRun 4.5s linear infinite;
+        pointer-events: none;
+    }
+}
 
 /* content arrives in reading order rather than all at once */
 .sheet__body > * { animation: sheetIn .55s cubic-bezier(.22, 1, .36, 1) both; }
@@ -4385,7 +4422,7 @@ html:not(.js) .cstory + .cstory { border-top: 1px solid var(--border); }
     .xp__when { font-size: .64rem; }
     .xp__kind { font-size: .6rem; }
     .chip, .tech__name { font-size: .8rem; }
-    .sheet__panel { width: min(560px, 100%); }
+    .sheet__panel { width: min(680px, 100%); }
 }
 
 @media (max-width: 760px) {
@@ -4674,5 +4711,6 @@ html:not(.js) .cstory + .cstory { border-top: 1px solid var(--border); }
     .honors__aura, .honors__stats::before,
     .award__halo, .award__coin, .award__coin::before,
     .club__ring, .clubx__beam, .clubx__panel::before,
-    .reel__tail, .reel__mid, .reel__head { animation: none !important; }
+    .reel__tail, .reel__mid, .reel__head,
+    .sheet__cover::after { animation: none !important; }
 }
