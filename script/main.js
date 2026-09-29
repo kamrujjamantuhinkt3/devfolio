@@ -116,6 +116,26 @@
     // never leave anyone stuck behind the loader
     setTimeout(function () { clearInterval(timer); finish(); }, 3200);
 
+    /* Pointer - one record of where the mouse is, shared by the starfield and
+       the cursor trail. Mouse and pen only; touch and reduced motion get none
+       of the pointer effects. */
+    var pointer = { x: -9999, y: -9999, on: false };
+    var pointerFx = !reduced && window.matchMedia("(pointer: fine)").matches;
+
+    if (pointerFx) {
+        window.addEventListener("pointermove", function (e) {
+            if (e.pointerType === "touch") return;
+            pointer.x = e.clientX;
+            pointer.y = e.clientY;
+            pointer.on = true;
+        }, { passive: true });
+
+        document.addEventListener("mouseout", function (e) {
+            if (!e.relatedTarget) pointer.on = false;   // left the window
+        });
+    }
+
+
     /* Starfield */
     var canvas = document.getElementById("stars");
 
@@ -124,6 +144,8 @@
         var stars = [];
         var shooting = null;
         var w = 0, h = 0, dpr = 1;
+        var PULL_RADIUS = 170;      // px around the pointer that stars lean in from
+        var LINK_RADIUS = 140;      // and the closer ring that gets joined to it
 
         function resize() {
             dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -146,6 +168,7 @@
                     r: r,
                     a: Math.random() * 0.6 + 0.2,
                     tw: Math.random() * Math.PI * 2,
+                    ox: 0, oy: 0,                        // pull towards the pointer
                     // nearer (larger) stars drift faster, so the field has depth
                     sp: (Math.random() * 0.12 + 0.06) * (0.6 + r),
                     ts: Math.random() * 0.02 + 0.006     // twinkle speed
@@ -172,9 +195,12 @@
             var rgb = light ? "58, 70, 130" : "255, 255, 255";
             var accent = light ? "79, 70, 229" : "165, 180, 252";
 
+            var near = [];
+
             for (var i = 0; i < stars.length; i++) {
                 var s = stars[i];
                 var alpha = s.a;
+                var pull = 0;
 
                 if (!reduced) {
                     s.tw += s.ts;
@@ -183,10 +209,45 @@
                     if (s.y < -2) { s.y = h + 2; s.x = Math.random() * w; }
                 }
 
+                // Stars close to the pointer lean in towards it and brighten
+                if (pointerFx) {
+                    var tx = 0, ty = 0;
+                    if (pointer.on) {
+                        var ex = pointer.x - s.x;
+                        var ey = pointer.y - s.y;
+                        var dist = Math.sqrt(ex * ex + ey * ey);
+                        if (dist < PULL_RADIUS) {
+                            pull = 1 - dist / PULL_RADIUS;
+                            pull *= pull;
+                            tx = ex * pull * 0.45;
+                            ty = ey * pull * 0.45;
+                            if (dist < LINK_RADIUS) near.push({ s: s, d: dist });
+                        }
+                    }
+                    s.ox += (tx - s.ox) * 0.08;             // eased, so they drift back
+                    s.oy += (ty - s.oy) * 0.08;
+                }
+
                 ctx.beginPath();
-                ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-                ctx.fillStyle = "rgba(" + (s.r > 1.05 ? accent : rgb) + "," + alpha.toFixed(3) + ")";
+                ctx.arc(s.x + s.ox, s.y + s.oy, s.r * (1 + pull * 0.9), 0, Math.PI * 2);
+                ctx.fillStyle = "rgba(" + (s.r > 1.05 || pull > 0.2 ? accent : rgb) + ","
+                    + Math.min(1, alpha + pull * 0.6).toFixed(3) + ")";
                 ctx.fill();
+            }
+
+            // ...and the nearest few are joined to it, so the cursor draws a
+            // small constellation of its own wherever it goes
+            if (near.length) {
+                near.sort(function (a, b) { return a.d - b.d; });
+                ctx.lineWidth = 0.7;
+                for (var j = 0; j < near.length && j < 5; j++) {
+                    var ns = near[j].s;
+                    ctx.strokeStyle = "rgba(" + accent + "," + ((1 - near[j].d / LINK_RADIUS) * 0.34).toFixed(3) + ")";
+                    ctx.beginPath();
+                    ctx.moveTo(pointer.x, pointer.y);
+                    ctx.lineTo(ns.x + ns.ox, ns.y + ns.oy);
+                    ctx.stroke();
+                }
             }
 
             if (!reduced) {
@@ -229,6 +290,206 @@
         });
         themeBtn.addEventListener("click", function () { if (reduced) draw(); });
     }
+
+    /* Cursor - a small star follows the pointer, shedding stardust as it
+       goes, and a click throws out a little burst. Runs only while something
+       is moving, and never for touch or reduced motion. */
+    var trail = document.getElementById("trail");
+
+    if (trail && trail.getContext && pointerFx) {
+        root.classList.add("has-trail");
+
+        var tctx = trail.getContext("2d");
+        var tw = 0, th = 0;
+        var sparks = [];
+        var MAX_SPARKS = 150;
+        var SHED_STEP = 7;           // px of travel per grain of dust
+        var comet = { x: 0, y: 0, glow: 0, size: 1, rot: 0, placed: false };
+        var carry = 0;
+        var trailOn = false;
+        var lastFrame = 0;
+        var overLink = false;
+
+        // white through indigo on the dark sky, the deeper indigos on light
+        var DARK_SPARKS = ["255, 255, 255", "224, 231, 255", "165, 180, 252", "129, 140, 248"];
+        var LIGHT_SPARKS = ["79, 70, 229", "67, 56, 202", "30, 64, 175", "99, 102, 241"];
+
+        function sizeTrail() {
+            var ratio = Math.min(window.devicePixelRatio || 1, 2);
+            tw = window.innerWidth;
+            th = window.innerHeight;
+            trail.width = Math.round(tw * ratio);
+            trail.height = Math.round(th * ratio);
+            tctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        }
+
+        function spawn(x, y, vx, vy, big) {
+            if (sparks.length >= MAX_SPARKS) sparks.shift();
+            var colours = isLight() ? LIGHT_SPARKS : DARK_SPARKS;
+            sparks.push({
+                x: x, y: y, vx: vx, vy: vy,        // velocity in px per ms
+                age: 0,
+                life: big ? 900 + Math.random() * 500 : 450 + Math.random() * 550,
+                size: big ? 2.8 + Math.random() * 2.4 : 1.1 + Math.random() * 1.8,
+                star: big || Math.random() < 0.38, // a sparkle, or plain dust
+                rot: Math.random() * Math.PI,
+                spin: (Math.random() - 0.5) * 0.006,
+                colour: colours[(Math.random() * colours.length) | 0]
+            });
+        }
+
+        // A four-point star with curved sides
+        function sparkle(x, y, r, rot) {
+            tctx.save();
+            tctx.translate(x, y);
+            tctx.rotate(rot);
+            tctx.beginPath();
+            tctx.moveTo(r, 0);
+            for (var k = 1; k <= 4; k++) {
+                var tip = k * Math.PI / 2;
+                var mid = tip - Math.PI / 4;
+                tctx.quadraticCurveTo(Math.cos(mid) * r * 0.16, Math.sin(mid) * r * 0.16,
+                                      Math.cos(tip) * r, Math.sin(tip) * r);
+            }
+            tctx.fill();
+            tctx.restore();
+        }
+
+        // Drop dust evenly along the path the star travelled this frame
+        function shed(ax, ay, bx, by) {
+            var dx = bx - ax, dy = by - ay;
+            var d = Math.sqrt(dx * dx + dy * dy);
+            if (d < 0.5) return;
+
+            carry = Math.min(carry + d, SHED_STEP * 16);
+            var ux = dx / d, uy = dy / d;
+
+            while (carry >= SHED_STEP) {
+                carry -= SHED_STEP;
+                var back = Math.min(carry / d, 1);
+                spawn(bx - dx * back + (Math.random() - 0.5) * 6,
+                      by - dy * back + (Math.random() - 0.5) * 6,
+                      (Math.random() - 0.5) * 0.035 - ux * 0.02,
+                      (Math.random() - 0.5) * 0.035 - uy * 0.02,
+                      false);
+            }
+        }
+
+        function frame(now) {
+            var dt = lastFrame ? Math.min(now - lastFrame, 48) : 16.7;
+            var f = dt / 16.7;                     // this frame, in 60fps frames
+            lastFrame = now;
+
+            var light = isLight();
+            var colours = light ? LIGHT_SPARKS : DARK_SPARKS;
+            var target = overLink ? 1.6 : 1;
+
+            tctx.clearRect(0, 0, tw, th);
+            tctx.globalCompositeOperation = light ? "source-over" : "lighter";
+
+            // the star eases after the pointer, so it trails rather than sticks
+            if (pointer.on) {
+                if (!comet.placed) { comet.x = pointer.x; comet.y = pointer.y; comet.placed = true; }
+                var ease = 1 - Math.pow(0.8, f);
+                var fromX = comet.x, fromY = comet.y;
+                comet.x += (pointer.x - comet.x) * ease;
+                comet.y += (pointer.y - comet.y) * ease;
+                shed(fromX, fromY, comet.x, comet.y);
+            }
+            comet.glow += ((pointer.on ? 1 : 0) - comet.glow) * Math.min(1, 0.12 * f);
+            comet.size += (target - comet.size) * Math.min(1, 0.16 * f);
+            comet.rot += 0.0009 * dt;
+            if (!pointer.on && comet.glow < 0.02) comet.placed = false;
+
+            var drag = Math.pow(0.985, f);
+
+            for (var i = sparks.length - 1; i >= 0; i--) {
+                var p = sparks[i];
+                p.age += dt;
+                if (p.age >= p.life) { sparks.splice(i, 1); continue; }
+
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+                p.vx *= drag;
+                p.vy *= drag;
+                p.rot += p.spin * dt;
+
+                var t = p.age / p.life;
+                var fade = t < 0.12 ? t / 0.12 : 1 - (t - 0.12) / 0.88;   // quick in, long out
+                tctx.fillStyle = "rgba(" + p.colour + "," + (fade * (light ? 0.7 : 0.95)).toFixed(3) + ")";
+
+                if (p.star) {
+                    sparkle(p.x, p.y, p.size * 2.7 * (1 - t * 0.4), p.rot);
+                } else {
+                    tctx.beginPath();
+                    tctx.arc(p.x, p.y, p.size * 0.55 * (1 - t * 0.5), 0, Math.PI * 2);
+                    tctx.fill();
+                }
+            }
+
+            // the guiding star itself: a soft halo, then the sparkle on top
+            if (comet.glow > 0.02) {
+                var r = 20 * comet.size;
+                var halo = tctx.createRadialGradient(comet.x, comet.y, 0, comet.x, comet.y, r);
+                halo.addColorStop(0, "rgba(" + colours[2] + "," + (0.45 * comet.glow).toFixed(3) + ")");
+                halo.addColorStop(1, "rgba(" + colours[2] + ",0)");
+                tctx.fillStyle = halo;
+                tctx.beginPath();
+                tctx.arc(comet.x, comet.y, r, 0, Math.PI * 2);
+                tctx.fill();
+
+                tctx.fillStyle = "rgba(" + colours[0] + "," + comet.glow.toFixed(3) + ")";
+                sparkle(comet.x, comet.y, 8 * comet.size, comet.rot);
+            }
+
+            // Stop once the dust has settled and the star has caught up
+            var resting = !sparks.length && (pointer.on
+                ? Math.abs(pointer.x - comet.x) < 0.3 && Math.abs(pointer.y - comet.y) < 0.3
+                  && Math.abs(comet.size - target) < 0.01 && comet.glow > 0.99
+                : comet.glow < 0.02);
+
+            if (resting) { trailOn = false; lastFrame = 0; }
+            else requestAnimationFrame(frame);
+        }
+
+        function wake() {
+            if (trailOn) return;
+            trailOn = true;
+            requestAnimationFrame(frame);
+        }
+
+        window.addEventListener("pointermove", function (e) {
+            if (e.pointerType !== "touch") wake();
+        }, { passive: true });
+
+        // the star swells a little over anything that can be clicked
+        document.addEventListener("pointerover", function (e) {
+            overLink = !!(e.target.closest && e.target.closest(
+                "a, button, label, input, textarea, select, [role='button'], .sat"));
+        });
+
+        document.addEventListener("mouseout", function (e) {
+            if (!e.relatedTarget) wake();          // let the star fade out
+        });
+
+        window.addEventListener("pointerdown", function (e) {
+            if (e.pointerType === "touch") return;
+            for (var k = 0; k < 12; k++) {
+                var angle = (k / 12) * Math.PI * 2 + Math.random() * 0.4;
+                var speed = 0.07 + Math.random() * 0.09;
+                spawn(e.clientX, e.clientY, Math.cos(angle) * speed, Math.sin(angle) * speed, k % 3 === 0);
+            }
+            wake();
+        });
+
+        sizeTrail();
+        var trailResize;
+        window.addEventListener("resize", function () {
+            clearTimeout(trailResize);
+            trailResize = setTimeout(function () { sizeTrail(); wake(); }, 150);
+        });
+    }
+
 
     /* Split the name into letters */
     var ci = 0;
@@ -1003,6 +1264,46 @@
 
             if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
             else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        });
+    }
+
+
+    /* Achievements - the badge tilts towards the pointer, and a glare follows
+       it across the surface, like turning a medal in the light */
+    if (pointerFx) {
+        document.querySelectorAll(".award__stage").forEach(function (stage) {
+            var plate = stage.querySelector(".award__plate");
+            var inside = false;
+            var queued = false;
+            var last = null;
+            if (!plate) return;
+
+            stage.addEventListener("pointermove", function (e) {
+                inside = true;
+                last = e;
+                if (queued) return;
+                queued = true;
+
+                requestAnimationFrame(function () {
+                    queued = false;
+                    if (!inside || !last) return;
+
+                    var box = stage.getBoundingClientRect();
+                    var px = (last.clientX - box.left) / box.width;
+                    var py = (last.clientY - box.top) / box.height;
+
+                    plate.style.setProperty("--ry", ((px - 0.5) * 22).toFixed(2) + "deg");
+                    plate.style.setProperty("--rx", ((0.5 - py) * 18).toFixed(2) + "deg");
+                    plate.style.setProperty("--gx", (px * 100).toFixed(1) + "%");
+                    plate.style.setProperty("--gy", (py * 100).toFixed(1) + "%");
+                });
+            });
+
+            stage.addEventListener("pointerleave", function () {
+                inside = false;
+                plate.style.setProperty("--rx", "0deg");
+                plate.style.setProperty("--ry", "0deg");
+            });
         });
     }
 

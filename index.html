@@ -75,6 +75,7 @@
                 <a href="#skills" class="nav__link">Skills</a>
                 <a href="#projects" class="nav__link">Projects</a>
                 <a href="#experience" class="nav__link">Experience</a>
+                <a href="#achievements" class="nav__link">Achievements</a>
                 <a href="#contact" class="nav__link">Contact</a>
                 <span class="nav__pill" id="navPill" aria-hidden="true"></span>
             </nav>
@@ -92,6 +93,9 @@
         </div>
     </header>
 
+    <!-- Cursor trail: drawn by script, mouse and pen only -->
+    <canvas class="trail" id="trail" aria-hidden="true"></canvas>
+
     <div class="mobile" id="mobileMenu" aria-hidden="true">
         <nav class="mobile__links" aria-label="Mobile">
             <a href="#home" style="--i:1">Home</a>
@@ -100,7 +104,8 @@
             <a href="#skills" style="--i:4">Skills</a>
             <a href="#projects" style="--i:5">Projects</a>
             <a href="#experience" style="--i:6">Experience</a>
-            <a href="#contact" style="--i:7">Contact</a>
+            <a href="#achievements" style="--i:7">Achievements</a>
+            <a href="#contact" style="--i:8">Contact</a>
         </nav>
         <div class="mobile__social">
             <a href="https://www.linkedin.com/in/kamrujjamantuhinkt3" target="_blank" rel="noopener">LinkedIn</a>
@@ -1039,6 +1044,110 @@
                         </div>
                     </div>
                 </article>
+        </div>
+    </section>
+
+    <!-- Achievements -->
+    <section class="section honors" id="achievements">
+        <span class="honors__aura" aria-hidden="true"></span>
+
+        <header class="section__head">
+            <p class="section__label" data-reveal><span class="section__rule"></span>Achievements</p>
+            <h2 class="section__title" data-reveal="words" data-words>Earned long before the first commit</h2>
+            <p class="section__lede" data-reveal style="--rd:.14s">
+                Before I wrote software I spent five years in Bangladesh Scouts, where the work was
+                discipline, service and turning up for the people beside you. Both stages I went
+                through ended with the highest award they give.
+            </p>
+        </header>
+
+        <div class="awards">
+            <article class="award" data-reveal="pop" style="--rd:0s">
+                <div class="award__card">
+                    <div class="award__stage">
+                        <span class="award__year" aria-hidden="true">2012</span>
+                        <svg class="award__orbit" viewBox="0 0 200 120" aria-hidden="true">
+                            <ellipse cx="100" cy="60" rx="96" ry="30"/>
+                            <circle class="award__moon" r="2.6">
+                                <animateMotion dur="12s" repeatCount="indefinite" path="M4,60 a96,30 0 1,0 192,0 a96,30 0 1,0 -192,0"/>
+                            </circle>
+                        </svg>
+                        <figure class="award__plate">
+                            <img src="assets/images/achievements/shapla-cub-award.jpg" alt="Shapla Cub Award badge of Bangladesh Scouts" width="1024" height="1024" loading="lazy" decoding="async">
+                        </figure>
+                        <span class="award__seal" aria-hidden="true">
+                            <svg viewBox="0 0 100 100">
+                                <defs><path id="sealA" d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0"/></defs>
+                                <text><textPath href="#sealA" textLength="234" lengthAdjust="spacing">NATIONAL RANK &#183; BANGLADESH SCOUTS &#183;</textPath></text>
+                            </svg>
+                            <b>5<sup>th</sup></b>
+                        </span>
+                    </div>
+
+                    <div class="award__body">
+                        <p class="award__meta"><time datetime="2012">2012</time><span aria-hidden="true"></span>Cub section</p>
+                        <h3 class="award__title">Shapla Cub Award</h3>
+                        <p class="award__school">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5 12 4.8l9.5 4.7L12 14.2 2.5 9.5Z"/><path d="M6.5 11.8v4c0 1.5 2.5 2.8 5.5 2.8s5.5-1.3 5.5-2.8v-4"/></svg>
+                            Rizia Govt. Primary School
+                        </p>
+                        <p class="award__text">The highest award in the Cub section of Bangladesh Scouts, earned through progressive badge work, camps and community service.</p>
+                        <p class="award__flag"><span class="cap">Ranked 5th in Bangladesh</span></p>
+                    </div>
+                </div>
+            </article>
+
+            <article class="award" data-reveal="pop" style="--rd:.12s">
+                <div class="award__card">
+                    <div class="award__stage">
+                        <span class="award__year" aria-hidden="true">2016</span>
+                        <svg class="award__orbit" viewBox="0 0 200 120" aria-hidden="true">
+                            <ellipse cx="100" cy="60" rx="96" ry="30"/>
+                            <circle class="award__moon" r="2.6">
+                                <animateMotion dur="12s" begin="-6s" repeatCount="indefinite" path="M4,60 a96,30 0 1,0 192,0 a96,30 0 1,0 -192,0"/>
+                            </circle>
+                        </svg>
+                        <figure class="award__plate">
+                            <img src="assets/images/achievements/president-scout-award.jpg" alt="President&rsquo;s Scout Award badge of Bangladesh Scouts" width="1024" height="929" loading="lazy" decoding="async">
+                        </figure>
+                        <span class="award__seal" aria-hidden="true">
+                            <svg viewBox="0 0 100 100">
+                                <defs><path id="sealB" d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0"/></defs>
+                                <text><textPath href="#sealB" textLength="234" lengthAdjust="spacing">HIGHEST HONOUR &#183; SCOUT SECTION &#183;</textPath></text>
+                            </svg>
+                            <svg class="award__spark" viewBox="0 0 24 24"><path d="M12 1.5c.7 5.6 3 8.4 10.5 10.5C15 14.1 12.7 16.9 12 22.5c-.7-5.6-3-8.4-10.5-10.5C9 9.9 11.3 7.1 12 1.5Z"/></svg>
+                        </span>
+                    </div>
+
+                    <div class="award__body">
+                        <p class="award__meta"><time datetime="2016">2016</time><span aria-hidden="true"></span>Scout section</p>
+                        <h3 class="award__title">President&rsquo;s Scout Award</h3>
+                        <p class="award__school">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5 12 4.8l9.5 4.7L12 14.2 2.5 9.5Z"/><path d="M6.5 11.8v4c0 1.5 2.5 2.8 5.5 2.8s5.5-1.3 5.5-2.8v-4"/></svg>
+                            United Islamia Govt. High School
+                        </p>
+                        <p class="award__text">The highest award in the Scout section of Bangladesh Scouts, earned through advanced badge work, camps, leadership and a record of service.</p>
+                        <p class="award__flag"><span class="cap" style="--capd:1.8s">Conferred by the President</span></p>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <div class="scout" data-reveal style="--rd:.1s">
+            <div class="scout__years">
+                <b class="scout__num" data-count="5">0</b>
+                <span class="scout__unit">years in<br>Scouting</span>
+            </div>
+            <div class="scout__copy">
+                <h3 class="scout__title">Bangladesh Scouts &mdash; from Cub to Scout</h3>
+                <p class="scout__text">Camps, service projects and a troop that only worked when everyone pulled their weight. The habits stayed with me: prepare properly, look after the team, finish what you start.</p>
+            </div>
+            <ul class="scout__values" aria-label="What Scouting taught me">
+                <li>Discipline</li>
+                <li>Teamwork</li>
+                <li>Service</li>
+                <li>Leadership</li>
+            </ul>
         </div>
     </section>
 
