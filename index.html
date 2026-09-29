@@ -613,17 +613,17 @@
         </div>
 
         <div class="projects__grid" id="projGrid">
-                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.05s">
+                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="https://rtgs.megapackagingbd.com" data-reveal style="--rd:0.05s">
                     <button class="proj__open" type="button" aria-haspopup="dialog">
                         <span class="proj__cover" data-ui="table" style="--c1:#4338ca; --c2:#1e40af" aria-hidden="true">
-                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
+                            <img src="assets/images/projects/rtgs-management-system.jpg" alt="" width="1920" height="1240" loading="lazy" decoding="async">
                             <span class="proj__no">01</span>
                         </span>
                         <span class="proj__body">
                             <span class="proj__cat">Full-stack</span>
                             <span class="proj__name">RTGS Management System</span>
-                            <span class="proj__blurb">An internal system for recording, tracking and settling real-time gross settlement entries.</span>
-                            <span class="proj__tags"><i>Next.js</i><i>TypeScript</i><i>Node.js</i></span>
+                            <span class="proj__blurb">An internal system that fills and prints banks' own RTGS and fund-transfer forms, and keeps every entry in an auditable register.</span>
+                            <span class="proj__tags"><i>JavaScript</i><i>PHP</i><i>MySQL</i></span>
                         </span>
                         <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
                     </button>
@@ -631,15 +631,16 @@
                     <template class="proj__detail">
                         <p class="sheet__cat">Full-stack</p>
                         <h3 class="sheet__name">RTGS Management System</h3>
-                        <p class="sheet__lede">An internal system for recording, tracking and settling real-time gross settlement entries.</p>
+                        <p class="sheet__lede">Built for Mega Packaging Bangladesh Ltd. An operator fills in a form once and the system prints the bank's own RTGS application or fund-transfer letter, ready to sign, while every transaction is kept in one shared, auditable register.</p>
                         <h4 class="sheet__sub">Highlights</h4>
                         <ul class="sheet__list">
-                                <li>Role-based access so operators and reviewers see different views</li>
-                                <li>Every entry is auditable, with a full trail of who changed what</li>
-                                <li>Server-rendered tables that stay fast as the ledger grows</li>
+                                <li>Bank-accurate forms for five banks, printed or saved as PDF exactly like each bank's own paper</li>
+                                <li>Administrator and operator roles enforced on the server, with a record of who saved and who changed each entry</li>
+                                <li>Dashboards with bank-wise totals, date filters, a printable top sheet and cheque attachments</li>
+                                <li>Offline-first: entries save instantly in the browser and sync to MySQL when the connection returns</li>
                         </ul>
                         <h4 class="sheet__sub">Built with</h4>
-                        <p class="sheet__stack"><span>Next.js</span><span>TypeScript</span><span>Node.js</span><span>MongoDB</span></p>
+                        <p class="sheet__stack"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>PHP</span><span>MySQL</span><span>jsPDF</span></p>
                     </template>
                 </article>
                 <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.10s">

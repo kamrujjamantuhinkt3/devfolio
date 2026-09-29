@@ -1292,11 +1292,16 @@
             card.style.setProperty("--c2", cover.style.getPropertyValue("--c2"));
 
             var name = (card.querySelector(".proj__name") || { textContent: "" }).textContent;
+            var address = name.split(" ")[0].toLowerCase();
+            // a deployed project shows its real address in the window's bar
+            if (card.dataset.demo) {
+                try { address = new URL(card.dataset.demo).hostname; } catch (e) { /* keep the name */ }
+            }
             var draw = SKETCH[cover.getAttribute("data-ui")] || SKETCH.landing;
             var mock = document.createElement("span");
             mock.className = "mock";
             mock.innerHTML = '<span class="mock__bar"><i></i><i></i><i></i><span class="mock__url">' + LOCK +
-                name.split(" ")[0].toLowerCase() + '</span></span><span class="mock__view">' + draw() + "</span>";
+                address + '</span></span><span class="mock__view">' + draw() + "</span>";
             cover.appendChild(mock);
 
             // a screenshot goes inside the window; if the file is missing, the sketch stays
