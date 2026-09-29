@@ -1354,17 +1354,87 @@
     }
 
 
-    /* Activities - a soft light follows the pointer across each role card */
-    var clubsGrid = document.querySelector(".clubs");
+    /* Activities - the clubs sit beside a story panel. Choosing one (a click,
+       the arrow keys, or resting the pointer on it) opens its story, and a
+       glider slides behind the chosen club. */
+    var clubList = document.querySelector(".clubx__list");
+    var clubPanel = document.querySelector(".clubx__panel");
 
-    if (clubsGrid && pointerFx) {
-        clubsGrid.addEventListener("pointermove", function (e) {
-            var card = e.target.closest(".club__card");
-            if (!card) return;
-            var box = card.getBoundingClientRect();
-            card.style.setProperty("--mx", (e.clientX - box.left).toFixed(0) + "px");
-            card.style.setProperty("--my", (e.clientY - box.top).toFixed(0) + "px");
-        }, { passive: true });
+    if (clubList && clubPanel) {
+        var clubTabs = Array.prototype.slice.call(clubList.querySelectorAll(".clubx__tab"));
+        var glider = clubList.querySelector(".clubx__glider");
+        var canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+        var hoverTimer = null;
+
+        function currentClub() { return clubList.querySelector('.clubx__tab[aria-selected="true"]'); }
+
+        function placeGlider() {
+            var tab = currentClub();
+            if (!glider || !tab) return;
+            glider.style.setProperty("--gy", tab.offsetTop + "px");
+            glider.style.setProperty("--gh", tab.offsetHeight + "px");
+        }
+
+        function openClub(tab, focus) {
+            if (!tab) return;
+            if (focus) tab.focus();
+            if (tab.getAttribute("aria-selected") === "true") return;
+
+            clubTabs.forEach(function (t) {
+                var on = t === tab;
+                t.setAttribute("aria-selected", String(on));
+                t.tabIndex = on ? 0 : -1;
+                var story = document.getElementById(t.getAttribute("aria-controls"));
+                if (story) story.classList.toggle("is-active", on);
+            });
+            placeGlider();
+        }
+
+        clubTabs.forEach(function (tab) {
+            tab.addEventListener("click", function () {
+                openClub(tab);
+                // in the swipeable row on small screens, bring the chosen club fully into view
+                if (!canHover) tab.scrollIntoView({ block: "nearest", inline: "nearest", behavior: reduced ? "auto" : "smooth" });
+            });
+
+            if (canHover) {
+                // a short pause first, so sweeping the pointer past a club does not open it
+                tab.addEventListener("pointerenter", function () {
+                    clearTimeout(hoverTimer);
+                    hoverTimer = setTimeout(function () { openClub(tab); }, 180);
+                });
+                tab.addEventListener("pointerleave", function () { clearTimeout(hoverTimer); });
+            }
+        });
+
+        // arrow keys move between clubs, the way tabs are expected to behave
+        clubList.addEventListener("keydown", function (e) {
+            var i = clubTabs.indexOf(document.activeElement);
+            if (i < 0) return;
+            var next = null;
+            if (e.key === "ArrowDown" || e.key === "ArrowRight") next = clubTabs[(i + 1) % clubTabs.length];
+            else if (e.key === "ArrowUp" || e.key === "ArrowLeft") next = clubTabs[(i - 1 + clubTabs.length) % clubTabs.length];
+            else if (e.key === "Home") next = clubTabs[0];
+            else if (e.key === "End") next = clubTabs[clubTabs.length - 1];
+            if (!next) return;
+            e.preventDefault();
+            openClub(next, true);
+        });
+
+        // place it once without a slide, then let it glide from then on
+        placeGlider();
+        if (glider) requestAnimationFrame(function () { glider.classList.add("is-ready"); });
+        window.addEventListener("resize", placeGlider);
+        window.addEventListener("load", placeGlider);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeGlider);
+
+        if (pointerFx) {
+            clubPanel.addEventListener("pointermove", function (e) {
+                var box = clubPanel.getBoundingClientRect();
+                clubPanel.style.setProperty("--mx", (e.clientX - box.left).toFixed(0) + "px");
+                clubPanel.style.setProperty("--my", (e.clientY - box.top).toFixed(0) + "px");
+            }, { passive: true });
+        }
     }
 
 
