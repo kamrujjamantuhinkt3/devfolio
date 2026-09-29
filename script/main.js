@@ -40,6 +40,44 @@
         };
     })();
 
+    /* Missing images - a logo or badge that has not been uploaded yet shows a
+       tidy emblem in its place instead of a broken image. The image itself
+       stays, so the moment the real file is added at that path it appears. */
+    var FALLBACK_ICONS = {
+        school: '<svg viewBox="0 0 24 24"><path d="M12 2.8 4.5 5.6v5.6c0 4.6 3.1 8.4 7.5 10 4.4-1.6 7.5-5.4 7.5-10V5.6L12 2.8Z"/><path d="M8 10c1.5-.6 2.8-.6 4 .4 1.2-1 2.5-1 4-.4v5.2c-1.5-.6-2.8-.6-4 .4-1.2-1-2.5-1-4-.4V10ZM12 10.4v5.2"/></svg>',
+        medal: '<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="15"/><path d="M11 31c-2.6-4.2-3-9.6-.7-14.2M37 31c2.6-4.2 3-9.6.7-14.2"/><path class="fallback__fill" d="M24 14.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L24 29.4l-5.8 3 1.1-6.5-4.7-4.6 6.5-.9Z"/></svg>'
+    };
+
+    function showFallback(img) {
+        var holder = img.parentNode;
+        if (!holder || holder.querySelector(".fallback")) return;
+
+        var key = img.getAttribute("data-fallback");
+        var mark = document.createElement("span");
+        mark.className = "fallback";
+        mark.setAttribute("aria-hidden", "true");
+        if (FALLBACK_ICONS[key]) mark.innerHTML = FALLBACK_ICONS[key];
+        else mark.textContent = key;          // initials
+
+        holder.appendChild(mark);
+        holder.classList.add("has-fallback");
+    }
+
+    function clearFallback(img) {
+        var holder = img.parentNode;
+        var mark = holder && holder.querySelector(".fallback");
+        if (mark) holder.removeChild(mark);
+        if (holder) holder.classList.remove("has-fallback");
+    }
+
+    document.querySelectorAll("img[data-fallback]").forEach(function (img) {
+        img.addEventListener("error", function () { showFallback(img); });
+        img.addEventListener("load", function () { clearFallback(img); });
+        // it may already have failed before this script ran
+        if (img.complete && !img.naturalWidth) showFallback(img);
+    });
+
+
     /* Theme*/
     var themeBtn = document.getElementById("themeToggle");
 
@@ -1268,17 +1306,18 @@
     }
 
 
-    /* Achievements - the badge tilts towards the pointer, and a glare follows
-       it across the surface, like turning a medal in the light */
+    /* Achievements - the medal tilts towards the pointer and a glare follows
+       it across the glass, like turning a medal in the light. The card's glow
+       follows the pointer too. */
     if (pointerFx) {
-        document.querySelectorAll(".award__stage").forEach(function (stage) {
-            var plate = stage.querySelector(".award__plate");
+        document.querySelectorAll(".award__card").forEach(function (card) {
+            var coin = card.querySelector(".award__coin");
             var inside = false;
             var queued = false;
             var last = null;
-            if (!plate) return;
+            if (!coin) return;
 
-            stage.addEventListener("pointermove", function (e) {
+            card.addEventListener("pointermove", function (e) {
                 inside = true;
                 last = e;
                 if (queued) return;
@@ -1288,21 +1327,25 @@
                     queued = false;
                     if (!inside || !last) return;
 
-                    var box = stage.getBoundingClientRect();
+                    var box = card.getBoundingClientRect();
                     var px = (last.clientX - box.left) / box.width;
                     var py = (last.clientY - box.top) / box.height;
 
-                    plate.style.setProperty("--ry", ((px - 0.5) * 22).toFixed(2) + "deg");
-                    plate.style.setProperty("--rx", ((0.5 - py) * 18).toFixed(2) + "deg");
-                    plate.style.setProperty("--gx", (px * 100).toFixed(1) + "%");
-                    plate.style.setProperty("--gy", (py * 100).toFixed(1) + "%");
+                    card.style.setProperty("--mx", (last.clientX - box.left).toFixed(0) + "px");
+                    card.style.setProperty("--my", (last.clientY - box.top).toFixed(0) + "px");
+                    coin.style.setProperty("--ry", ((px - 0.5) * 28).toFixed(2) + "deg");
+                    coin.style.setProperty("--rx", ((0.5 - py) * 22).toFixed(2) + "deg");
+                    coin.style.setProperty("--gx", (px * 100).toFixed(1) + "%");
+                    coin.style.setProperty("--gy", (py * 100).toFixed(1) + "%");
                 });
             });
 
-            stage.addEventListener("pointerleave", function () {
+            card.addEventListener("pointerleave", function () {
                 inside = false;
-                plate.style.setProperty("--rx", "0deg");
-                plate.style.setProperty("--ry", "0deg");
+                card.style.removeProperty("--mx");
+                card.style.removeProperty("--my");
+                coin.style.setProperty("--rx", "0deg");
+                coin.style.setProperty("--ry", "0deg");
             });
         });
     }
