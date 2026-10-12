@@ -60,7 +60,7 @@
                         <ellipse cx="110" cy="110" rx="106" ry="34"/>
                         <circle r="4.5"><animateMotion dur="9s" repeatCount="indefinite" path="M4,110 a106,34 0 1,0 212,0 a106,34 0 1,0 -212,0"/></circle>
                     </svg>
-                    <img src="assets/images/profile/tuhin-formal.png" alt="" width="132" height="132">
+                    <img src="assets/images/profile/tuhin-formal-900.jpg" alt="" width="132" height="132">
                 </figure>
                 <p class="gate__status" style="--gi:1"><span aria-hidden="true"></span>Open to opportunities</p>
                 <p class="gate__hello" style="--gi:2">Hello, I&rsquo;m</p>
@@ -331,7 +331,7 @@
                 <figure class="portrait">
                     <span class="portrait__glow" aria-hidden="true"></span>
                     <div class="portrait__frame">
-                        <img src="assets/images/profile/tuhin-formal.png" alt="Portrait of Kamrujjaman Tuhin"
+                        <img src="assets/images/profile/tuhin-formal-900.jpg" alt="Portrait of Kamrujjaman Tuhin"
                              width="440" height="440" fetchpriority="high" decoding="async">
                         <span class="portrait__tone" aria-hidden="true"></span>
                         <span class="portrait__vignette" aria-hidden="true"></span>
@@ -377,7 +377,7 @@
                 <span class="about__outline" data-reveal="zoom" style="--rd:.24s" aria-hidden="true"></span>
 
                 <div class="about__photo" data-reveal="zoom">
-                    <img src="assets/images/profile/tuhin-casual.jpg" alt="Kamrujjaman Tuhin on campus" loading="lazy" width="640" height="640">
+                    <img src="assets/images/profile/tuhin-casual-1000.jpg" alt="Kamrujjaman Tuhin on campus" loading="lazy" width="640" height="640">
                     <span class="about__tint" aria-hidden="true"></span>
                 </div>
 
@@ -740,52 +740,155 @@
             <p class="section__label" data-reveal><span class="section__rule"></span>Projects</p>
             <h2 class="section__title" data-reveal="words" data-words>Things I have <em>built</em></h2>
             <p class="section__lede" data-reveal style="--rd:.14s">
-                A mix of full-stack applications, front-end work and the odd tool built to scratch
-                my own itch. Open any card for what it does, how it was put together and where the
-                code lives.
+                One system running in production for a company, told in full, and a set of smaller
+                builds below it. Open any of them for what it does, how it was put together and where
+                the code lives.
             </p>
         </header>
 
-        <div class="filters projects__filters" role="tablist" aria-label="Filter projects" data-reveal style="--rd:.02s">
-            <button class="filter is-on" type="button" role="tab" data-cat="all" aria-selected="true">All</button>
-            <button class="filter" type="button" role="tab" data-cat="Full-stack" aria-selected="false">Full-stack</button>
-            <button class="filter" type="button" role="tab" data-cat="Frontend" aria-selected="false">Frontend</button>
-            <button class="filter" type="button" role="tab" data-cat="Tooling" aria-selected="false">Tooling</button>
+        <!-- The case study: the project that is running in production, told in
+             full. A short tour of its real screens - captured from the app,
+             with demo data - plays inside a browser window. -->
+        <article class="proj case" data-key="rtgs" data-featured data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="https://rtgs.megapackagingbd.com" data-reveal="case">
+            <header class="case__head">
+                <div class="case__title">
+                    <p class="case__eyebrow"><span class="case__pulse" aria-hidden="true"></span>Case study &middot; Live in production</p>
+                    <h3 class="proj__name case__name">RTGS Management System</h3>
+                    <p class="proj__cat case__for">Full-stack &middot; built for Mega Packaging Bangladesh Ltd.</p>
+                    <p class="proj__tags case__stack"><i>HTML</i><i>CSS</i><i>JavaScript</i><i>PHP</i><i>MySQL</i><i>jsPDF</i></p>
+                </div>
+                <div class="case__intro">
+                    <p class="proj__blurb case__lede">An operator fills in a form once, and the system prints the bank&rsquo;s own RTGS application or a fund-transfer letter, ready to sign &mdash; while every transaction lands in one shared, auditable register.</p>
+                    <div class="case__actions">
+                        <a class="btn btn--primary case__visit" href="https://rtgs.megapackagingbd.com" target="_blank" rel="noopener"><span>Visit the live app</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+                        <button class="btn btn--ghost proj__open case__more" type="button" aria-haspopup="dialog"><span>Case details</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+                        <a class="case__code" href="https://www.github.com/kamrujjamantuhinkt3" target="_blank" rel="noopener" aria-label="Code for RTGS Management System on GitHub"><svg class="i i--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg></a>
+                    </div>
+                </div>
+            </header>
+
+            <div class="tour" data-tour style="--tour-hue:#6366f1">
+                <div class="tour__side">
+                    <p class="tour__kicker"><span class="section__rule"></span>Take the tour</p>
+                    <p class="tour__intro">Five screens from the live app. It plays on its own &mdash; or pick any step.</p>
+                <ol class="tour__steps" role="tablist" aria-label="A tour of the RTGS Management System">
+                    <li style="--li:0">
+                        <button class="tour__step is-on" type="button" role="tab" id="tourTab0" aria-controls="tourScreen" aria-selected="true" tabindex="0" data-step="0" style="--hue:#6366f1">
+                            <span class="tour__no">01</span>
+                            <span class="tour__copy">
+                                <b class="tour__title">Home</b>
+                                <span class="tour__more"><span>The front door: RTGS forms, fund transfers and cash withdrawals, each one key away.</span></span>
+                            </span>
+                            <span class="tour__track" aria-hidden="true"><i class="tour__fill"></i></span>
+                        </button>
+                    </li>
+                    <li style="--li:1">
+                        <button class="tour__step" type="button" role="tab" id="tourTab1" aria-controls="tourScreen" aria-selected="false" tabindex="-1" data-step="1" style="--hue:#3b82f6">
+                            <span class="tour__no">02</span>
+                            <span class="tour__copy">
+                                <b class="tour__title">RTGS forms</b>
+                                <span class="tour__more"><span>Each bank&rsquo;s own application, filled in once and printed or saved as PDF, with totals per bank.</span></span>
+                            </span>
+                            <span class="tour__track" aria-hidden="true"><i class="tour__fill"></i></span>
+                        </button>
+                    </li>
+                    <li style="--li:2">
+                        <button class="tour__step" type="button" role="tab" id="tourTab2" aria-controls="tourScreen" aria-selected="false" tabindex="-1" data-step="2" style="--hue:#8b5cf6">
+                            <span class="tour__no">03</span>
+                            <span class="tour__copy">
+                                <b class="tour__title">Fund transfers</b>
+                                <span class="tour__more"><span>Transfer letters on the company letterhead, for eleven accounts across three banks.</span></span>
+                            </span>
+                            <span class="tour__track" aria-hidden="true"><i class="tour__fill"></i></span>
+                        </button>
+                    </li>
+                    <li style="--li:3">
+                        <button class="tour__step" type="button" role="tab" id="tourTab3" aria-controls="tourScreen" aria-selected="false" tabindex="-1" data-step="3" style="--hue:#14b8a6">
+                            <span class="tour__no">04</span>
+                            <span class="tour__copy">
+                                <b class="tour__title">Top sheet</b>
+                                <span class="tour__more"><span>Every transaction for a period, bank by bank, on the one page that gets printed.</span></span>
+                            </span>
+                            <span class="tour__track" aria-hidden="true"><i class="tour__fill"></i></span>
+                        </button>
+                    </li>
+                    <li style="--li:4">
+                        <button class="tour__step" type="button" role="tab" id="tourTab4" aria-controls="tourScreen" aria-selected="false" tabindex="-1" data-step="4" style="--hue:#a5b4fc">
+                            <span class="tour__no">05</span>
+                            <span class="tour__copy">
+                                <b class="tour__title">Light theme</b>
+                                <span class="tour__more"><span>Every screen also comes in a light theme, and the choice is remembered.</span></span>
+                            </span>
+                            <span class="tour__track" aria-hidden="true"><i class="tour__fill"></i></span>
+                        </button>
+                    </li>
+                </ol>
+                </div>
+
+                <div class="tour__stage">
+                    <span class="tour__glow" aria-hidden="true"></span>
+                    <figure class="tour__win" id="tourScreen" role="tabpanel" aria-labelledby="tourTab0">
+                        <span class="tour__chrome" aria-hidden="true">
+                            <i></i><i></i><i></i>
+                            <span class="tour__url"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9.5" rx="2.2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span data-tour-url>rtgs.megapackagingbd.com/#/home</span></span>
+                            <span class="tour__live"><span></span>Live</span>
+                        </span>
+                        <span class="proj__cover tour__screens" data-ui="table" style="--c1:#4338ca; --c2:#1e40af">
+                            <img class="is-on" src="assets/images/projects/rtgs-management-system.jpg" alt="RTGS Management System home screen, welcoming Mega Packaging Bangladesh Limited, with its three workflows" width="2049" height="1281" loading="lazy" decoding="async" data-url="rtgs.megapackagingbd.com/#/home">
+                            <img src="assets/images/projects/rtgs-tour-rtgs-forms.jpg" alt="The RTGS forms dashboard, with totals and a card for each bank" width="2049" height="1281" loading="lazy" decoding="async" data-url="rtgs.megapackagingbd.com/#/dashboard">
+                            <img src="assets/images/projects/rtgs-tour-fund-transfer.jpg" alt="The fund transfer dashboard, with totals and the banks and their accounts" width="2049" height="1281" loading="lazy" decoding="async" data-url="rtgs.megapackagingbd.com/#/transfers">
+                            <img src="assets/images/projects/rtgs-tour-top-sheet.jpg" alt="The top sheet: transaction totals, a bank-wise summary and the list of transactions" width="2049" height="1281" loading="lazy" decoding="async" data-url="rtgs.megapackagingbd.com/#/home">
+                            <img src="assets/images/projects/rtgs-tour-light.jpg" alt="The home screen in the light theme" width="2049" height="1281" loading="lazy" decoding="async" data-url="rtgs.megapackagingbd.com/#/home">
+                        </span>
+                    </figure>
+                </div>
+            </div>
+
+            <div class="case__facts">
+                <dl class="case__stats">
+                    <div><dt>Workflows</dt><dd>3</dd></div>
+                    <div><dt>Banks</dt><dd>5</dd></div>
+                    <div><dt>Accounts</dt><dd>11</dd></div>
+                    <div><dt>Companies</dt><dd>5</dd></div>
+                </dl>
+                <ul class="case__features">
+                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3.5h10V9"/><rect x="3.5" y="9" width="17" height="8" rx="2"/><path d="M7 14h10v6.5H7z"/></svg><span><b>Bank-accurate printing</b>Each bank&rsquo;s own paper form, filled in exactly</span></li>
+                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2.5 4.5 13.5H12l-1 8 8.5-11H12z"/></svg><span><b>Offline-first</b>Saves at once, syncs to MySQL when back online</span></li>
+                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6v5.6c0 4.5 3.2 8.2 7.5 9.4 4.3-1.2 7.5-4.9 7.5-9.4V6L12 3Z"/><path d="m8.8 12.2 2.3 2.3 4.2-4.4"/></svg><span><b>Role-based access</b>Administrator and operator, enforced on the server</span></li>
+                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7.5V12l3 2"/><circle cx="12" cy="12" r="8.5"/></svg><span><b>Audit trail</b>Who saved, and who changed, every entry</span></li>
+                </ul>
+            </div>
+
+            <template class="proj__detail">
+                <p class="sheet__cat">Full-stack &middot; Live in production</p>
+                <h3 class="sheet__name">RTGS Management System</h3>
+                <p class="sheet__lede">Built for Mega Packaging Bangladesh Ltd. An operator fills in a form once and the system prints the bank's own RTGS application or fund-transfer letter, ready to sign, while every transaction is kept in one shared, auditable register.</p>
+                <h4 class="sheet__sub">Highlights</h4>
+                <ul class="sheet__list">
+                        <li>Bank-accurate RTGS forms, printed or saved as PDF exactly like each bank's own paper</li>
+                        <li>Fund-transfer letters on the company letterhead, and cash withdrawals recorded with the cheque's copy</li>
+                        <li>Administrator and operator roles enforced on the server, with a record of who saved and who changed each entry</li>
+                        <li>A printable top sheet with bank-wise totals for any period, and light and dark themes</li>
+                        <li>Offline-first: entries save instantly in the browser and sync to MySQL when the connection returns</li>
+                </ul>
+                <h4 class="sheet__sub">Built with</h4>
+                <p class="sheet__stack"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>PHP</span><span>MySQL</span><span>jsPDF</span></p>
+            </template>
+        </article>
+
+        <div class="index-head" data-reveal>
+            <p class="index-head__title"><span class="section__rule"></span>More projects</p>
+            <div class="filters projects__filters" role="tablist" aria-label="Filter projects">
+                <button class="filter is-on" type="button" role="tab" data-cat="all" aria-selected="true">All</button>
+                <button class="filter" type="button" role="tab" data-cat="Full-stack" aria-selected="false">Full-stack</button>
+                <button class="filter" type="button" role="tab" data-cat="Frontend" aria-selected="false">Frontend</button>
+                <button class="filter" type="button" role="tab" data-cat="Tooling" aria-selected="false">Tooling</button>
+            </div>
         </div>
 
-        <div class="projects__grid" id="projGrid">
-                <article class="proj" data-key="rtgs" data-featured data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="https://rtgs.megapackagingbd.com" data-reveal style="--rd:0.05s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog">
-                        <span class="proj__cover" data-ui="table" style="--c1:#4338ca; --c2:#1e40af" aria-hidden="true">
-                            <img src="assets/images/projects/rtgs-management-system.jpg" alt="" width="1920" height="1240" loading="lazy" decoding="async">
-                            <span class="proj__no">01</span>
-                        </span>
-                        <span class="proj__body">
-                            <span class="proj__cat">Full-stack</span>
-                            <span class="proj__name">RTGS Management System</span>
-                            <span class="proj__blurb">An internal system that fills and prints banks' own RTGS and fund-transfer forms, and keeps every entry in an auditable register.</span>
-                            <span class="proj__tags"><i>JavaScript</i><i>PHP</i><i>MySQL</i></span>
-                        </span>
-                        <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-                    </button>
-
-                    <template class="proj__detail">
-                        <p class="sheet__cat">Full-stack</p>
-                        <h3 class="sheet__name">RTGS Management System</h3>
-                        <p class="sheet__lede">Built for Mega Packaging Bangladesh Ltd. An operator fills in a form once and the system prints the bank's own RTGS application or fund-transfer letter, ready to sign, while every transaction is kept in one shared, auditable register.</p>
-                        <h4 class="sheet__sub">Highlights</h4>
-                        <ul class="sheet__list">
-                                <li>Bank-accurate forms for five banks, printed or saved as PDF exactly like each bank's own paper</li>
-                                <li>Administrator and operator roles enforced on the server, with a record of who saved and who changed each entry</li>
-                                <li>Dashboards with bank-wise totals, date filters, a printable top sheet and cheque attachments</li>
-                                <li>Offline-first: entries save instantly in the browser and sync to MySQL when the connection returns</li>
-                        </ul>
-                        <h4 class="sheet__sub">Built with</h4>
-                        <p class="sheet__stack"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>PHP</span><span>MySQL</span><span>jsPDF</span></p>
-                    </template>
-                </article>
-                <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.10s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog">
+        <div class="projects__grid proj-index" id="projGrid">
+                <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.05s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="02">
                         <span class="proj__cover" data-ui="landing" style="--c1:#4f46e5; --c2:#22b8d6" aria-hidden="true">
                             <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
                             <span class="proj__no">02</span>
@@ -813,8 +916,8 @@
                         <p class="sheet__stack"><span>HTML</span><span>CSS</span><span>JavaScript</span></p>
                     </template>
                 </article>
-                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.15s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.10s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="03">
                         <span class="proj__cover" data-ui="board" style="--c1:#6366f1; --c2:#8b5cf6" aria-hidden="true">
                             <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
                             <span class="proj__no">03</span>
@@ -842,8 +945,8 @@
                         <p class="sheet__stack"><span>React</span><span>Node.js</span><span>MongoDB</span><span>Mongoose</span></p>
                     </template>
                 </article>
-                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.20s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.15s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="04">
                         <span class="proj__cover" data-ui="store" style="--c1:#1e40af; --c2:#0ea5e9" aria-hidden="true">
                             <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
                             <span class="proj__no">04</span>
@@ -871,8 +974,8 @@
                         <p class="sheet__stack"><span>Next.js</span><span>TypeScript</span><span>MongoDB</span><span>BetterAuth</span></p>
                     </template>
                 </article>
-                <article class="proj" data-cat="Tooling" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.25s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                <article class="proj" data-cat="Tooling" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.20s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="05">
                         <span class="proj__cover" data-ui="form" style="--c1:#4338ca; --c2:#6366f1" aria-hidden="true">
                             <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
                             <span class="proj__no">05</span>
@@ -900,8 +1003,8 @@
                         <p class="sheet__stack"><span>Next.js</span><span>BetterAuth</span><span>TypeScript</span></p>
                     </template>
                 </article>
-                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.30s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.25s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="06">
                         <span class="proj__cover" data-ui="notes" style="--c1:#7c3aed; --c2:#4f46e5" aria-hidden="true">
                             <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
                             <span class="proj__no">06</span>
@@ -929,8 +1032,8 @@
                         <p class="sheet__stack"><span>React</span><span>Node.js</span><span>MongoDB</span></p>
                     </template>
                 </article>
-                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.35s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.30s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="07">
                         <span class="proj__cover" data-ui="chat" style="--c1:#2563eb; --c2:#22d3ee" aria-hidden="true">
                             <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
                             <span class="proj__no">07</span>
@@ -958,8 +1061,8 @@
                         <p class="sheet__stack"><span>Node.js</span><span>React</span><span>MongoDB</span></p>
                     </template>
                 </article>
-                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.40s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.35s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="08">
                         <span class="proj__cover" data-ui="chart" style="--c1:#4f46e5; --c2:#3b82f6" aria-hidden="true">
                             <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
                             <span class="proj__no">08</span>
@@ -988,7 +1091,7 @@
                     </template>
                 </article>
                 <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.40s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="09">
                         <span class="proj__cover" data-ui="article" style="--c1:#5b21b6; --c2:#6366f1" aria-hidden="true">
                             <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
                             <span class="proj__no">09</span>
@@ -1016,8 +1119,8 @@
                         <p class="sheet__stack"><span>Next.js</span><span>MongoDB</span><span>Tailwind CSS</span></p>
                     </template>
                 </article>
-                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.40s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.45s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="10">
                         <span class="proj__cover" data-ui="calendar" style="--c1:#1d4ed8; --c2:#818cf8" aria-hidden="true">
                             <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
                             <span class="proj__no">10</span>
@@ -1045,8 +1148,8 @@
                         <p class="sheet__stack"><span>Next.js</span><span>Node.js</span><span>MongoDB</span><span>BetterAuth</span></p>
                     </template>
                 </article>
-                <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.40s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.50s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="11">
                         <span class="proj__cover" data-ui="list" style="--c1:#0891b2; --c2:#4f46e5" aria-hidden="true">
                             <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
                             <span class="proj__no">11</span>
@@ -1074,8 +1177,8 @@
                         <p class="sheet__stack"><span>React</span><span>TypeScript</span><span>Tailwind CSS</span></p>
                     </template>
                 </article>
-                <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.40s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog">
+                <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.55s">
+                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="12">
                         <span class="proj__cover" data-ui="store" style="--c1:#7c3aed; --c2:#38bdf8" aria-hidden="true">
                             <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
                             <span class="proj__no">12</span>
@@ -1105,13 +1208,8 @@
                 </article>
         </div>
 
-        <div class="projects__more">
-            <button class="more" id="projMore" type="button" aria-expanded="false" aria-controls="projGrid">
-                <span class="more__label">Show all projects</span>
-                <span class="more__n">12</span>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-            </button>
-        </div>
+        <!-- a preview of the row under the pointer, filled by script -->
+        <div class="proj-peek" id="projPeek" aria-hidden="true"></div>
     </section>
 
     <!-- Experience
@@ -1911,7 +2009,7 @@
         </header>
 
         <div class="uni__comms" id="uniComms" hidden aria-live="polite">
-            <img class="uni__face" src="assets/images/profile/tuhin-formal.png" alt="">
+            <img class="uni__face" src="assets/images/profile/tuhin-formal-900.jpg" alt="">
             <div>
                 <p class="uni__comms-from"><span aria-hidden="true"></span>Transmission from Kamrujjaman</p>
                 <p class="uni__comms-text" id="uniCommsText"></p>

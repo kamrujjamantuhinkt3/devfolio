@@ -1216,42 +1216,24 @@
     if (projGrid && sheet) {
         var sheetBody = document.getElementById("sheetBody");
         var sheetLinks = document.getElementById("sheetLinks");
-        var projects = Array.prototype.slice.call(projGrid.querySelectorAll(".proj"));
+        // the case study and every row of the index; the case study stands on
+        // its own, so the filters only ever sort the index
+        var projects = Array.prototype.slice.call(document.querySelectorAll("#projects .proj"));
+        var indexCards = projects.filter(function (p) { return !p.hasAttribute("data-featured"); });
         var projFilters = Array.prototype.slice.call(document.querySelectorAll(".projects .filter"));
         var lastOpener = null;
         var currentCat = "all";
-        var showAll = false;
-        var FOLD_AFTER = 9;          // cards shown before "Show all projects": three full rows
-        var moreBtn = document.getElementById("projMore");
 
-        // One place decides what is visible: the filter, and whether the list
-        // is folded. Folding only applies to "All"; a filter shows every match.
         function layoutProjects() {
-            var folding = currentCat === "all" && !showAll;
-            projects.forEach(function (card, i) {
+            indexCards.forEach(function (card) {
                 card.classList.toggle("is-hidden", currentCat !== "all" && card.dataset.cat !== currentCat);
-                card.classList.toggle("is-folded", folding && i >= FOLD_AFTER);
-            });
-            if (!moreBtn) return;
-            moreBtn.parentNode.hidden = currentCat !== "all" || projects.length <= FOLD_AFTER;
-            moreBtn.setAttribute("aria-expanded", String(showAll));
-            moreBtn.querySelector(".more__label").textContent = showAll ? "Show fewer" : "Show all projects";
-        }
-
-        if (moreBtn) {
-            moreBtn.querySelector(".more__n").textContent = projects.length;
-            moreBtn.addEventListener("click", function () {
-                showAll = !showAll;
-                layoutProjects();
-                // folding the list away can leave the reader far below it
-                if (!showAll) moreBtn.scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" });
             });
         }
 
         // each filter shows how many projects it holds
         projFilters.forEach(function (btn) {
             var cat = btn.dataset.cat;
-            var count = projects.filter(function (p) { return cat === "all" || p.dataset.cat === cat; }).length;
+            var count = indexCards.filter(function (p) { return cat === "all" || p.dataset.cat === cat; }).length;
             var badge = document.createElement("span");
             badge.className = "filter__n";
             badge.textContent = count;
@@ -1374,6 +1356,10 @@
             // the card borrows its cover's colours, for the dot beside the category
             card.style.setProperty("--c1", cover.style.getPropertyValue("--c1"));
             card.style.setProperty("--c2", cover.style.getPropertyValue("--c2"));
+            card.querySelectorAll(".proj__tags i").forEach(addTechMark);
+
+            // the case study brings its own screens and its own links
+            if (card.hasAttribute("data-featured")) return;
 
             var name = (card.querySelector(".proj__name") || { textContent: "" }).textContent;
             var address = name.split(" ")[0].toLowerCase();
@@ -1423,43 +1409,6 @@
                 card.appendChild(acts);
             }
 
-            card.querySelectorAll(".proj__tags i").forEach(addTechMark);
-
-            // the featured project tells more of its story on the card itself
-            if (card.hasAttribute("data-featured")) {
-                var tpl = card.querySelector("template.proj__detail");
-                var cardBody = card.querySelector(".proj__body");
-                var nameEl = card.querySelector(".proj__name");
-                var ledeSrc = tpl && tpl.content.querySelector(".sheet__lede");
-                var pointSrc = tpl ? tpl.content.querySelectorAll(".sheet__list li") : [];
-
-                if (ledeSrc && nameEl) {
-                    var ledeEl = document.createElement("span");
-                    ledeEl.className = "proj__lede";
-                    ledeEl.textContent = ledeSrc.textContent.trim();
-                    nameEl.insertAdjacentElement("afterend", ledeEl);
-                }
-                if (pointSrc.length && cardBody) {
-                    var pointsEl = document.createElement("span");
-                    pointsEl.className = "proj__points";
-                    pointsEl.setAttribute("role", "list");
-                    Array.prototype.slice.call(pointSrc, 0, 4).forEach(function (li) {
-                        var item = document.createElement("span");
-                        item.setAttribute("role", "listitem");
-                        item.textContent = li.textContent.trim();
-                        pointsEl.appendChild(item);
-                    });
-                    var tagsEl = cardBody.querySelector(".proj__tags");
-                    cardBody.insertBefore(pointsEl, tagsEl);
-                }
-
-                var flag = document.createElement("span");
-                flag.className = "proj__flag";
-                flag.setAttribute("aria-hidden", "true");
-                flag.innerHTML = '<svg class="i i--fill" viewBox="0 0 24 24"><path d="M12 3c.6 4.5 2.5 6.4 7 7-4.5.6-6.4 2.5-7 7-.6-4.5-2.5-6.4-7-7 4.5-.6 6.4-2.5 7-7z"/></svg>' +
-                    (card.dataset.demo ? "Featured &middot; live in production" : "Featured");
-                cover.appendChild(flag);
-            }
         }
 
         projects.forEach(dressCard);
@@ -1492,6 +1441,21 @@
             return a;
         }
 
+        // the case study's front screen, in the same browser window the sketches use
+        function shotCover(card, deck) {
+            var img = deck.querySelector("img");
+            var out = document.createElement("span");
+            var address = "";
+            try { address = new URL(card.dataset.demo).hostname; } catch (e) { /* no address */ }
+            out.className = "proj__cover";
+            out.style.setProperty("--c1", deck.style.getPropertyValue("--c1"));
+            out.style.setProperty("--c2", deck.style.getPropertyValue("--c2"));
+            out.innerHTML = '<span class="mock"><span class="mock__bar"><i></i><i></i><i></i><span class="mock__url">' + LOCK +
+                address + '</span></span><span class="mock__view"></span></span>';
+            if (img) out.querySelector(".mock__view").appendChild(img.cloneNode(true));
+            return out;
+        }
+
         function openSheet(card) {
             var detail = card.querySelector(".proj__detail");
             sheetBody.innerHTML = "";
@@ -1504,7 +1468,7 @@
                 var frame = document.createElement("div");
                 frame.className = "sheet__cover";
                 frame.setAttribute("aria-hidden", "true");
-                frame.appendChild(cover.cloneNode(true));
+                frame.appendChild(card.hasAttribute("data-featured") ? shotCover(card, cover) : cover.cloneNode(true));
                 sheetBody.appendChild(frame);
             }
 
@@ -1552,10 +1516,157 @@
 
         projects.forEach(function (card) {
             var opener = card.querySelector(".proj__open");
-            opener.addEventListener("click", function () { openSheet(card); });
-            opener.setAttribute("data-glow", "");      // lit by the glow below
+            if (opener) opener.addEventListener("click", function () { openSheet(card); });
         });
-        projGrid.setAttribute("data-glow-group", "");
+
+
+        /* The case study - a short tour of the app's real screens plays in the
+           browser window. Each step fills its line, then hands on to the next.
+           It plays only while it is on screen, holds still while the pointer
+           or the keyboard is on it, and any step can be chosen directly. */
+        var tour = document.querySelector("[data-tour]");
+
+        if (tour) {
+            var tourSteps = Array.prototype.slice.call(tour.querySelectorAll(".tour__step"));
+            var tourShots = Array.prototype.slice.call(tour.querySelectorAll(".tour__screens img"));
+            var tourUrl = tour.querySelector("[data-tour-url]");
+            var tourWin = tour.querySelector(".tour__win");
+            var tourCard = tour.closest(".proj");
+            var tourAt = 0;
+            var TOUR_STEP = 6000;                  // ms each screen plays for
+
+            tour.style.setProperty("--tour-dur", TOUR_STEP + "ms");
+
+            var showStep = function (i, focus) {
+                tourAt = (i + tourSteps.length) % tourSteps.length;
+                tourSteps.forEach(function (s, k) {
+                    var on = k === tourAt;
+                    s.classList.toggle("is-on", on);
+                    s.setAttribute("aria-selected", String(on));
+                    s.tabIndex = on ? 0 : -1;
+                });
+                tourShots.forEach(function (im, k) {
+                    im.classList.toggle("is-on", k === tourAt);
+                    im.setAttribute("aria-hidden", String(k !== tourAt));
+                });
+
+                var step = tourSteps[tourAt];
+                var shot = tourShots[tourAt];
+                if (tourUrl && shot) tourUrl.textContent = shot.getAttribute("data-url");
+                tour.style.setProperty("--tour-hue", step.style.getPropertyValue("--hue"));
+                if (tourWin) tourWin.setAttribute("aria-labelledby", step.id);
+
+                // start this step's line from empty, even when it is chosen again
+                var fill = step.querySelector(".tour__fill");
+                if (fill) {
+                    fill.style.animation = "none";
+                    void fill.offsetWidth;
+                    fill.style.animation = "";
+                }
+                if (focus) step.focus();
+
+                // the next screen is fetched ahead of its turn
+                var next = tourShots[(tourAt + 1) % tourShots.length];
+                if (next && next.loading === "lazy") next.loading = "eager";
+            };
+
+            tourSteps.forEach(function (s, k) {
+                s.addEventListener("click", function () { showStep(k); });
+                var fill = s.querySelector(".tour__fill");
+                if (fill) {
+                    fill.addEventListener("animationend", function () {
+                        if (s.classList.contains("is-on") && tour.classList.contains("is-playing")) showStep(tourAt + 1);
+                    });
+                }
+            });
+
+            // arrow keys, Home and End move between the steps, as tabs do
+            tour.querySelector(".tour__steps").addEventListener("keydown", function (e) {
+                var k = e.key;
+                var to = k === "ArrowDown" || k === "ArrowRight" ? tourAt + 1
+                       : k === "ArrowUp" || k === "ArrowLeft" ? tourAt - 1
+                       : k === "Home" ? 0 : k === "End" ? tourSteps.length - 1 : null;
+                if (to === null) return;
+                e.preventDefault();
+                showStep(to, true);
+            });
+
+            // the window itself opens the case details
+            if (tourWin && tourCard) tourWin.addEventListener("click", function () { openSheet(tourCard); });
+
+            showStep(0);
+
+            if (!reduced && "IntersectionObserver" in window) {
+                new IntersectionObserver(function (entries) {
+                    entries.forEach(function (en) { tour.classList.toggle("is-playing", en.isIntersecting); });
+                }, { threshold: 0.35 }).observe(tour);
+
+                tour.addEventListener("pointerenter", function (e) { if (e.pointerType !== "touch") tour.classList.add("is-paused"); });
+                tour.addEventListener("pointerleave", function () { tour.classList.remove("is-paused"); });
+                tour.addEventListener("focusin", function () { tour.classList.add("is-paused"); });
+                tour.addEventListener("focusout", function (e) {
+                    if (!tour.contains(e.relatedTarget)) tour.classList.remove("is-paused");
+                });
+            }
+        }
+
+
+        /* The index - a preview of the row under the pointer follows it down
+           the list, eased, and leaning into the direction it is moving */
+        var peek = document.getElementById("projPeek");
+
+        if (peek && pointerFx) {
+            projGrid.classList.add("has-peek");
+            var pk = { row: null, x: 0, y: 0, tx: 0, ty: 0, raf: 0, on: false };
+
+            var peekStep = function () {
+                pk.raf = 0;
+                var dx = pk.tx - pk.x;
+                var dy = pk.ty - pk.y;
+                pk.x += dx * 0.18;
+                pk.y += dy * 0.18;
+
+                var w = peek.offsetWidth;
+                var hh = peek.offsetHeight;
+                var left = pk.x + 34;
+                if (left + w > window.innerWidth - 16) left = pk.x - 34 - w;     // flip to the other side
+                var top = Math.max(84, Math.min(window.innerHeight - hh - 16, pk.y - hh / 2));
+                var lean = Math.max(-8, Math.min(8, dx * 0.05));
+
+                peek.style.transform = "translate3d(" + left.toFixed(1) + "px," + top.toFixed(1) + "px,0) rotate(" + lean.toFixed(2) + "deg)";
+                if (Math.abs(dx) > 0.4 || Math.abs(dy) > 0.4) pk.raf = requestAnimationFrame(peekStep);
+            };
+
+            var hidePeek = function () {
+                pk.on = false;
+                pk.row = null;
+                peek.classList.remove("is-on");
+            };
+
+            projGrid.addEventListener("pointermove", function (e) {
+                if (e.pointerType === "touch") return;
+                var row = e.target.closest(".proj");
+                if (!row) { hidePeek(); return; }
+
+                if (row !== pk.row) {
+                    pk.row = row;
+                    var cover = row.querySelector(".proj__cover");
+                    peek.innerHTML = "";
+                    if (cover) peek.appendChild(cover.cloneNode(true));
+                }
+                pk.tx = e.clientX;
+                pk.ty = e.clientY;
+                if (!pk.on) {
+                    pk.on = true;
+                    pk.x = pk.tx;          // appear where the pointer is, not fly in from a corner
+                    pk.y = pk.ty;
+                    peek.classList.add("is-on");
+                }
+                if (!pk.raf) pk.raf = requestAnimationFrame(peekStep);
+            });
+            projGrid.addEventListener("pointerleave", hidePeek);
+            window.addEventListener("scroll", function () { if (pk.on) hidePeek(); }, { passive: true });
+        }
 
 
         sheet.querySelectorAll("[data-sheet-close]").forEach(function (el) {
