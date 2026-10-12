@@ -1200,12 +1200,31 @@ main { counter-reset: section; }
 
 
 /* Wide screens: the title on the left and its introduction on the right,
-   instead of both stacked down the left with the right half left empty */
+   instead of both stacked down the left with the right half left empty.
+   The split is not a fixed half: each section sets --split and --split-gap
+   to the grid of its own content, and that grid reads the same values, so
+   the introduction always starts on the line of the text, card or panel
+   beneath it. Sections without a two-column body split down the middle, on
+   the line of the third project card, so most introductions share it. */
+.about      { --split: .82fr 1.18fr; --split-gap: 64px; }
+.skills     { --split: 1fr 1.05fr; --split-gap: 44px; }
+.projects   { --split-gap: 16px; }
+.honors     { --split-gap: 22px; }
+.activities { --split: minmax(300px, 380px) minmax(0, 1fr); --split-gap: 28px; }
+.contact    { --split: 1fr 1.12fr; --split-gap: 22px; }
+
+/* Just above the breakpoint the project grid has three columns, so its
+   header splits on the second card instead of the third */
+@media (min-width: 1081px) and (max-width: 1100px) {
+    .projects { --split: repeat(3, minmax(0, 1fr)); }
+    .projects .section__head > .section__lede { grid-column: 2 / -1; }
+}
+
 @media (min-width: 1081px) {
     .section__head {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        column-gap: 72px;
+        grid-template-columns: var(--split, minmax(0, 1fr) minmax(0, 1fr));
+        column-gap: var(--split-gap, 16px);
         align-items: end;
     }
     .section__head > * { grid-column: 1; }
@@ -1235,9 +1254,9 @@ main { counter-reset: section; }
 
 .about__grid {
     display: grid;
-    grid-template-columns: .82fr 1.18fr;
+    grid-template-columns: var(--split);
     align-items: start;
-    gap: 64px;
+    gap: var(--split-gap);
 }
 
 
@@ -1245,6 +1264,16 @@ main { counter-reset: section; }
 .about__figure {
     position: relative;
     justify-self: center;
+}
+
+/* Wide screens: the photo starts on the line of the label and the title
+   above it, and is sized to its column rather than floating in the middle */
+@media (min-width: 1081px) {
+    .about__figure { justify-self: start; width: min(100%, 440px); }
+    .about__figure .about__photo { width: 100%; }
+}
+@media (min-width: 1800px) {
+    .about__figure { width: min(100%, 480px); }
 }
 
 /* A dashed frame offset behind the photo, like a blueprint alignment mark */
@@ -1854,9 +1883,9 @@ main { counter-reset: section; }
 
 .system {
     display: grid;
-    grid-template-columns: 1fr 1.05fr;
+    grid-template-columns: var(--split);
     align-items: center;
-    gap: 44px;
+    gap: var(--split-gap);
 }
 
 
@@ -2322,7 +2351,7 @@ main { counter-reset: section; }
 .projects__grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
+    gap: var(--split-gap);
 }
 
 .proj { display: flex; perspective: 1000px; }
@@ -3196,7 +3225,7 @@ main { counter-reset: section; }
 .awards {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px;
+    gap: var(--split-gap);
     margin-top: 22px;
 }
 .award { min-width: 0; }
@@ -3500,8 +3529,8 @@ main { counter-reset: section; }
 
 .clubx {
     display: grid;
-    grid-template-columns: minmax(300px, 380px) minmax(0, 1fr);
-    gap: 28px;
+    grid-template-columns: var(--split);
+    gap: var(--split-gap);
     align-items: start;
 }
 
@@ -4057,9 +4086,9 @@ html:not(.js) .cstory + .cstory { border-top: 1px solid var(--border); }
 
 .reach {
     display: grid;
-    grid-template-columns: 1fr 1.12fr;
+    grid-template-columns: var(--split);
     align-items: stretch;
-    gap: 22px;
+    gap: var(--split-gap);
 }
 
 /* Both routes are presented as matching panels, numbered, so it reads as a
@@ -4640,8 +4669,8 @@ html:not(.js) .cstory + .cstory { border-top: 1px solid var(--border); }
     .hero__role { font-size: 1.2rem; max-width: 50ch; }
     .section__title { font-size: clamp(2.1rem, 3.2vw, 3rem); }
     .solar { --sw: min(520px, 100%); }
-    .projects__grid { gap: 18px; }
-    .reach { gap: 26px; }
+    .projects { --split-gap: 18px; }
+    .contact { --split-gap: 26px; }
 }
 
 @media (min-width: 1800px) {
