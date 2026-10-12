@@ -101,23 +101,21 @@ kbd {
 }
 .uni__top > * { pointer-events: auto; }
 
-.uni__brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.uni__mark {
-    flex: none;
-    display: grid;
-    place-items: center;
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    font-family: var(--font-brand);
-    font-size: .95rem;
-    font-weight: 700;
-    color: #fff;
-    background: radial-gradient(circle at 30% 25%, var(--indigo-400), var(--indigo-700) 65%, #1e1b4b);
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, .16), 0 8px 22px rgba(79, 70, 229, .45);
+/* the brand is the navbar's own: the KT monogram in its orbit, and the name */
+.uni__brand { display: flex; align-items: center; gap: 13px; min-width: 0; }
+.uni__brand .mark { --mark-h: 40px; }
+.uni__brand:hover .mark__ring { opacity: 1; }
+
+/* the game is always night, so the monogram keeps its night colours */
+:root[data-theme="light"] .uni .mark__kt {
+    background: linear-gradient(135deg, #ffffff, var(--indigo-300) 45%, var(--indigo-500));
+    -webkit-background-clip: text;
+    background-clip: text;
 }
-.uni__who { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
-.uni__who b { font-family: var(--font-name); font-size: 1.3rem; font-weight: 400; white-space: nowrap; }
-.uni__who span { font-size: .56rem; font-weight: 600; letter-spacing: 1.6px; text-transform: uppercase; color: var(--u-muted); }
+
+.uni__who { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.uni__who b { font-family: var(--font-name); font-size: 1.32rem; font-weight: 400; line-height: 1.25; letter-spacing: .3px; white-space: nowrap; }
+.uni__who span { font-size: .58rem; font-weight: 500; letter-spacing: 1.1px; text-transform: uppercase; color: var(--u-muted); }
 
 .uni__progress {
     display: flex;
@@ -1029,94 +1027,6 @@ kbd {
 .uni-map__go svg { width: 14px; height: 14px; }
 
 
-/* Intro - the title screen */
-.uni-intro {
-    position: absolute;
-    inset: 0;
-    z-index: 6;
-    display: grid;
-    place-items: center;
-    padding: 24px;
-    overflow-y: auto;
-    background: radial-gradient(circle at 50% 45%, rgba(5, 9, 22, .72), rgba(2, 4, 13, .94) 70%);
-    transition: opacity .6s ease;
-}
-.uni-intro.is-gone { opacity: 0; pointer-events: none; }
-.uni-intro__card {
-    width: min(560px, 100%);
-    text-align: center;
-    animation: uniRise .9s cubic-bezier(.22, 1, .36, 1) both;
-}
-@keyframes uniRise {
-    from { opacity: 0; transform: translateY(24px); }
-    to   { opacity: 1; transform: none; }
-}
-.uni-intro__face { position: relative; width: 120px; height: 120px; margin: 0 auto 20px; }
-.uni-intro__face img {
-    position: relative;
-    width: 100%; height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    object-position: top;
-    border: 3px solid rgba(165, 180, 252, .6);
-    box-shadow: 0 0 0 8px rgba(99, 102, 241, .14), 0 0 60px rgba(99, 102, 241, .45);
-}
-.uni-intro__orbit {
-    position: absolute;
-    left: 50%; top: 50%;
-    width: 190%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    border: 1px solid rgba(165, 180, 252, .4);
-    transform: translate(-50%, -50%) rotate(-18deg) scaleY(.32);
-    animation: uniOrbit 12s linear infinite;
-}
-.uni-intro__orbit::after {
-    content: "";
-    position: absolute;
-    top: 50%; right: -5px;
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 0 12px var(--indigo-300);
-}
-@keyframes uniOrbit { to { transform: translate(-50%, -50%) rotate(342deg) scaleY(.32); } }
-
-.uni-intro__kicker { font-size: .66rem; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--indigo-300); }
-.uni-intro__title {
-    margin-top: 8px;
-    font-size: clamp(2.2rem, 6vw, 3.4rem);
-    font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: -1.6px;
-    background: linear-gradient(120deg, #fff 25%, var(--indigo-300) 75%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
-.uni-intro__role { margin-top: 6px; font-family: var(--font-name); font-size: 1.6rem; color: #c7d2fe; }
-.uni-intro__text { margin: 14px auto 0; max-width: 46ch; font-size: .95rem; font-weight: 300; line-height: 1.7; color: var(--u-muted); }
-.uni-intro__welcome { margin-top: 12px; font-size: .85rem; color: #6ee7b7; }
-
-.uni-intro__keys {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px 14px;
-    margin-top: 22px;
-}
-.uni-intro__keys li { display: inline-flex; align-items: center; gap: 7px; font-size: .76rem; color: var(--u-muted); }
-.uni-intro__keys--touch { display: none; }
-@media (hover: none), (pointer: coarse) {
-    .uni-intro__keys--pointer { display: none; }
-    .uni-intro__keys--touch { display: flex; }
-}
-
-.uni-intro__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 26px; }
-.uni-intro__note { margin-top: 14px; font-size: .74rem; color: var(--u-muted); }
-
-
 /* Finale - the whole universe explored */
 .uni-finale { position: absolute; inset: 0; z-index: 7; display: grid; place-items: center; padding: 20px; }
 .uni-finale__scrim { position: absolute; inset: 0; background: rgba(2, 4, 13, .75); opacity: 0; transition: opacity .35s ease; }
@@ -1258,7 +1168,7 @@ kbd {
 /* Phones */
 @media (max-width: 620px) {
     .uni__top { padding: 12px 12px 22px; gap: 8px; }
-    .uni__mark { width: 36px; height: 36px; font-size: .85rem; }
+    .uni__brand .mark { --mark-h: 34px; }
     .uni__progress { padding: 0 14px; height: 38px; }
     .uni__dots { display: none; }
     .uni__tools { gap: 6px; }
@@ -1286,8 +1196,6 @@ kbd {
     .uni__panel-classic { display: none; }
     .uni__panel-nav { max-width: 48%; }
 
-    .uni-intro__face { width: 96px; height: 96px; }
-    .uni-intro__actions .up-btn { width: 100%; }
     .uni-finale__card { padding: 34px 20px 24px; }
     .uni-finale__actions .up-btn { width: 100%; }
 
@@ -1299,7 +1207,6 @@ kbd {
 @media (prefers-reduced-motion: reduce) {
     .uni__next::before,
     .uni-enter::before,
-    .uni-intro__orbit,
     .uni-finale__ring,
     .uni__prompt,
     .uni__comms-from span { animation: none !important; }

@@ -1890,7 +1890,7 @@
         var copy = t.closest("[data-copy]");
         if (copy) { copyText(copy.getAttribute("data-copy"), copy); return; }
         var classic = t.closest("[data-classic]");
-        if (classic) { e.preventDefault(); setMode("classic", classic.getAttribute("data-classic")); }
+        if (classic) { e.preventDefault(); switchView("classic", classic.getAttribute("data-classic")); }
     });
 
     $("uniPanelClose").addEventListener("click", function () { takeOff(); });
@@ -1910,7 +1910,7 @@
         var next = WORLDS[w.index + 1];
         return next ? nextBodyOf(next) : null;
     }
-    $("uniClassic").addEventListener("click", function () { setMode("classic", this.getAttribute("data-to")); });
+    $("uniClassic").addEventListener("click", function () { switchView("classic", this.getAttribute("data-to")); });
 
     function copyText(value, btn) {
         function done() {
@@ -2259,7 +2259,7 @@
             else if (landed) takeOff();
             return;
         }
-        if (!intro.hidden || !finale.hidden || !mapEl.hidden) return;
+        if (!finale.hidden || !mapEl.hidden) return;
         if (landed) return;                          // the panel has the keyboard while landed
         if (setKey(e, true)) {
             if (started) e.preventDefault();
@@ -2315,15 +2315,18 @@
     canvas.addEventListener("pointercancel", function () { if (press) clearTimeout(press.timer); press = null; steer = null; });
 
 
-    /* Intro and finale */
-    var intro = $("uniIntro");
+    /* Starting, and the finale */
     var finale = $("uniFinale");
     var started = false;
 
+    // every switch between the views goes out as one event, which the classic
+    // page hears too, so the two always agree on which one is showing
+    function switchView(m, to) {
+        document.dispatchEvent(new CustomEvent("kt:mode", { detail: { mode: m, to: to } }));
+    }
+
     function startGame() {
         started = true;
-        intro.classList.add("is-gone");
-        setTimeout(function () { intro.hidden = true; }, 600);
         uni.classList.add("is-playing");
         if (state.sound) sound.unlock();
         canvas.focus({ preventScroll: true });
@@ -2340,9 +2343,8 @@
         }
     }
 
-    $("uniStart").addEventListener("click", startGame);
     all("[data-uni-classic]").forEach(function (b) {
-        b.addEventListener("click", function () { setMode("classic", "#home"); });
+        b.addEventListener("click", function () { switchView("classic", "#home"); });
     });
 
     function openFinale() {
@@ -2372,7 +2374,7 @@
         if (t.closest("[data-finale-close]")) { closeFinale(); return; }
         if (t.closest("[data-finale-contact]")) { closeFinale(); flyTo(BODY.beacon, true); return; }
         var classic = t.closest("[data-classic]");
-        if (classic) { e.preventDefault(); closeFinale(); setMode("classic", classic.getAttribute("data-classic")); }
+        if (classic) { e.preventDefault(); closeFinale(); switchView("classic", classic.getAttribute("data-classic")); }
     });
 
 
@@ -2412,10 +2414,8 @@
         if (game) {
             resize();
             run();
-            if (!started) {
-                intro.hidden = false;
-                $("uniStart").focus({ preventScroll: true });
-            }
+            if (!started) startGame();
+            else canvas.focus({ preventScroll: true });
         } else {
             stop();
             if (landed) { landed = null; ship.state = "flying"; closePanel(); }
@@ -2426,7 +2426,7 @@
         }
     }
 
-    if (enterBtn) enterBtn.addEventListener("click", function () { setMode("game"); });
+    if (enterBtn) enterBtn.addEventListener("click", function () { switchView("game"); });
 
 
     /* The loop */
@@ -2462,21 +2462,16 @@
     });
 
 
-    /* Start */
+    /* Start - the universe waits to be chosen. The welcome screen, the
+       "Explore as a game" button and the buttons in here all send the same
+       kt:mode event, and this is where it is answered. */
     renderHud();
-    if (exploredCount() > 0) {
-        $("uniStartLabel").textContent = "Continue exploring";
-        $("uniWelcome").hidden = false;
-        $("uniWelcomeN").textContent = exploredCount() + " of " + WORLDS.length;
-    }
-    if (C.portrait && C.portrait.src) $("uniFace").src = C.portrait.src;
     all(".uni__face").forEach(function (im) { if (C.portrait && C.portrait.src) im.src = C.portrait.src; });
     $("uniHintKeys").hidden = touchFirst;
     $("uniHintTouch").hidden = !touchFirst;
 
-    // a link to a section, or a visitor who chose the classic page, starts there
-    var saved = null;
-    try { saved = localStorage.getItem("kt-mode"); } catch (e) { /* ignore */ }
-    var hash = location.hash && location.hash.length > 1 ? document.querySelector(location.hash) : null;
-    setMode(hash || saved === "classic" ? "classic" : "game");
+    document.addEventListener("kt:mode", function (e) {
+        var d = e.detail || {};
+        setMode(d.mode === "game" ? "game" : "classic", d.to);
+    });
 })();

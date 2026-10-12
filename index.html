@@ -46,6 +46,134 @@
         </div>
     </div>
 
+    <!-- Welcome: after the loader, a short introduction and one question -
+         the classic portfolio or the space mission. Opened by script, so
+         without it the page simply loads as it always has. -->
+    <div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateName" aria-describedby="gateLine" hidden>
+        <span class="gate__glow gate__glow--1" aria-hidden="true"></span>
+        <span class="gate__glow gate__glow--2" aria-hidden="true"></span>
+
+        <div class="gate__inner">
+            <div class="gate__intro">
+                <figure class="gate__face" style="--gi:0">
+                    <svg class="gate__orbit" viewBox="0 0 220 220" aria-hidden="true">
+                        <ellipse cx="110" cy="110" rx="106" ry="34"/>
+                        <circle r="4.5"><animateMotion dur="9s" repeatCount="indefinite" path="M4,110 a106,34 0 1,0 212,0 a106,34 0 1,0 -212,0"/></circle>
+                    </svg>
+                    <img src="assets/images/profile/tuhin-formal.png" alt="" width="132" height="132">
+                </figure>
+                <p class="gate__status" style="--gi:1"><span aria-hidden="true"></span>Open to opportunities</p>
+                <p class="gate__hello" style="--gi:2">Hello, I&rsquo;m</p>
+                <h2 class="gate__name" id="gateName" style="--gi:3">Kamrujjaman Tuhin</h2>
+                <p class="gate__role" style="--gi:4">Full-Stack Developer</p>
+                <p class="gate__line" id="gateLine" style="--gi:5">I build production software for the web &mdash; interface, server and everything in between.</p>
+                <ul class="gate__facts" style="--gi:6">
+                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12.5h18"/></svg><span>Software Engineer at <b>Mega Packaging Bangladesh</b></span></li>
+                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/><path d="M3.5 4.5V9H8M12 7.5V12l3 2"/></svg><span>Previously at <b>Brain Station 23</b></span></li>
+                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5 12 4.8l9.5 4.7L12 14.2 2.5 9.5Z"/><path d="M6.5 11.8v4c0 1.5 2.5 2.8 5.5 2.8s5.5-1.3 5.5-2.8v-4"/></svg><span><b>B.Sc. in CSE</b>, Daffodil International University</span></li>
+                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span><b>Savar, Dhaka</b>, Bangladesh</span></li>
+                </ul>
+                <dl class="gate__stats" style="--gi:7">
+                    <div><dt>Technologies</dt><dd data-gate-count=".sat">13</dd></div>
+                    <div><dt>Companies</dt><dd data-gate-count=".xp">2</dd></div>
+                    <div><dt>National awards</dt><dd data-gate-count=".award">2</dd></div>
+                    <div><dt>Club roles</dt><dd data-gate-count=".clubx__tab">6</dd></div>
+                </dl>
+            </div>
+
+            <div class="gate__ask">
+                <p class="gate__kicker">One question before we start</p>
+                <p class="gate__q" id="gateQ">How would you like to explore my portfolio?</p>
+
+                <div class="gate__choices" role="group" aria-labelledby="gateQ">
+                    <button class="choice" type="button" data-choose="classic">
+                        <span class="choice__art">
+                            <svg class="art" viewBox="0 0 300 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                                <defs>
+                                    <linearGradient id="gaPageBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141b46"/><stop offset="1" stop-color="#070b1e"/></linearGradient>
+                                    <linearGradient id="gaInk" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#818cf8"/><stop offset="1" stop-color="#c7d2fe"/></linearGradient>
+                                    <clipPath id="gaView"><rect x="24" y="38" width="252" height="112"/></clipPath>
+                                </defs>
+                                <rect width="300" height="150" fill="url(#gaPageBg)"/>
+                                <rect x="24" y="16" width="252" height="150" rx="10" fill="#0b1130" stroke="rgba(165,180,252,.28)"/>
+                                <circle cx="36" cy="27" r="2.6" fill="#f87171"/><circle cx="44" cy="27" r="2.6" fill="#fbbf24"/><circle cx="52" cy="27" r="2.6" fill="#34d399"/>
+                                <rect x="96" y="23" width="108" height="8" rx="4" fill="rgba(255,255,255,.08)"/>
+                                <line x1="24" y1="37.5" x2="276" y2="37.5" stroke="rgba(165,180,252,.14)"/>
+                                <g clip-path="url(#gaView)">
+                                    <g class="art__scroll">
+                                        <rect x="38" y="52" width="44" height="5" rx="2.5" fill="url(#gaInk)"/>
+                                        <rect x="38" y="62" width="104" height="10" rx="5" fill="#e0e7ff"/>
+                                        <rect x="38" y="77" width="84" height="10" rx="5" fill="url(#gaInk)"/>
+                                        <rect x="38" y="93" width="96" height="4" rx="2" fill="rgba(255,255,255,.22)"/>
+                                        <rect x="38" y="101" width="72" height="4" rx="2" fill="rgba(255,255,255,.14)"/>
+                                        <rect x="38" y="112" width="36" height="11" rx="5.5" fill="#6366f1"/>
+                                        <rect x="79" y="112" width="32" height="11" rx="5.5" fill="none" stroke="rgba(165,180,252,.45)"/>
+                                        <ellipse cx="216" cy="86" rx="44" ry="13" fill="none" stroke="rgba(165,180,252,.35)" transform="rotate(-16 216 86)"/>
+                                        <circle cx="216" cy="86" r="27" fill="#26246b" stroke="#818cf8" stroke-width="1.5"/>
+                                        <circle cx="216" cy="80" r="9" fill="#a5b4fc"/>
+                                        <path d="M199 104c3-9 10-13 17-13s14 4 17 13" fill="#a5b4fc"/>
+                                        <g fill="rgba(255,255,255,.05)" stroke="rgba(165,180,252,.2)">
+                                            <rect x="38" y="140" width="70" height="46" rx="7"/>
+                                            <rect x="115" y="140" width="70" height="46" rx="7"/>
+                                            <rect x="192" y="140" width="70" height="46" rx="7"/>
+                                        </g>
+                                        <g fill="url(#gaInk)" opacity=".8">
+                                            <rect x="46" y="170" width="40" height="4" rx="2"/>
+                                            <rect x="123" y="170" width="40" height="4" rx="2"/>
+                                            <rect x="200" y="170" width="40" height="4" rx="2"/>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                        </span>
+                        <span class="choice__copy">
+                            <span class="choice__kicker"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg> Classic view <em class="choice__last">Last time</em></span>
+                            <span class="choice__title">Everything on one page</span>
+                            <span class="choice__text">A clean scroll through my work, skills and experience &mdash; quick to scan, and made for recruiters.</span>
+                        </span>
+                        <span class="choice__meta"><kbd>1</kbd><span>About two minutes</span><span class="choice__go"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></span>
+                    </button>
+
+                    <button class="choice choice--game" type="button" data-choose="game">
+                        <span class="choice__art">
+                            <svg class="art" viewBox="0 0 300 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                                <defs>
+                                    <radialGradient id="gaSky" cx=".5" cy=".45" r=".8"><stop offset="0" stop-color="#1d1957"/><stop offset="1" stop-color="#04061a"/></radialGradient>
+                                    <radialGradient id="gaNeb" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#7c3aed" stop-opacity=".45"/><stop offset="1" stop-color="#7c3aed" stop-opacity="0"/></radialGradient>
+                                    <radialGradient id="gaP1" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#c7d2fe"/><stop offset=".5" stop-color="#6366f1"/><stop offset="1" stop-color="#1e1b4b"/></radialGradient>
+                                    <radialGradient id="gaP2" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#bae6fd"/><stop offset=".5" stop-color="#0ea5e9"/><stop offset="1" stop-color="#0c1e4a"/></radialGradient>
+                                    <radialGradient id="gaP3" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#fef3c7"/><stop offset=".5" stop-color="#f59e0b"/><stop offset="1" stop-color="#4a2306"/></radialGradient>
+                                </defs>
+                                <rect width="300" height="150" fill="url(#gaSky)"/>
+                                <circle cx="180" cy="70" r="80" fill="url(#gaNeb)"/>
+                                <g fill="#fff" opacity=".75"><circle cx="18" cy="20" r="0.9"/><circle cx="44" cy="58" r="0.6"/><circle cx="70" cy="14" r="1.1"/><circle cx="96" cy="40" r="0.7"/><circle cx="122" cy="22" r="0.6"/><circle cx="150" cy="52" r="0.9"/><circle cx="176" cy="12" r="0.7"/><circle cx="204" cy="30" r="1.0"/><circle cx="232" cy="16" r="0.6"/><circle cx="258" cy="60" r="0.8"/><circle cx="284" cy="24" r="0.9"/><circle cx="30" cy="96" r="0.7"/><circle cx="62" cy="132" r="0.9"/><circle cx="110" cy="108" r="0.6"/><circle cx="138" cy="140" r="0.8"/><circle cx="170" cy="120" r="0.6"/><circle cx="226" cy="128" r="0.9"/><circle cx="252" cy="104" r="0.6"/><circle cx="280" cy="136" r="0.8"/><circle cx="12" cy="140" r="0.6"/></g>
+                                <path d="M44 108 C 96 34, 140 136, 190 76 S 246 30, 262 46" fill="none" stroke="rgba(165,180,252,.4)" stroke-width="1.2" stroke-dasharray="4 5"/>
+                                <ellipse cx="44" cy="108" rx="27" ry="7" fill="none" stroke="rgba(165,180,252,.55)" stroke-width="1.6" transform="rotate(-14 44 108)"/>
+                                <circle cx="44" cy="108" r="16" fill="url(#gaP1)"/>
+                                <circle cx="190" cy="76" r="10" fill="url(#gaP2)"/>
+                                <ellipse cx="262" cy="46" rx="22" ry="6" fill="none" stroke="rgba(253,230,138,.6)" stroke-width="1.5" transform="rotate(-14 262 46)"/>
+                                <circle cx="262" cy="46" r="13" fill="url(#gaP3)"/>
+                                <g class="art__ship">
+                                    <path d="M-12 0 L-5 -1.6 L-5 1.6 Z" fill="#818cf8" opacity=".8"/>
+                                    <path d="M8 0 L-5 -5 L-3 0 L-5 5 Z" fill="#eef2ff"/>
+                                    <animateMotion dur="7s" repeatCount="indefinite" rotate="auto" path="M44 108 C 96 34, 140 136, 190 76 S 246 30, 262 46"/>
+                                </g>
+                            </svg>
+                        </span>
+                        <span class="choice__copy">
+                            <span class="choice__kicker"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5c2.6-1.1 4.6-1.1 5-.7.4.4.4 2.4-.7 5L12.5 15 9 11.5z"/><path d="M9 11.5 5.5 12 4 14l3.5 1M12.5 15l-.5 3.5L10 20l-1-3.5"/><circle cx="15" cy="9" r="1.3"/></svg> Gaming view <em class="choice__last">Last time</em></span>
+                            <span class="choice__title">Fly through my career</span>
+                            <span class="choice__text">Pilot a ship between eight worlds &mdash; education, skills, projects, experience &mdash; and land on each one.</span>
+                        </span>
+                        <span class="choice__meta"><kbd>2</kbd><span>Keyboard, mouse or touch</span><span class="choice__go"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></span>
+                    </button>
+                </div>
+
+                <p class="gate__note">You can switch between the two views at any time.</p>
+            </div>
+        </div>
+    </div>
+
     <div class="scroll-progress" id="scrollProgress"></div>
 
     <!-- Navbar -->
@@ -331,62 +459,64 @@
             </p>
         </header>
 
-        <div class="timeline">
-            <span class="timeline__rail" aria-hidden="true"><span class="timeline__progress"></span></span>
+        <div class="journey" data-reveal data-glow-group>
+            <div class="journey__track" aria-hidden="true">
+                <span class="journey__line"><span class="journey__fill"></span></span>
+                <span class="journey__now"><i></i>Now</span>
+            </div>
 
-            <ol class="timeline__list">
-
-                <li class="tl">
-                    <span class="tl__node tl__node--live" aria-hidden="true"></span>
-                    <article class="tl__card">
-                        <span class="tl__logo">
-                            <span class="tl__ring" aria-hidden="true"></span>
-                            <img src="assets/images/institute/diu-logo.jpg" alt="Daffodil International University logo" loading="lazy" width="80" height="80" data-fallback="school">
-                        </span>
-                        <div class="tl__copy">
-                            <p class="tl__years">2022 &mdash; 2026 <span class="tl__badge">Ongoing</span></p>
-                            <h3 class="tl__school">Daffodil International University</h3>
-                            <p class="tl__degree">B.Sc. in Computer Science &amp; Engineering</p>
-                            <p class="tl__meta">CGPA 3.50</p>
-                        </div>
-                        <span class="tl__level" aria-hidden="true">B.Sc.</span>
+            <ol class="journey__list">
+                <li class="tl edu-step" style="--si:0">
+                    <span class="edu-step__node" data-year="2013" aria-hidden="true"></span>
+                    <article class="edu-step__card" data-glow>
+                        <header class="edu-step__head">
+                            <span class="tl__logo edu-step__crest">
+                                <span class="tl__ring" aria-hidden="true"></span>
+                                <img src="assets/images/institute/uighs-logo.jpg" alt="United Islamia Govt. High School logo" loading="lazy" width="80" height="80" data-fallback="school">
+                            </span>
+                            <span class="edu-step__level" aria-hidden="true">SSC</span>
+                        </header>
+                        <p class="edu-step__when"><span class="tl__years">2013 &mdash; 2018</span><span class="edu-step__span">5 years</span></p>
+                        <h3 class="tl__school edu-step__school">United Islamia Govt. High School</h3>
+                        <p class="tl__degree edu-step__degree">Secondary School Certificate</p>
+                        <p class="tl__meta edu-step__meta"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span>Madaripur, Bangladesh</span></p>
                     </article>
                 </li>
 
-                <li class="tl">
-                    <span class="tl__node" aria-hidden="true"></span>
-                    <article class="tl__card">
-                        <span class="tl__logo">
-                            <span class="tl__ring" aria-hidden="true"></span>
-                            <img src="assets/images/institute/mgc-logo.jpg" alt="Madaripur Government College logo" loading="lazy" width="80" height="80" data-fallback="school">
-                        </span>
-                        <div class="tl__copy">
-                            <p class="tl__years">2018 &mdash; 2020</p>
-                            <h3 class="tl__school">Madaripur Government College</h3>
-                            <p class="tl__degree">Higher Secondary Certificate</p>
-                            <p class="tl__meta">Madaripur, Bangladesh</p>
-                        </div>
-                        <span class="tl__level" aria-hidden="true">HSC</span>
+                <li class="tl edu-step" style="--si:1">
+                    <span class="edu-step__node" data-year="2018" aria-hidden="true"></span>
+                    <article class="edu-step__card" data-glow>
+                        <header class="edu-step__head">
+                            <span class="tl__logo edu-step__crest">
+                                <span class="tl__ring" aria-hidden="true"></span>
+                                <img src="assets/images/institute/mgc-logo.jpg" alt="Madaripur Government College logo" loading="lazy" width="80" height="80" data-fallback="school">
+                            </span>
+                            <span class="edu-step__level" aria-hidden="true">HSC</span>
+                        </header>
+                        <p class="edu-step__when"><span class="tl__years">2018 &mdash; 2020</span><span class="edu-step__span">2 years</span></p>
+                        <h3 class="tl__school edu-step__school">Madaripur Government College</h3>
+                        <p class="tl__degree edu-step__degree">Higher Secondary Certificate</p>
+                        <p class="tl__meta edu-step__meta"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span>Madaripur, Bangladesh</span></p>
                     </article>
                 </li>
 
-                <li class="tl">
-                    <span class="tl__node" aria-hidden="true"></span>
-                    <article class="tl__card">
-                        <span class="tl__logo">
-                            <span class="tl__ring" aria-hidden="true"></span>
-                            <img src="assets/images/institute/uighs-logo.jpg" alt="United Islamia Govt. High School logo" loading="lazy" width="80" height="80" data-fallback="school">
-                        </span>
-                        <div class="tl__copy">
-                            <p class="tl__years">2013 &mdash; 2018</p>
-                            <h3 class="tl__school">United Islamia Govt. High School</h3>
-                            <p class="tl__degree">Secondary School Certificate</p>
-                            <p class="tl__meta">Madaripur, Bangladesh</p>
-                        </div>
-                        <span class="tl__level" aria-hidden="true">SSC</span>
+                <li class="tl edu-step edu-step--now" style="--si:2">
+                    <span class="edu-step__node" data-year="2022" aria-hidden="true"></span>
+                    <article class="edu-step__card" data-glow>
+                        <header class="edu-step__head">
+                            <span class="tl__logo edu-step__crest">
+                                <span class="tl__ring" aria-hidden="true"></span>
+                                <img src="assets/images/institute/diu-logo.jpg" alt="Daffodil International University logo" loading="lazy" width="80" height="80" data-fallback="school">
+                            </span>
+                            <span class="edu-step__level" aria-hidden="true">B.Sc.</span>
+                        </header>
+                        <p class="edu-step__when"><span class="tl__years">2022 &mdash; 2026 <span class="tl__badge">Ongoing</span></span><span class="edu-step__span">4 years</span></p>
+                        <h3 class="tl__school edu-step__school">Daffodil International University</h3>
+                        <p class="tl__degree edu-step__degree">B.Sc. in Computer Science &amp; Engineering</p>
+                        <p class="tl__meta edu-step__meta edu-step__meta--gpa">CGPA <b>3.50</b> <span>/ 4.00</span></p>
+                        <span class="edu-step__gpa" aria-hidden="true"><i style="--v:.875"></i></span>
                     </article>
                 </li>
-
             </ol>
         </div>
     </section>
@@ -624,7 +754,7 @@
         </div>
 
         <div class="projects__grid" id="projGrid">
-                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="https://rtgs.megapackagingbd.com" data-reveal style="--rd:0.05s">
+                <article class="proj" data-key="rtgs" data-featured data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="https://rtgs.megapackagingbd.com" data-reveal style="--rd:0.05s">
                     <button class="proj__open" type="button" aria-haspopup="dialog">
                         <span class="proj__cover" data-ui="table" style="--c1:#4338ca; --c2:#1e40af" aria-hidden="true">
                             <img src="assets/images/projects/rtgs-management-system.jpg" alt="" width="1920" height="1240" loading="lazy" decoding="async">
@@ -995,77 +1125,77 @@
             <h2 class="section__title" data-reveal="words" data-words>Where the learning <em>got real</em></h2>
             <p class="section__lede" data-reveal style="--rd:.14s">
                 Classrooms teach you the rules; shipping teaches you the exceptions. These are the
-                places I have written code that someone other than me had to rely on. Open any one
-                for the detail.
+                places I have written code that someone other than me had to rely on.
             </p>
         </header>
 
-        <div class="xps">
-            <span class="xps__rail" aria-hidden="true"></span>
-                <article class="xp" data-reveal="left" style="--rd:0.00s">
-                    <span class="xp__node xp__node--live" aria-hidden="true"></span>
+        <div class="career" data-glow-group>
+            <span class="career__rail" aria-hidden="true"></span>
 
-                    <h3 class="xp__head">
-                        <button class="xp__toggle" type="button" aria-expanded="true" aria-controls="xp0">
-                            <span class="xp__logo"><img src="assets/images/company/mega-packaging-logo.png" alt="Mega Packaging Bangladesh Limited logo" loading="lazy" width="56" height="56" data-fallback="MP"></span>
-                            <span class="xp__id">
-                                <span class="xp__role">Software Engineer</span>
-                                <span class="xp__org">Mega Packaging Bangladesh Limited</span>
-                            </span>
-                            <span class="xp__meta">
-                                <span class="xp__when">2026 &mdash; Present</span> <span class="xp__now">Current</span>
-                                <span class="xp__kind">Full Time</span>
-                            </span>
-                            <span class="xp__chev" aria-hidden="true">
-                                <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
-                            </span>
-                        </button>
-                    </h3>
+            <article class="xp job job--now" data-reveal style="--rd:0s">
+                <aside class="job__when">
+                    <span class="job__node" aria-hidden="true"></span>
+                    <span class="job__year" aria-hidden="true">2026</span>
+                    <span class="xp__when job__span">2026 &mdash; Present</span>
+                    <span class="xp__now job__now">Current</span>
+                </aside>
 
-                    <div class="xp__panel" id="xp0">
-                        <div class="xp__inner">
-                            <p class="xp__summary">Building and maintaining internal software for a manufacturing business, where the people using it are colleagues and the feedback is immediate.</p>
-                            <ul class="xp__list">
-                                <li>Developing features across the stack against real operational requirements</li>
-                                <li>Working with existing systems and data rather than starting from a blank file</li>
-                                <li>Supporting what I ship, which keeps the quality bar honest</li>
-                            </ul>
-                            <p class="xp__stack"><span>Next.js</span><span>TypeScript</span><span>Node.js</span><span>MongoDB</span></p>
+                <div class="job__card" data-glow>
+                    <header class="job__head">
+                        <span class="xp__logo job__logo"><img src="assets/images/company/mega-packaging-logo.png" alt="Mega Packaging Bangladesh Limited logo" loading="lazy" width="56" height="56" data-fallback="MP"></span>
+                        <div class="job__id">
+                            <h3 class="xp__role job__title">Software Engineer</h3>
+                            <p class="xp__org job__org">Mega Packaging Bangladesh Limited</p>
                         </div>
-                    </div>
-                </article>
-                <article class="xp" data-reveal="left" style="--rd:0.10s">
-                    <span class="xp__node" aria-hidden="true"></span>
+                        <span class="xp__kind job__kind">Full Time</span>
+                    </header>
 
-                    <h3 class="xp__head">
-                        <button class="xp__toggle" type="button" aria-expanded="false" aria-controls="xp1">
-                            <span class="xp__logo"><img src="assets/images/company/brain-station-logo.webp" alt="Brain Station 23 logo" loading="lazy" width="56" height="56" data-fallback="BS23"></span>
-                            <span class="xp__id">
-                                <span class="xp__role">Full-Stack Developer</span>
-                                <span class="xp__org">Brain Station 23</span>
-                            </span>
-                            <span class="xp__meta">
-                                <span class="xp__when">2023 &mdash; 2025</span>
-                                <span class="xp__kind">Full Time</span>
-                            </span>
-                            <span class="xp__chev" aria-hidden="true">
-                                <svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
-                            </span>
-                        </button>
-                    </h3>
+                    <p class="xp__summary job__summary">Building and maintaining internal software for a manufacturing business, where the people using it are colleagues and the feedback is immediate.</p>
+                    <ul class="xp__list job__list">
+                            <li><svg class="i job__tick" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.6 4.5L19 7.5"/></svg>Developing features across the stack against real operational requirements</li>
+                            <li><svg class="i job__tick" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.6 4.5L19 7.5"/></svg>Working with existing systems and data rather than starting from a blank file</li>
+                            <li><svg class="i job__tick" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.6 4.5L19 7.5"/></svg>Supporting what I ship, which keeps the quality bar honest</li>
+                    </ul>
 
-                    <div class="xp__panel" id="xp1">
-                        <div class="xp__inner">
-                            <p class="xp__summary">Two years in a professional engineering team, delivering client work end to end and learning how software is actually built at scale.</p>
-                            <ul class="xp__list">
-                                <li>Delivered features from requirement through to production release</li>
-                                <li>Worked inside established codebases and review processes with a team</li>
-                                <li>Learned how much of engineering is communication, estimation and follow-through</li>
-                            </ul>
-                            <p class="xp__stack"><span>React</span><span>Next.js</span><span>Node.js</span><span>MongoDB</span><span>Git</span></p>
+                    <footer class="job__foot">
+                        <p class="xp__stack job__stack"><span>Next.js</span><span>TypeScript</span><span>Node.js</span><span>MongoDB</span></p>
+                        <a class="job__work" href="#projects" data-open-project="rtgs">
+                            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c.6 4.5 2.5 6.4 7 7-4.5.6-6.4 2.5-7 7-.6-4.5-2.5-6.4-7-7 4.5-.6 6.4-2.5 7-7z"/></svg><span>Shipped here: <b>RTGS Management System</b></span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+                        </a>
+                    </footer>
+                </div>
+            </article>
+
+            <article class="xp job" data-reveal style="--rd:.1s">
+                <aside class="job__when">
+                    <span class="job__node" aria-hidden="true"></span>
+                    <span class="job__year" aria-hidden="true">2023</span>
+                    <span class="xp__when job__span">2023 &mdash; 2025</span>
+                    
+                </aside>
+
+                <div class="job__card" data-glow>
+                    <header class="job__head">
+                        <span class="xp__logo job__logo"><img src="assets/images/company/brain-station-logo.webp" alt="Brain Station 23 logo" loading="lazy" width="56" height="56" data-fallback="BS23"></span>
+                        <div class="job__id">
+                            <h3 class="xp__role job__title">Full-Stack Developer</h3>
+                            <p class="xp__org job__org">Brain Station 23</p>
                         </div>
-                    </div>
-                </article>
+                        <span class="xp__kind job__kind">Full Time</span>
+                    </header>
+
+                    <p class="xp__summary job__summary">Two years in a professional engineering team, delivering client work end to end and learning how software is actually built at scale.</p>
+                    <ul class="xp__list job__list">
+                            <li><svg class="i job__tick" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.6 4.5L19 7.5"/></svg>Delivered features from requirement through to production release</li>
+                            <li><svg class="i job__tick" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.6 4.5L19 7.5"/></svg>Worked inside established codebases and review processes with a team</li>
+                            <li><svg class="i job__tick" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.6 4.5L19 7.5"/></svg>Learned how much of engineering is communication, estimation and follow-through</li>
+                    </ul>
+
+                    <footer class="job__foot">
+                        <p class="xp__stack job__stack"><span>React</span><span>Next.js</span><span>Node.js</span><span>MongoDB</span><span>Git</span></p>
+                    </footer>
+                </div>
+            </article>
         </div>
     </section>
 
@@ -1566,80 +1696,63 @@
             </p>
         </header>
 
-        <div class="reach">
+        <div class="hub" data-glow-group>
 
-            <!-- Left: the direct routes -->
-            <div class="reach__side" data-reveal style="--rd:.06s">
-                <header class="panel__head">
-                    <span class="panel__no">01</span>
-                    <h3 class="panel__title">Reach me directly</h3>
-                    <p class="panel__note">Email is fastest. Everything else works too.</p>
-                </header>
-
-                <ul class="lines">
-                    <li class="line" data-reveal style="--rd:.12s">
-                        <span class="line__icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24"><rect x="2.6" y="4.8" width="18.8" height="14.4" rx="2.6"/><path d="M3.3 7.1 12 13.4l8.7-6.3"/></svg>
-                        </span>
-                        <span class="line__body">
-                            <span class="line__label">Email</span>
-                            <span class="line__value" id="mailValue">kamrujjamantuhinkt3@gmail.com</span>
-                        </span>
-                        <button class="line__copy" type="button" id="copyMail" aria-label="Copy email address">
+            <!-- Left: every way to reach me -->
+            <div class="hub__tiles">
+                <article class="tile tile--mail" data-glow data-reveal style="--rd:.04s">
+                    <p class="tile__status"><span aria-hidden="true"></span>Open to opportunities</p>
+                    <p class="tile__kicker"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.6" y="4.8" width="18.8" height="14.4" rx="2.6"/><path d="M3.3 7.1 12 13.4l8.7-6.3"/></svg> Email &middot; the fastest way to reach me</p>
+                    <p class="tile__mail" id="mailValue">kamrujjamantuhinkt3@gmail.com</p>
+                    <div class="tile__actions">
+                        <a class="btn btn--primary btn--sm" href="mailto:kamrujjamantuhinkt3@gmail.com"><span>Write an email</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7z"/></svg></a>
+                        <button class="tile__copy" type="button" id="copyMail" aria-label="Copy email address">
                             <svg class="i-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.2"/><path d="M15 6.2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h1.2"/></svg>
                             <svg class="i-done" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.6 4.5L19 7.5"/></svg>
+                            <span class="tile__copy-label">Copy</span>
                         </button>
-                    </li>
+                    </div>
+                </article>
 
-                    <li class="line" data-reveal style="--rd:.18s">
-                        <span class="line__icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" class="is-filled"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3.2 9h3.6v12H3.2zM9.2 9h3.45v1.64h.05c.48-.9 1.66-1.85 3.42-1.85 3.66 0 4.33 2.4 4.33 5.52V21h-3.6v-5.02c0-1.2-.02-2.74-1.67-2.74-1.67 0-1.93 1.3-1.93 2.65V21H9.2z"/></svg>
-                        </span>
-                        <span class="line__body">
-                            <span class="line__label">LinkedIn</span>
-                            <span class="line__value">in/kamrujjamantuhinkt3</span>
-                        </span>
-                        <a class="line__go" href="https://www.linkedin.com/in/kamrujjamantuhinkt3" target="_blank" rel="noopener" aria-label="Open LinkedIn profile">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
-                        </a>
-                    </li>
+                <a class="tile tile--link tile--in" href="https://www.linkedin.com/in/kamrujjamantuhinkt3" target="_blank" rel="noopener" data-glow data-reveal style="--rd:.1s">
+                    <span class="tile__icon"><svg class="i i--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3.2 9h3.6v12H3.2zM9.2 9h3.45v1.64h.05c.48-.9 1.66-1.85 3.42-1.85 3.66 0 4.33 2.4 4.33 5.52V21h-3.6v-5.02c0-1.2-.02-2.74-1.67-2.74-1.67 0-1.93 1.3-1.93 2.65V21H9.2z"/></svg></span>
+                    <span class="tile__name">LinkedIn</span>
+                    <span class="tile__handle">in/kamrujjamantuhinkt3</span>
+                    <span class="tile__go"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+                </a>
 
-                    <li class="line" data-reveal style="--rd:.24s">
-                        <span class="line__icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" class="is-filled"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg>
-                        </span>
-                        <span class="line__body">
-                            <span class="line__label">GitHub</span>
-                            <span class="line__value">kamrujjamantuhinkt3</span>
-                        </span>
-                        <a class="line__go" href="https://www.github.com/kamrujjamantuhinkt3" target="_blank" rel="noopener" aria-label="Open GitHub profile">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>
-                        </a>
-                    </li>
+                <a class="tile tile--link tile--gh" href="https://www.github.com/kamrujjamantuhinkt3" target="_blank" rel="noopener" data-glow data-reveal style="--rd:.14s">
+                    <span class="tile__icon"><svg class="i i--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg></span>
+                    <span class="tile__name">GitHub</span>
+                    <span class="tile__handle">kamrujjamantuhinkt3</span>
+                    <span class="tile__go"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+                </a>
 
-                    <li class="line" data-reveal style="--rd:.30s">
-                        <span class="line__icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
-                        </span>
-                        <span class="line__body">
-                            <span class="line__label">Based in</span>
-                            <span class="line__value">Savar, Dhaka &middot; <span class="line__time" id="localTime">--:--</span> Local</span>
-                        </span>
-                    </li>
-                </ul>
+                <article class="tile tile--time" data-glow data-reveal style="--rd:.18s">
+                    <span class="clock" id="clockFace" aria-hidden="true"><i class="clock__h"></i><i class="clock__m"></i><i class="clock__dot"></i></span>
+                    <div class="tile__time-copy">
+                        <p class="tile__kicker"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg> Savar, Dhaka</p>
+                        <p class="tile__time"><span id="localTime">--:--</span></p>
+                        <p class="tile__note" id="localNote">Local time &middot; GMT+6</p>
+                    </div>
+                </article>
 
-                <a href="assets/docs/Kamrujjaman-Tuhin-CV.pdf" class="btn btn--ghost reach__cv" id="cvContact" download>
-                    <span>Download CV</span>
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3.5v11M7.5 10.5 12 15l4.5-4.5M4.5 18.5h15"/></svg>
+                <a class="tile tile--link tile--cv" href="assets/docs/Kamrujjaman-Tuhin-CV.pdf" id="cvContact" download data-glow data-reveal style="--rd:.22s">
+                    <span class="tile__icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span>
+                    <span class="tile__name">Download CV</span>
+                    <span class="tile__handle">PDF r&eacute;sum&eacute;</span>
+                    <span class="tile__go"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11M7.5 10.5 12 15l4.5-4.5M4.5 18.5h15"/></svg></span>
                 </a>
             </div>
 
-            <!-- Right: write the message here -->
-            <form class="note" id="contactForm" novalidate data-reveal="zoom" style="--rd:.16s">
-                <header class="panel__head">
-                    <span class="panel__no">02</span>
-                    <h3 class="panel__title">Or write to me here</h3>
-                    <p class="panel__note">Tell me what you are building and I will come back to you.</p>
+            <!-- Right: the message form -->
+            <form class="note" id="contactForm" novalidate data-glow data-reveal="zoom" style="--rd:.16s">
+                <header class="note__head">
+                    <span class="note__icon"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7z"/></svg></span>
+                    <div>
+                        <h3 class="note__title">Send a message</h3>
+                        <p class="note__sub">Tell me what you are building and I will come back to you.</p>
+                    </div>
                 </header>
 
                 <div class="note__grid">
@@ -1661,7 +1774,7 @@
                     <label class="field__label" for="cSubject">Subject <span>(optional)</span></label>
                 </p>
 
-                <p class="field">
+                <p class="field field--grow">
                     <textarea class="field__input field__input--area" id="cBody" name="message" rows="5" placeholder=" " required></textarea>
                     <label class="field__label" for="cBody">Your message</label>
                     <span class="field__error" data-for="cBody"></span>
@@ -1670,7 +1783,7 @@
 
                 <button class="btn btn--primary note__send" type="submit" id="sendBtn">
                     <span class="note__send-text">Send message</span>
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+                    <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
                 </button>
 
                 <p class="note__hint" id="formHint" role="status" aria-live="polite">
@@ -1738,6 +1851,9 @@
                 </blockquote>
             </figure>
 
+            <!-- Lit wherever the pointer is, the way the Mega Packaging footer is -->
+            <div class="foot__word" id="footWord" aria-hidden="true" translate="no"><span data-text="KAMRUJJAMAN TUHIN">KAMRUJJAMAN TUHIN</span></div>
+
             <div class="foot__base">
                 <p class="foot__copy">&copy; <span id="year">2026</span> Kamrujjaman Tuhin. All rights reserved.</p>
                 <a class="foot__up" href="#home">
@@ -1769,7 +1885,15 @@
 
         <header class="uni__top">
             <div class="uni__brand">
-                <span class="uni__mark" aria-hidden="true">KT</span>
+                <span class="mark" aria-hidden="true">
+                    <svg class="mark__orbit" viewBox="0 0 120 120">
+                        <g class="mark__tilt">
+                            <circle class="mark__ring" cx="60" cy="60" r="52" vector-effect="non-scaling-stroke"/>
+                            <g class="mark__spin"><circle class="mark__moon" cx="112" cy="60" r="6"/></g>
+                        </g>
+                    </svg>
+                    <span class="mark__kt">KT</span>
+                </span>
                 <span class="uni__who"><b>Kamrujjaman&nbsp;Tuhin</b><span>Full-Stack Developer</span></span>
             </div>
 
@@ -1848,38 +1972,6 @@
                 <p class="uni-map__note">Pick a world and the autopilot will fly you there and land.</p>
                 <ol class="uni-map__list" id="uniMapList"></ol>
             </section>
-        </div>
-
-        <div class="uni-intro" id="uniIntro" hidden>
-            <div class="uni-intro__card">
-                <div class="uni-intro__face">
-                    <span class="uni-intro__orbit" aria-hidden="true"></span>
-                    <img id="uniFace" src="assets/images/profile/tuhin-formal.png" alt="Kamrujjaman Tuhin">
-                </div>
-                <p class="uni-intro__kicker">An explorable portfolio</p>
-                <h2 class="uni-intro__title">Kamrujjaman Tuhin</h2>
-                <p class="uni-intro__role">Full-Stack Developer</p>
-                <p class="uni-intro__text">My career is a small universe. Pilot the ship between its worlds and land on each one to explore it &mdash; education, skills, projects, experience and more.</p>
-                <p class="uni-intro__welcome" id="uniWelcome" hidden>Welcome back, pilot &mdash; <b id="uniWelcomeN">0 of 8</b> worlds explored.</p>
-
-                <ul class="uni-intro__keys uni-intro__keys--pointer" aria-label="Controls">
-                    <li><kbd>W A S D</kbd><span>Fly</span></li>
-                    <li><kbd>Shift</kbd><span>Boost</span></li>
-                    <li><kbd>Space</kbd><span>Land</span></li>
-                    <li><kbd>Click</kbd><span>Set a course</span></li>
-                </ul>
-                <ul class="uni-intro__keys uni-intro__keys--touch" aria-label="Controls">
-                    <li><kbd>Tap</kbd><span>Fly there</span></li>
-                    <li><kbd>Tap a world</kbd><span>Land on it</span></li>
-                    <li><kbd>Hold</kbd><span>Steer</span></li>
-                </ul>
-
-                <div class="uni-intro__actions">
-                    <button class="up-btn up-btn--lg" id="uniStart" type="button"><span id="uniStartLabel">Start exploring</span><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
-                    <button class="up-btn up-btn--ghost up-btn--lg" type="button" data-uni-classic><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Classic portfolio</span></button>
-                </div>
-                <p class="uni-intro__note">In a hurry? The classic portfolio has everything on one page.</p>
-            </div>
         </div>
 
         <div class="uni-finale" id="uniFinale" hidden role="dialog" aria-modal="true" aria-labelledby="uniFinaleTitle">

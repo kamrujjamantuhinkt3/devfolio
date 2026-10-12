@@ -138,12 +138,18 @@
         setTimeout(function () {
             preloader.classList.add("is-done");
             body.classList.remove("is-loading");
-            scrollLock.off();                    // release the pin taken at start-up
-            // a link straight to a section: the pin reset the scroll, so go there now
+
+            // A link straight to a section skips the welcome and opens the
+            // classic page there. Otherwise the welcome asks first, and the
+            // page stays pinned until a view is chosen.
             var linked = location.hash.length > 1 && document.getElementById(location.hash.slice(1));
-            if (linked && !root.classList.contains("is-universe")) linked.scrollIntoView();
-            body.classList.add("is-ready");
-            startStory();
+            if (gate && !linked) {
+                openGate();
+            } else {
+                scrollLock.off();                // release the pin taken at start-up
+                if (linked) linked.scrollIntoView();
+                sendMode("classic");
+            }
             setTimeout(function () { preloader.style.display = "none"; }, 900);
         }, 340);
     }
@@ -162,6 +168,99 @@
 
     // never leave anyone stuck behind the loader
     setTimeout(function () { clearInterval(timer); finish(); }, 3200);
+
+    /* Welcome - after the loader, a short introduction and then one question:
+       the classic portfolio or the space mission. The answer goes out as a
+       "kt:mode" event. The game listens for it, and sends the same event when
+       someone switches views from inside it, so the two always agree. */
+    var gate = document.getElementById("gate");
+    var gateOpen = false;
+    var entered = false;
+    var gateChoices = gate ? Array.prototype.slice.call(gate.querySelectorAll("[data-choose]")) : [];
+
+    // the classic page makes its entrance once, whenever it is first shown
+    function enterPage() {
+        if (entered) return;
+        entered = true;
+        body.classList.add("is-ready");
+        startStory();
+    }
+
+    function sendMode(mode, to) {
+        document.dispatchEvent(new CustomEvent("kt:mode", { detail: { mode: mode, to: to } }));
+    }
+
+    document.addEventListener("kt:mode", function (e) {
+        if (!e.detail || e.detail.mode !== "game") enterPage();
+    });
+
+    function openGate() {
+        // the counts are read from the page itself, so they never go stale
+        gate.querySelectorAll("[data-gate-count]").forEach(function (dd) {
+            dd.textContent = document.querySelectorAll(dd.getAttribute("data-gate-count")).length;
+        });
+
+        // the view chosen last time is marked, and is where focus lands
+        var last = null;
+        try { last = localStorage.getItem("kt-mode"); } catch (e) { /* private mode */ }
+        var lastChoice = null;
+        gateChoices.forEach(function (c) {
+            var mine = c.getAttribute("data-choose") === last;
+            c.classList.toggle("is-last", mine);
+            if (mine) lastChoice = c;
+        });
+
+        gateOpen = true;
+        body.classList.add("is-gated");
+        gate.hidden = false;
+        requestAnimationFrame(function () { gate.classList.add("is-open"); });
+
+        // the question arrives after the introduction, and focus waits for it
+        setTimeout(function () {
+            if (gateOpen) (lastChoice || gateChoices[0]).focus({ preventScroll: true });
+        }, reduced ? 0 : 1500);
+    }
+
+    function choose(mode) {
+        if (!gateOpen) return;
+        if (mode === "game" && !document.getElementById("universe")) mode = "classic";
+        gateOpen = false;
+        try { localStorage.setItem("kt-mode", mode); } catch (e) { /* ignore */ }
+        gate.classList.add("is-leaving");
+
+        setTimeout(function () {
+            gate.hidden = true;
+            gate.classList.remove("is-open", "is-leaving");
+            body.classList.remove("is-gated");
+            scrollLock.off();
+            sendMode(mode === "game" ? "game" : "classic");
+        }, reduced ? 0 : 520);
+    }
+
+    gateChoices.forEach(function (c) {
+        c.addEventListener("click", function () { choose(c.getAttribute("data-choose")); });
+    });
+
+    // 1 or C, 2 or G; arrows move between the two; Tab stays inside
+    document.addEventListener("keydown", function (e) {
+        if (!gateOpen) return;
+        var k = e.key;
+        var at = gateChoices.indexOf(document.activeElement);
+
+        if (k === "1" || k === "c" || k === "C") { e.preventDefault(); choose("classic"); }
+        else if (k === "2" || k === "g" || k === "G") { e.preventDefault(); choose("game"); }
+        else if (k === "ArrowLeft" || k === "ArrowRight" || k === "ArrowUp" || k === "ArrowDown" || k === "Tab") {
+            var back = k === "ArrowLeft" || k === "ArrowUp" || (k === "Tab" && e.shiftKey);
+            e.preventDefault();
+            gateChoices[at < 0 ? 0 : (at + (back ? -1 : 1) + gateChoices.length) % gateChoices.length].focus();
+        }
+    });
+
+    // the little ship in the gaming picture is SMIL, which CSS cannot pause
+    if (gate && reduced) {
+        gate.querySelectorAll("svg").forEach(function (s) { if (s.pauseAnimations) s.pauseAnimations(); });
+    }
+
 
     /* Pointer - one record of where the mouse is, shared by the starfield and
        the cursor trail. Mouse and pen only; touch and reduced motion get none
@@ -755,7 +854,9 @@
         if (reduced || !("IntersectionObserver" in window)) {
             revealAll();
         } else {
+            var revealSeen = false;
             var revealObs = new IntersectionObserver(function (entries) {
+                revealSeen = true;        // it reports every element once, in view or not
                 entries.forEach(function (entry) {
                     if (!entry.isIntersecting) return;
                     entry.target.classList.add("is-in");
@@ -765,83 +866,10 @@
 
             revealEls.forEach(function (el) { revealObs.observe(el); });
 
-            // Safety net: if nothing has been revealed a few seconds in, the
-            // observer never fired — show the content rather than hide it.
+            // Safety net: if the observer has not reported anything a few seconds
+            // in, it is not working here - show the content rather than hide it.
             setTimeout(function () {
-                if (!document.querySelector("[data-reveal].is-in")) revealAll();
-            }, 3000);
-        }
-    }
-
-
-    /* Education timeline — the rail fills as you scroll and each milestone
-       lights up as the line reaches it, so the section reads like a story
-       being told rather than a list that is simply there. */
-    var timeline = document.querySelector(".timeline");
-
-    if (timeline) {
-        var milestones = Array.prototype.slice.call(timeline.querySelectorAll(".tl"));
-        var progress = timeline.querySelector(".timeline__progress");
-
-        function litAll() {
-            milestones.forEach(function (li) { li.classList.add("is-lit"); });
-            if (progress) progress.style.height = "100%";
-        }
-
-        if (reduced) {
-            litAll();
-        } else {
-            var queued = false;
-
-            function drawTimeline() {
-                queued = false;
-
-                var vh = window.innerHeight;
-                var y = window.scrollY;
-                var docMax = Math.max(document.documentElement.scrollHeight - vh, 0);
-
-                var rect = timeline.getBoundingClientRect();
-                var absTop = rect.top + y;
-                var height = rect.height || 1;
-
-                // Where the rail starts and finishes filling, as scroll positions.
-                // The finish is clamped to the furthest the page can actually
-                // scroll — otherwise the last milestone sits too close to the
-                // bottom to ever be reached, and never appears at all.
-                var startY = absTop - vh * 0.85;
-                var endY = Math.min(absTop + height - vh * 0.45, docMax);
-                if (endY <= startY) endY = startY + 1;
-
-                var pct = (y - startY) / (endY - startY);
-                if (pct < 0) pct = 0;
-                if (pct > 1) pct = 1;
-                if (y >= docMax - 2) pct = 1;      // at the end of the page the story is fully told
-
-                progress.style.height = (pct * 100).toFixed(2) + "%";
-
-                milestones.forEach(function (li) {
-                    // measured from the item itself, not its dot — the dot is
-                    // hidden on narrow screens and would report no position
-                    var mid = li.getBoundingClientRect().top + y + li.offsetHeight * 0.35;
-                    var ratio = (mid - absTop) / height;
-                    // once lit it stays lit — a story does not un-tell itself
-                    if (pct >= ratio * 0.95) li.classList.add("is-lit");
-                });
-            }
-
-            function queueDraw() {
-                if (queued) return;
-                queued = true;
-                requestAnimationFrame(drawTimeline);
-            }
-
-            window.addEventListener("scroll", queueDraw, { passive: true });
-            window.addEventListener("resize", queueDraw);
-            drawTimeline();
-
-            // Safety net, same reasoning as the scroll reveals
-            setTimeout(function () {
-                if (!timeline.querySelector(".tl.is-lit") && timeline.getBoundingClientRect().top < window.innerHeight) litAll();
+                if (!revealSeen) revealAll();
             }, 3000);
         }
     }
@@ -1143,6 +1171,44 @@
     }
 
 
+    /* Tech logos - stack names on projects and roles get the same logos the
+       Skills orbit uses, from its sprite. Anything without a logo gets a small
+       monogram tile, drawn by CSS so it never adds to the text. */
+    var TECH = {
+        "html": "l-html", "css": "l-css", "javascript": "l-js", "typescript": "l-ts",
+        "react": "l-react", "tailwind css": "l-tailwind", "next.js": "l-next", "node.js": "l-node",
+        "mongodb": "l-mongo", "mongoose": "l-mongoose", "betterauth": "l-auth", "git": "l-git",
+        "github": "l-github"
+    };
+    var TECH_TEXT = { "php": ["PHP", "#777bb4"], "mysql": ["SQL", "#00758f"], "jspdf": ["PDF", "#e11d48"] };
+    var SVG_NS = "http://www.w3.org/2000/svg";
+
+    function addTechMark(el) {
+        if (el.querySelector(".tech-mark")) return;
+        var name = el.textContent.trim();
+        var key = name.toLowerCase();
+        var mark;
+
+        if (TECH[key] && document.getElementById(TECH[key])) {
+            mark = document.createElementNS(SVG_NS, "svg");
+            mark.setAttribute("class", "tech-mark");
+            mark.setAttribute("viewBox", "0 0 24 24");
+            var use = document.createElementNS(SVG_NS, "use");
+            use.setAttribute("href", "#" + TECH[key]);
+            mark.appendChild(use);
+        } else {
+            var mono = TECH_TEXT[key] || [name.replace(/[^A-Za-z0-9]/g, "").slice(0, 3).toUpperCase(), ""];
+            // a <b>, so it never matches the span and i selectors that read the stack
+            mark = document.createElement("b");
+            mark.className = "tech-mark tech-mark--text";
+            mark.setAttribute("data-mono", mono[0]);
+            if (mono[1]) mark.style.setProperty("--tc", mono[1]);
+        }
+        mark.setAttribute("aria-hidden", "true");
+        el.insertBefore(mark, el.firstChild);
+    }
+
+
     /* Projects — filter the grid, and open a card in the detail sheet */
     var projGrid = document.getElementById("projGrid");
     var sheet = document.getElementById("sheet");
@@ -1155,7 +1221,7 @@
         var lastOpener = null;
         var currentCat = "all";
         var showAll = false;
-        var FOLD_AFTER = 8;          // cards shown before "Show all projects"
+        var FOLD_AFTER = 9;          // cards shown before "Show all projects": three full rows
         var moreBtn = document.getElementById("projMore");
 
         // One place decides what is visible: the filter, and whether the list
@@ -1329,15 +1395,70 @@
                 shot.addEventListener("error", function () { shot.remove(); });
             }
 
-            // what is behind the card, at a glance: a live site, the code, or both
-            var cue = card.querySelector(".proj__cue");
-            if (cue && (card.dataset.demo || card.dataset.repo)) {
-                var avail = document.createElement("span");
-                avail.className = "proj__avail";
-                avail.setAttribute("aria-hidden", "true");
-                avail.innerHTML = (card.dataset.demo ? '<span class="proj__live">Live</span>' : "") +
-                    (card.dataset.repo ? GITHUB_MARK : "");
-                cue.appendChild(avail);
+            // The live site and the code, as links of their own over the foot of
+            // the card - a link cannot sit inside the card's button
+            if (card.dataset.demo || card.dataset.repo) {
+                var acts = document.createElement("div");
+                acts.className = "proj__actions";
+                if (card.dataset.demo) {
+                    var live = document.createElement("a");
+                    live.className = "proj__act proj__act--live";
+                    live.href = card.dataset.demo;
+                    live.target = "_blank";
+                    live.rel = "noopener";
+                    live.textContent = "Live";
+                    live.setAttribute("aria-label", "Live demo of " + name);
+                    acts.appendChild(live);
+                }
+                if (card.dataset.repo) {
+                    var code = document.createElement("a");
+                    code.className = "proj__act proj__act--icon";
+                    code.href = card.dataset.repo;
+                    code.target = "_blank";
+                    code.rel = "noopener";
+                    code.innerHTML = GITHUB_MARK.replace("<svg ", '<svg class="i i--fill" aria-hidden="true" ');
+                    code.setAttribute("aria-label", "Code for " + name + " on GitHub");
+                    acts.appendChild(code);
+                }
+                card.appendChild(acts);
+            }
+
+            card.querySelectorAll(".proj__tags i").forEach(addTechMark);
+
+            // the featured project tells more of its story on the card itself
+            if (card.hasAttribute("data-featured")) {
+                var tpl = card.querySelector("template.proj__detail");
+                var cardBody = card.querySelector(".proj__body");
+                var nameEl = card.querySelector(".proj__name");
+                var ledeSrc = tpl && tpl.content.querySelector(".sheet__lede");
+                var pointSrc = tpl ? tpl.content.querySelectorAll(".sheet__list li") : [];
+
+                if (ledeSrc && nameEl) {
+                    var ledeEl = document.createElement("span");
+                    ledeEl.className = "proj__lede";
+                    ledeEl.textContent = ledeSrc.textContent.trim();
+                    nameEl.insertAdjacentElement("afterend", ledeEl);
+                }
+                if (pointSrc.length && cardBody) {
+                    var pointsEl = document.createElement("span");
+                    pointsEl.className = "proj__points";
+                    pointsEl.setAttribute("role", "list");
+                    Array.prototype.slice.call(pointSrc, 0, 4).forEach(function (li) {
+                        var item = document.createElement("span");
+                        item.setAttribute("role", "listitem");
+                        item.textContent = li.textContent.trim();
+                        pointsEl.appendChild(item);
+                    });
+                    var tagsEl = cardBody.querySelector(".proj__tags");
+                    cardBody.insertBefore(pointsEl, tagsEl);
+                }
+
+                var flag = document.createElement("span");
+                flag.className = "proj__flag";
+                flag.setAttribute("aria-hidden", "true");
+                flag.innerHTML = '<svg class="i i--fill" viewBox="0 0 24 24"><path d="M12 3c.6 4.5 2.5 6.4 7 7-4.5.6-6.4 2.5-7 7-.6-4.5-2.5-6.4-7-7 4.5-.6 6.4-2.5 7-7z"/></svg>' +
+                    (card.dataset.demo ? "Featured &middot; live in production" : "Featured");
+                cover.appendChild(flag);
             }
         }
 
@@ -1388,6 +1509,7 @@
             }
 
             sheetBody.appendChild(detail.content.cloneNode(true));
+            sheetBody.querySelectorAll(".sheet__stack span").forEach(addTechMark);
 
             // the heading has to carry the id the dialog is labelled by
             var title = sheetBody.querySelector(".sheet__name");
@@ -1431,54 +1553,10 @@
         projects.forEach(function (card) {
             var opener = card.querySelector(".proj__open");
             opener.addEventListener("click", function () { openSheet(card); });
-
-            // the light layer is decorative, so it is added here rather than
-            // repeated twelve times in the markup
-            var glow = document.createElement("span");
-            glow.className = "proj__glow";
-            glow.setAttribute("aria-hidden", "true");
-            opener.appendChild(glow);
+            opener.setAttribute("data-glow", "");      // lit by the glow below
         });
+        projGrid.setAttribute("data-glow-group", "");
 
-
-        /* One delegated listener for all twelve cards, throttled to a frame */
-        if (!reduced && window.matchMedia("(pointer: fine)").matches) {
-            var tiltCard = null;
-            var tiltEvent = null;
-            var tiltQueued = false;
-            var MAX_TILT = 5;          // degrees; enough to read as depth, not as a toy
-
-            projGrid.addEventListener("mousemove", function (e) {
-                var opener = e.target.closest(".proj__open");
-                if (!opener) return;
-
-                tiltCard = opener;
-                tiltEvent = e;
-                if (tiltQueued) return;
-                tiltQueued = true;
-
-                requestAnimationFrame(function () {
-                    tiltQueued = false;
-                    if (!tiltCard || !tiltEvent) return;
-
-                    var box = tiltCard.getBoundingClientRect();
-                    var px = (tiltEvent.clientX - box.left) / box.width;
-                    var py = (tiltEvent.clientY - box.top) / box.height;
-
-                    tiltCard.style.setProperty("--ry", ((px - 0.5) * 2 * MAX_TILT).toFixed(2) + "deg");
-                    tiltCard.style.setProperty("--rx", ((0.5 - py) * 2 * MAX_TILT).toFixed(2) + "deg");
-                    tiltCard.style.setProperty("--mx", (px * 100).toFixed(1) + "%");
-                    tiltCard.style.setProperty("--my", (py * 100).toFixed(1) + "%");
-                });
-            });
-
-            projGrid.addEventListener("mouseout", function (e) {
-                var opener = e.target.closest(".proj__open");
-                if (!opener || opener.contains(e.relatedTarget)) return;
-                opener.style.setProperty("--rx", "0deg");
-                opener.style.setProperty("--ry", "0deg");
-            });
-        }
 
         sheet.querySelectorAll("[data-sheet-close]").forEach(function (el) {
             el.addEventListener("click", closeSheet);
@@ -1632,21 +1710,40 @@
     }
 
 
-    /* Contact — live local time in Dhaka, so the clock is right whoever is
-       reading and wherever they are. */
+    /* Contact — live local time in Dhaka, in words and on a small clock, so it
+       is right whoever is reading and wherever they are */
     var clockEl = document.getElementById("localTime");
+    var clockFace = document.getElementById("clockFace");
+    var clockNote = document.getElementById("localNote");
 
     if (clockEl) {
-        var fmt;
+        var fmt, fmt24;
         try {
             fmt = new Intl.DateTimeFormat("en-US", {
                 timeZone: "Asia/Dhaka", hour: "numeric", minute: "2-digit", hour12: true
+            });
+            fmt24 = new Intl.DateTimeFormat("en-GB", {
+                timeZone: "Asia/Dhaka", hour: "2-digit", minute: "2-digit", hour12: false
             });
         } catch (e) { fmt = null; }   // no zone data: leave the placeholder alone
 
         if (fmt) {
             (function tickClock() {
-                clockEl.textContent = fmt.format(new Date());
+                var now = new Date();
+                clockEl.textContent = fmt.format(now);
+
+                var hm = fmt24.format(now).split(":");
+                var h = parseInt(hm[0], 10) % 24;
+                var min = parseInt(hm[1], 10);
+                var total = h * 60 + min;              // grows all day, so the hands never wind back
+                if (clockFace) {
+                    clockFace.style.setProperty("--h", (total * 0.5) + "deg");
+                    clockFace.style.setProperty("--m", (total * 6) + "deg");
+                }
+                if (clockNote) {
+                    var part = h >= 5 && h < 12 ? "Morning" : h >= 12 && h < 17 ? "Afternoon" : h >= 17 && h < 21 ? "Evening" : "Night";
+                    clockNote.textContent = part + " \u00b7 GMT+6";
+                }
                 setTimeout(tickClock, 20000);
             })();
         }
@@ -1662,11 +1759,14 @@
             var address = mailValue.textContent.trim();
 
             function confirmCopy() {
+                var label = copyBtn.querySelector(".tile__copy-label");
                 copyBtn.classList.add("is-done");
                 copyBtn.setAttribute("aria-label", "Email address copied");
+                if (label) label.textContent = "Copied";
                 setTimeout(function () {
                     copyBtn.classList.remove("is-done");
                     copyBtn.setAttribute("aria-label", "Copy email address");
+                    if (label) label.textContent = "Copy";
                 }, 2000);
             }
 
@@ -1912,48 +2012,83 @@
     }
 
 
-    /* Experience — accordion. Heights are measured rather than guessed, so a
-       row animates smoothly whatever length its content turns out to be. */
-    var xps = Array.prototype.slice.call(document.querySelectorAll(".xp"));
+    /* Experience - each role's stack gets its logos, and a role can link
+       straight to the work shipped there: the project scrolls into view and
+       its details open */
+    document.querySelectorAll(".xp__stack span").forEach(addTechMark);
 
-    if (xps.length) {
-        function setOpen(xp, open) {
-            var panel = xp.querySelector(".xp__panel");
-            var toggle = xp.querySelector(".xp__toggle");
+    document.querySelectorAll("[data-open-project]").forEach(function (link) {
+        link.addEventListener("click", function (e) {
+            var card = document.querySelector('.proj[data-key="' + link.getAttribute("data-open-project") + '"]');
+            var opener = card && card.querySelector(".proj__open");
+            if (!opener) return;
+            e.preventDefault();
 
-            xp.classList.toggle("is-open", open);
-            toggle.setAttribute("aria-expanded", String(open));
-            panel.style.maxHeight = open ? panel.scrollHeight + "px" : "";
-        }
+            // a filter may be hiding it
+            var allBtn = document.querySelector('.projects .filter[data-cat="all"]');
+            if (card.classList.contains("is-hidden") && allBtn) allBtn.click();
 
-        xps.forEach(function (xp) {
-            var toggle = xp.querySelector(".xp__toggle");
-
-            // the first row ships open, so the section never looks empty
-            if (toggle.getAttribute("aria-expanded") === "true") setOpen(xp, true);
-
-            toggle.addEventListener("click", function () {
-                var willOpen = !xp.classList.contains("is-open");
-                xps.forEach(function (other) { if (other !== xp) setOpen(other, false); });
-                setOpen(xp, willOpen);
-            });
+            card.scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" });
+            setTimeout(function () { opener.click(); }, reduced ? 0 : 700);
         });
+    });
 
-        // a reflow (fonts loading, window resizing) changes how tall the text is
-        function remeasure() {
-            xps.forEach(function (xp) {
-                if (!xp.classList.contains("is-open")) return;
-                var panel = xp.querySelector(".xp__panel");
-                panel.style.maxHeight = panel.scrollHeight + "px";
-            });
-        }
 
-        var xpResize;
-        window.addEventListener("resize", function () {
-            clearTimeout(xpResize);
-            xpResize = setTimeout(remeasure, 150);
+    /* Glow - the borders of the cards in a group light up near the pointer,
+       the near edges of the cards around it too, the way the footer wordmark
+       is lit. One listener per group, at most one update a frame. */
+    document.querySelectorAll("[data-glow]").forEach(function (el) {
+        if (el.querySelector(":scope > .glow")) return;
+        var layer = document.createElement("span");
+        layer.className = "glow";
+        layer.setAttribute("aria-hidden", "true");
+        el.appendChild(layer);
+    });
+
+    if (pointerFx) {
+        document.querySelectorAll("[data-glow-group]").forEach(function (group) {
+            var cards = Array.prototype.slice.call(group.querySelectorAll("[data-glow]"));
+            var queued = false;
+            var lastMove = null;
+
+            group.addEventListener("pointermove", function (e) {
+                if (e.pointerType === "touch") return;
+                lastMove = e;
+                group.classList.add("is-glowing");
+                if (queued) return;
+                queued = true;
+
+                requestAnimationFrame(function () {
+                    queued = false;
+                    cards.forEach(function (c) {
+                        var r = c.getBoundingClientRect();
+                        if (!r.width) return;              // filtered or folded away
+                        c.style.setProperty("--gx", (lastMove.clientX - r.left).toFixed(0) + "px");
+                        c.style.setProperty("--gy", (lastMove.clientY - r.top).toFixed(0) + "px");
+                    });
+                });
+            }, { passive: true });
+
+            group.addEventListener("pointerleave", function () { group.classList.remove("is-glowing"); });
         });
-        if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
+    }
+
+
+    /* Footer - the wordmark is lit wherever the pointer is, the way it is on
+       the Mega Packaging site */
+    var footWord = document.getElementById("footWord");
+    var footEl = document.querySelector("footer.foot");
+
+    if (footWord && footEl && pointerFx) {
+        var footText = footWord.querySelector("span");
+        footEl.addEventListener("pointermove", function (e) {
+            if (e.pointerType !== "mouse") return;
+            var r = footText.getBoundingClientRect();
+            footText.style.setProperty("--wx", (e.clientX - r.left).toFixed(0) + "px");
+            footText.style.setProperty("--wy", (e.clientY - r.top).toFixed(0) + "px");
+            footWord.classList.add("lit");
+        });
+        footEl.addEventListener("pointerleave", function () { footWord.classList.remove("lit"); });
     }
 
 
@@ -2031,6 +2166,6 @@
         a.addEventListener("click", function () { setMenu(false); });
     });
     document.addEventListener("keydown", function (e) {
-        if (e.key === "Escape") setMenu(false);
+        if (e.key === "Escape" && menu.classList.contains("is-open")) setMenu(false);
     });
 })();
