@@ -20,7 +20,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Great+Vibes&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="styles/style.css">
-    <link rel="stylesheet" href="styles/game.css">
+    <link rel="stylesheet" href="styles/universe.css">
     <noscript><style>.preloader{display:none!important}.reveal,.char,[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 <body class="is-loading">
@@ -1739,153 +1739,154 @@
             <div class="sheet__links" id="sheetLinks"></div>
         </div>
     </div>
-    <!-- Game layer: XP, quests, star shards and the Bug Hunt arcade.
-         Built by script/game.js. It sits on top of the page and locks
-         nothing away, so the portfolio reads the same without it. -->
-    <div class="hud" id="hud" hidden>
-        <button class="hud__main" id="hudBtn" type="button" aria-controls="questLog" aria-expanded="false">
-            <span class="hud__ring" aria-hidden="true">
-                <svg viewBox="0 0 48 48"><circle class="hud__track" cx="24" cy="24" r="21"/><circle class="hud__fill" id="hudFill" cx="24" cy="24" r="21" pathLength="100"/></svg>
-                <b id="hudLevel">1</b>
-            </span>
-            <span class="hud__text" aria-hidden="true">
-                <span class="hud__title"><span class="hud__lv">Level</span> <span id="hudTitle">Visitor</span></span>
-                <span class="hud__meta" id="hudMeta">0 XP</span>
-            </span>
-        </button>
-        <button class="hud__play" type="button" data-play aria-label="Play Bug Hunt" title="Play Bug Hunt">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 8h11a4 4 0 0 1 3.9 4.9l-.9 3.8a2.3 2.3 0 0 1-4 .9L15 16H9l-1.5 1.6a2.3 2.3 0 0 1-4-.9l-.9-3.8A4 4 0 0 1 6.5 8z"/><path d="M8 10.5v3.5M6.25 12.25h3.5M15.5 11.5h.01M17.5 13.5h.01"/></svg>
-        </button>
-        <span class="hud__gain" id="hudGain" aria-hidden="true"></span>
-    </div>
 
-    <div class="toasts" id="toasts" aria-live="polite"></div>
+    <!-- The universe: the portfolio as a game. Built by script/universe.js,
+         which reads every word on its worlds from the classic page above,
+         so editing a section here updates the game as well. -->
+    <div class="uni" id="universe" hidden>
+        <canvas class="uni__canvas" id="uniCanvas" tabindex="-1" aria-label="The universe. Fly the ship between worlds and land on them to explore the portfolio."></canvas>
 
-    <div class="levelup" id="levelUp" aria-hidden="true">
-        <span class="levelup__kicker">Level up</span>
-        <b class="levelup__name" id="levelUpName">Explorer</b>
-        <span class="levelup__n">Level <span id="levelUpNum">2</span></span>
-    </div>
-
-    <div class="qlog" id="questLog" hidden>
-        <div class="qlog__scrim" data-qlog-close></div>
-        <section class="qlog__panel" role="dialog" aria-labelledby="qlogTitle">
-            <header class="qlog__head">
-                <span class="qlog__badge" aria-hidden="true"><b id="qlogLevel">1</b></span>
-                <div class="qlog__who">
-                    <p class="qlog__kicker">Quest log &middot; Level</p>
-                    <h2 class="qlog__title" id="qlogTitle">Visitor</h2>
-                    <p class="qlog__next" id="qlogNext">100 XP to Explorer</p>
-                </div>
-                <button class="qlog__close" id="qlogClose" type="button" data-qlog-close aria-label="Close the quest log"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-            </header>
-
-            <div class="qlog__xp">
-                <span class="qlog__bar"><i id="qlogBar"></i></span>
-                <span class="qlog__xpn" id="qlogXp">0 XP</span>
+        <header class="uni__top">
+            <div class="uni__brand">
+                <span class="uni__mark" aria-hidden="true">KT</span>
+                <span class="uni__who"><b>Kamrujjaman&nbsp;Tuhin</b><span>Full-Stack Developer</span></span>
             </div>
 
-            <p class="qlog__label">Star map <span id="qlogSectors">0 of 9</span></p>
-            <ol class="qlog__nodes" id="qlogNodes" aria-label="Sections of the page"></ol>
+            <div class="uni__progress">
+                <span class="uni__progress-label">Explored <b id="uniCount">0/8</b></span>
+                <ol class="uni__dots" id="uniDots" aria-label="Worlds"></ol>
+            </div>
 
-            <p class="qlog__label">Quests <span id="qlogCount">0 of 9</span></p>
-            <ol class="qlog__list" id="qlogList"></ol>
+            <div class="uni__tools">
+                <span class="uni__chip" title="Skill crystals collected"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 8v8L12 21l7.5-5V8z"/><path d="M4.5 8 12 12l7.5-4M12 12v9"/></svg><b id="uniCrystals">0/13</b></span>
+                <button class="uni__tool" id="uniMapBtn" type="button" aria-controls="uniMap"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6.5V20l6-2.5 6 2.5 6-2.5V4l-6 2.5L9 4zM9 4v13.5M15 6.5V20"/></svg><span>Map</span></button>
+                <button class="uni__tool uni__tool--icon" id="uniSound" type="button" aria-pressed="false" aria-label="Sound"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="wave" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></button>
+                <button class="uni__tool" type="button" data-uni-classic><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Classic view</span></button>
+            </div>
+        </header>
 
-            <footer class="qlog__foot">
-                <button class="btn btn--primary btn--sm qlog__play" type="button" data-play>
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 8h11a4 4 0 0 1 3.9 4.9l-.9 3.8a2.3 2.3 0 0 1-4 .9L15 16H9l-1.5 1.6a2.3 2.3 0 0 1-4-.9l-.9-3.8A4 4 0 0 1 6.5 8z"/><path d="M8 10.5v3.5M6.25 12.25h3.5M15.5 11.5h.01M17.5 13.5h.01"/></svg>
-                    <span>Play Bug Hunt</span>
-                </button>
-                <button class="qlog__tool" id="gameReport" type="button" hidden>Mission report</button>
-                <button class="qlog__tool" id="soundToggle" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="wave" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg><span data-sound-label>Sound off</span></button>
-                <button class="qlog__tool" id="gameReset" type="button">Reset</button>
+        <div class="uni__comms" id="uniComms" hidden aria-live="polite">
+            <img class="uni__face" src="assets/images/profile/tuhin-formal.png" alt="">
+            <div>
+                <p class="uni__comms-from"><span aria-hidden="true"></span>Transmission from Kamrujjaman</p>
+                <p class="uni__comms-text" id="uniCommsText"></p>
+            </div>
+        </div>
+
+        <div class="uni__toast" id="uniToast" hidden aria-live="polite">
+            <span class="uni__toast-icon" id="uniToastIcon"></span>
+            <span class="uni__toast-copy"><b id="uniToastTitle"></b><small id="uniToastSub"></small></span>
+        </div>
+
+        <div class="uni__compass" id="uniCompass" hidden aria-hidden="true">
+            <span class="uni__compass-arrow" id="uniCompassArrow"><svg viewBox="0 0 24 24"><path d="M5 12h12M12 6l6 6-6 6"/></svg></span>
+            <span class="uni__compass-copy"><b id="uniCompassName"></b><small id="uniCompassDist"></small></span>
+        </div>
+
+        <button class="uni__prompt" id="uniPrompt" type="button" hidden>
+            <kbd class="uni__key">Space</kbd>
+            <span>Land on <b id="uniPromptName">Origin</b></span>
+        </button>
+
+        <footer class="uni__bottom">
+            <p class="uni__hint" id="uniHintKeys"><kbd>W A S D</kbd> fly <kbd>Shift</kbd> boost <kbd>Space</kbd> land <span>&middot; or click anywhere to set a course</span></p>
+            <p class="uni__hint" id="uniHintTouch" hidden>Tap to fly &middot; tap a world to land &middot; hold to steer</p>
+            <button class="uni__next" id="uniNext" type="button">
+                <span class="uni__next-copy"><small id="uniNextKicker">Next &middot; About me</small><b id="uniNextLabel">Origin</b></span>
+                <span class="uni__next-go"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+            </button>
+            <canvas class="uni__mini" id="uniMini" role="img" aria-label="Star map: click a world to fly there"></canvas>
+        </footer>
+
+        <aside class="uni__panel" id="uniPanel" hidden aria-labelledby="uniPanelTitle">
+            <header class="uni__panel-head">
+                <div>
+                    <p class="uni__panel-kicker" id="uniPanelKicker"></p>
+                    <h2 class="uni__panel-title" id="uniPanelTitle"></h2>
+                </div>
+                <button class="uni__panel-close" id="uniPanelClose" type="button" aria-label="Take off"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+            </header>
+            <div class="uni__panel-body" id="uniPanelBody"></div>
+            <footer class="uni__panel-foot">
+                <button class="uni__panel-nav" id="uniPrev" type="button"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11 6l-6 6 6 6"/></svg><span></span></button>
+                <button class="uni__panel-classic" id="uniClassic" type="button">Read on the classic page</button>
+                <button class="uni__panel-nav uni__panel-nav--next" id="uniNextWorld" type="button"><span></span><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
             </footer>
-        </section>
-    </div>
+        </aside>
 
-    <div class="arcade" id="arcade" role="dialog" aria-modal="true" aria-labelledby="arcadeTitle" hidden>
-        <div class="arcade__scrim" data-arcade-close></div>
-        <div class="arcade__box">
-            <header class="arcade__bar">
-                <h2 class="arcade__title" id="arcadeTitle"><span class="arcade__logo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10a4 4 0 0 1 8 0v4a4 4 0 0 1-8 0v-4zM12 10v8M4 13h4M16 13h4M5 8l3 2M19 8l-3 2M5 19l3-2M19 19l-3-2M10 6 9 4M14 6l1-2"/></svg></span>Bug Hunt</h2>
-                <dl class="arcade__stats">
-                    <div><dt>Score</dt><dd id="arcadeScore">0</dd></div>
-                    <div><dt>Lives</dt><dd class="arcade__lives" id="arcadeLives"></dd></div>
-                    <div><dt>Best</dt><dd id="arcadeBest">0</dd></div>
-                </dl>
-                <div class="arcade__tools">
-                    <button class="arcade__icon" id="arcadeSound" type="button" aria-pressed="false" aria-label="Sound"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="wave" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></button>
-                    <button class="arcade__icon" id="arcadePauseBtn" type="button" aria-label="Pause"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg></button>
-                    <button class="arcade__icon" type="button" data-arcade-close aria-label="Close the game"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-                </div>
-            </header>
-
-            <div class="arcade__stage">
-                <canvas class="arcade__canvas" id="arcadeCanvas" tabindex="-1" role="img" aria-label="Bug Hunt playing field"></canvas>
-
-                <div class="arcade__screen" id="arcadeStart">
-                    <p class="arcade__kicker">A mini-game</p>
-                    <h3 class="arcade__head">Squash the bugs before they reach production</h3>
-                    <ul class="arcade__rules">
-                        <li><b>Move</b> with the mouse, a finger, or &larr; &rarr;</li>
-                        <li><b>Fire</b> is automatic</li>
-                        <li><b>Catch</b> <span class="pill pill--tests">TESTS</span> for a triple shot and <span class="pill pill--git">GIT</span> for an extra life</li>
-                    </ul>
-                    <p class="arcade__cheat" id="arcadeCheat" hidden>Cheat code accepted &mdash; you start with five lives.</p>
-                    <button class="btn btn--primary arcade__go" id="arcadeStartBtn" type="button">Start game</button>
-                </div>
-
-                <div class="arcade__screen" id="arcadePause" hidden>
-                    <p class="arcade__kicker">Paused</p>
-                    <h3 class="arcade__head">Take a breath</h3>
-                    <button class="btn btn--primary" id="arcadeResume" type="button">Resume</button>
-                </div>
-
-                <div class="arcade__screen" id="arcadeOver" hidden>
-                    <p class="arcade__kicker">Game over &middot; your rank</p>
-                    <h3 class="arcade__head" id="arcadeRank">QA engineer</h3>
-                    <dl class="arcade__result">
-                        <div><dt>Score</dt><dd id="overScore">0</dd></div>
-                        <div><dt>Bugs squashed</dt><dd id="overKills">0</dd></div>
-                        <div><dt>Accuracy</dt><dd id="overAcc">0%</dd></div>
-                        <div><dt>Best</dt><dd id="overBest">0</dd></div>
-                    </dl>
-                    <p class="arcade__note" id="overNote"></p>
-                    <div class="arcade__actions">
-                        <button class="btn btn--primary" id="arcadeAgain" type="button">Play again</button>
-                        <a class="btn btn--ghost" href="#contact" data-arcade-close>Hire the developer</a>
+        <div class="uni-map" id="uniMap" hidden>
+            <div class="uni-map__scrim" data-map-close></div>
+            <section class="uni-map__panel" role="dialog" aria-modal="true" aria-labelledby="uniMapTitle">
+                <header class="uni-map__head">
+                    <div>
+                        <p class="uni-map__kicker">Star map</p>
+                        <h2 class="uni-map__title" id="uniMapTitle">Where to, pilot?</h2>
                     </div>
+                    <button class="uni__panel-close" type="button" data-map-close aria-label="Close the map"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+                </header>
+                <p class="uni-map__note">Pick a world and the autopilot will fly you there and land.</p>
+                <ol class="uni-map__list" id="uniMapList"></ol>
+            </section>
+        </div>
+
+        <div class="uni-intro" id="uniIntro" hidden>
+            <div class="uni-intro__card">
+                <div class="uni-intro__face">
+                    <span class="uni-intro__orbit" aria-hidden="true"></span>
+                    <img id="uniFace" src="assets/images/profile/tuhin-formal.png" alt="Kamrujjaman Tuhin">
                 </div>
-            </div>
+                <p class="uni-intro__kicker">An explorable portfolio</p>
+                <h2 class="uni-intro__title">Kamrujjaman Tuhin</h2>
+                <p class="uni-intro__role">Full-Stack Developer</p>
+                <p class="uni-intro__text">My career is a small universe. Pilot the ship between its worlds and land on each one to explore it &mdash; education, skills, projects, experience and more.</p>
+                <p class="uni-intro__welcome" id="uniWelcome" hidden>Welcome back, pilot &mdash; <b id="uniWelcomeN">0 of 8</b> worlds explored.</p>
 
-            <p class="arcade__hint">P to pause &middot; Esc to leave</p>
+                <ul class="uni-intro__keys uni-intro__keys--pointer" aria-label="Controls">
+                    <li><kbd>W A S D</kbd><span>Fly</span></li>
+                    <li><kbd>Shift</kbd><span>Boost</span></li>
+                    <li><kbd>Space</kbd><span>Land</span></li>
+                    <li><kbd>Click</kbd><span>Set a course</span></li>
+                </ul>
+                <ul class="uni-intro__keys uni-intro__keys--touch" aria-label="Controls">
+                    <li><kbd>Tap</kbd><span>Fly there</span></li>
+                    <li><kbd>Tap a world</kbd><span>Land on it</span></li>
+                    <li><kbd>Hold</kbd><span>Steer</span></li>
+                </ul>
+
+                <div class="uni-intro__actions">
+                    <button class="up-btn up-btn--lg" id="uniStart" type="button"><span id="uniStartLabel">Start exploring</span><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+                    <button class="up-btn up-btn--ghost up-btn--lg" type="button" data-uni-classic><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Classic portfolio</span></button>
+                </div>
+                <p class="uni-intro__note">In a hurry? The classic portfolio has everything on one page.</p>
+            </div>
+        </div>
+
+        <div class="uni-finale" id="uniFinale" hidden role="dialog" aria-modal="true" aria-labelledby="uniFinaleTitle">
+            <div class="uni-finale__scrim" data-finale-close></div>
+            <div class="uni-finale__card">
+                <button class="uni__panel-close uni-finale__close" type="button" data-finale-close aria-label="Keep exploring"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+                <span class="uni-finale__medal" aria-hidden="true"><span class="uni-finale__ring"></span><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0V4zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 20h6M10 17h4"/></svg></span>
+                <p class="uni-finale__kicker">Mission complete</p>
+                <h2 class="uni-finale__title" id="uniFinaleTitle">You have explored the whole universe</h2>
+                <p class="uni-finale__text">You know my story now, from the first school to today. If it sounds like someone you want on your team, let&rsquo;s talk.</p>
+                <dl class="uni-finale__stats">
+                    <div><dt>Worlds</dt><dd>8/8</dd></div>
+                    <div><dt>Skills collected</dt><dd id="uniFinaleSkills">0/13</dd></div>
+                    <div id="uniFinaleTimeRow"><dt>Time</dt><dd id="uniFinaleTime">&mdash;</dd></div>
+                </dl>
+                <div class="uni-finale__actions">
+                    <button class="up-btn up-btn--lg" type="button" data-finale-contact><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5c2.6-1.1 4.6-1.1 5-.7.4.4.4 2.4-.7 5L12.5 15 9 11.5z"/><path d="M9 11.5 5.5 12 4 14l3.5 1M12.5 15l-.5 3.5L10 20l-1-3.5"/><circle cx="15" cy="9" r="1.3"/></svg><span>Send me a signal</span></button>
+                    <a class="up-btn up-btn--ghost up-btn--lg" href="https://www.linkedin.com/in/kamrujjamantuhinkt3" target="_blank" rel="noopener"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3.2 9h3.6v12H3.2zM9.2 9h3.45v1.64h.05c.48-.9 1.66-1.85 3.42-1.85 3.66 0 4.33 2.4 4.33 5.52V21h-3.6v-5.02c0-1.2-.02-2.74-1.67-2.74-1.67 0-1.93 1.3-1.93 2.65V21H9.2z"/></svg><span>LinkedIn</span></a>
+                </div>
+                <button class="uni-finale__classic" type="button" data-classic="#home">Read everything on the classic page</button>
+            </div>
         </div>
     </div>
 
-    <div class="victory" id="victory" role="dialog" aria-modal="true" aria-labelledby="victoryTitle" hidden>
-        <div class="victory__scrim" data-victory-close></div>
-        <div class="victory__panel">
-            <button class="victory__close" type="button" data-victory-close aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-            <span class="victory__medal" aria-hidden="true">
-                <span class="victory__ring"></span>
-                <svg viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 20h6M10 17h4"/></svg>
-            </span>
-            <p class="victory__kicker">Mission complete</p>
-            <h2 class="victory__title" id="victoryTitle">Welcome aboard, Commander</h2>
-            <p class="victory__text">You have explored every corner of this portfolio. I bring the same curiosity and follow-through to every team I join &mdash; so let&rsquo;s build something together.</p>
-            <dl class="victory__stats">
-                <div><dt>XP earned</dt><dd id="victoryXp">0</dd></div>
-                <div><dt>Star shards</dt><dd id="victoryShards">5/5</dd></div>
-                <div id="victoryTimeRow"><dt>Time</dt><dd id="victoryTime">&mdash;</dd></div>
-            </dl>
-            <div class="victory__actions">
-                <a class="btn btn--primary" href="#contact" data-victory-close><span>Get in touch</span></a>
-                <a class="btn btn--ghost" href="https://www.linkedin.com/in/kamrujjamantuhinkt3" target="_blank" rel="noopener"><span>Connect on LinkedIn</span></a>
-            </div>
-        </div>
-    </div>
+    <!-- Shown on the classic page, the way back into the universe -->
+    <button class="uni-enter" id="uniEnter" type="button" hidden><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5c2.6-1.1 4.6-1.1 5-.7.4.4.4 2.4-.7 5L12.5 15 9 11.5z"/><path d="M9 11.5 5.5 12 4 14l3.5 1M12.5 15l-.5 3.5L10 20l-1-3.5"/><circle cx="15" cy="9" r="1.3"/></svg><span>Explore as a game</span></button>
 
     <script src="script/main.js"></script>
-    <script src="script/game.js"></script>
+    <script src="script/universe.js"></script>
 </body>
 </html>

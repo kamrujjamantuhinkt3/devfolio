@@ -139,6 +139,9 @@
             preloader.classList.add("is-done");
             body.classList.remove("is-loading");
             scrollLock.off();                    // release the pin taken at start-up
+            // a link straight to a section: the pin reset the scroll, so go there now
+            var linked = location.hash.length > 1 && document.getElementById(location.hash.slice(1));
+            if (linked && !root.classList.contains("is-universe")) linked.scrollIntoView();
             body.classList.add("is-ready");
             startStory();
             setTimeout(function () { preloader.style.display = "none"; }, 900);
@@ -233,6 +236,11 @@
         }
 
         function draw(t) {
+            // the universe covers the page: keep the loop alive but draw nothing
+            if (root.classList.contains("is-universe") && !reduced) {
+                requestAnimationFrame(draw);
+                return;
+            }
             ctx.clearRect(0, 0, w, h);
 
             var light = isLight();
@@ -503,7 +511,7 @@
         }
 
         window.addEventListener("pointermove", function (e) {
-            if (e.pointerType !== "touch") wake();
+            if (e.pointerType !== "touch" && !root.classList.contains("is-universe")) wake();
         }, { passive: true });
 
         // the star swells a little over anything that can be clicked
@@ -517,7 +525,7 @@
         });
 
         window.addEventListener("pointerdown", function (e) {
-            if (e.pointerType === "touch") return;
+            if (e.pointerType === "touch" || root.classList.contains("is-universe")) return;
             for (var k = 0; k < 12; k++) {
                 var angle = (k / 12) * Math.PI * 2 + Math.random() * 0.4;
                 var speed = 0.07 + Math.random() * 0.09;
