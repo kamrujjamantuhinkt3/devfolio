@@ -68,6 +68,7 @@ body {
 body.is-loading { overflow: hidden; }
 
 a { color: inherit; text-decoration: none; }
+p { text-wrap: pretty; }
 img { display: block; max-width: 100%; }
 button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
 figure { margin: 0; }
@@ -467,6 +468,56 @@ html { scrollbar-width: thin; scrollbar-color: rgba(129, 140, 248, .5) var(--bg)
 
 .hero__bg { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
 
+/* A quiet cue at the foot of the first screen that there is more below */
+.hero__scroll {
+    position: absolute;
+    left: 0; right: 0; bottom: 30px;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+}
+.hero__scroll a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    pointer-events: auto;
+    color: var(--muted);
+    transition: color .3s ease;
+}
+.hero__scroll a:hover { color: var(--text); }
+.hero__mouse {
+    position: relative;
+    width: 22px; height: 34px;
+    border-radius: 12px;
+    border: 1.5px solid rgba(165, 180, 252, .5);
+}
+.hero__mouse span {
+    position: absolute;
+    left: 50%; top: 7px;
+    width: 3px; height: 7px;
+    margin-left: -1.5px;
+    border-radius: 3px;
+    background: var(--indigo-300);
+    animation: mouseWheel 1.9s cubic-bezier(.45, 0, .2, 1) infinite;
+}
+@keyframes mouseWheel {
+    0%   { transform: translateY(0); opacity: 0; }
+    20%  { opacity: 1; }
+    70%  { transform: translateY(10px); opacity: 0; }
+    100% { transform: translateY(10px); opacity: 0; }
+}
+.hero__scroll-text {
+    font-size: .6rem;
+    font-weight: 600;
+    letter-spacing: 2.6px;
+    text-transform: uppercase;
+}
+/* only where the first screen is tall enough to hold it above the fold */
+@media (max-width: 899px), (max-height: 959px) {
+    .hero__scroll { display: none; }
+}
+
 /* Sits behind the whole page so every section shares the same sky */
 .space {
     position: fixed;
@@ -657,14 +708,17 @@ body.is-ready .accent.is-flowing .char {
     margin-bottom: 24px;
 }
 .hero__proof span { display: inline-flex; align-items: center; }
-.hero__proof span + span::before {
-    content: "";
-    width: 4px; height: 4px;
-    border-radius: 50%;
-    background: var(--indigo-400);
-    opacity: .6;
-    margin-right: 14px;
+.hero__pi {
+    flex: none;
+    width: 15px; height: 15px;
+    margin-right: 7px;
+    fill: none;
+    stroke: var(--indigo-300);
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
+:root[data-theme="light"] .hero__pi { stroke: var(--indigo-600); }
 .hero__proof b { font-weight: 600; color: var(--text); }
 
 /* Employer capsules. The light is a conic gradient spinning on a square
@@ -1048,7 +1102,9 @@ body.is-ready .accent.is-flowing .char {
 .js [data-reveal="words"] { opacity: 1; transform: none; }
 
 [data-reveal].is-in { opacity: 1; transform: none; }
-[data-reveal].is-in, [data-reveal="mask"].is-in { clip-path: inset(0 0 0 0); }
+/* Only the wipe needs a clip, and only while it plays. Left on everything
+   else it would cut off shadows and anything drawn outside the box. */
+[data-reveal="mask"].is-in { clip-path: inset(0 0 0 0); }
 
 
 /* Word-by-word heading reveal (spans built by JS) */
@@ -1076,7 +1132,10 @@ body.is-ready .accent.is-flowing .char {
     padding: 62px 24px;
 }
 
-.section__head { margin-bottom: 36px; }
+.section__head { margin-bottom: 40px; }
+
+/* Each section is numbered in its label, so the page reads as a sequence */
+main { counter-reset: section; }
 
 .section__label {
     display: flex;
@@ -1090,24 +1149,75 @@ body.is-ready .accent.is-flowing .char {
     margin-bottom: 16px;
 }
 .section__rule { width: 40px; height: 1px; background: linear-gradient(90deg, transparent, var(--indigo-400)); }
+.section__label::before {
+    counter-increment: section;
+    content: counter(section, decimal-leading-zero);
+    font-size: .74rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+}
 
 .section__title {
     font-size: clamp(1.9rem, 3.6vw, 2.7rem);
     font-weight: 700;
     line-height: 1.15;
     letter-spacing: -1.2px;
-    max-width: 18ch;
+    max-width: 20ch;
+    text-wrap: balance;          /* no title ends on a single stranded word */
+}
+
+/* The accent phrase of every heading, in the same indigo light as the name */
+.word--accent .word__in {
+    background: linear-gradient(120deg, var(--indigo-300) 0%, #c7d2fe 45%, var(--indigo-400) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+:root[data-theme="light"] .word--accent .word__in {
+    background-image: linear-gradient(120deg, var(--indigo-700), var(--indigo-500));
+}
+
+/* A text shadow would paint over gradient-filled glyphs, so the accent drops
+   the one it inherits and keeps legibility with a filter instead. The video
+   band stays dark in both themes, so its accent keeps the light gradient. */
+.word--accent .word__in { text-shadow: none; }
+.reel .word--accent .word__in { filter: drop-shadow(0 3px 12px rgba(3, 6, 20, .75)); }
+:root[data-theme="light"] .reel .word--accent .word__in {
+    background-image: linear-gradient(120deg, var(--indigo-300) 0%, #c7d2fe 45%, var(--indigo-400) 100%);
 }
 
 .section__lede {
     max-width: 62ch;
     margin-top: 14px;
-    font-size: .92rem;
+    font-size: .95rem;
     font-weight: 300;
     line-height: 1.7;
     color: var(--muted);
 }
 
+
+
+/* Wide screens: the title on the left and its introduction on the right,
+   instead of both stacked down the left with the right half left empty */
+@media (min-width: 1081px) {
+    .section__head {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        column-gap: 72px;
+        align-items: end;
+    }
+    .section__head > * { grid-column: 1; }
+    .section__head > .section__lede {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+        align-self: end;
+        margin-top: 0;
+        padding-bottom: 6px;
+    }
+    .section__head > .clubx__summary { grid-column: 2; }
+}
 
 /* About */
 .about__aura {
@@ -1630,6 +1740,27 @@ body.is-ready .accent.is-flowing .char {
 }
 
 
+/* Education — the level of the qualification, set large on the right */
+.tl__level {
+    margin-left: auto;
+    padding-right: 6px;
+    font-size: clamp(2.2rem, 3.6vw, 3.1rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -1.5px;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(165, 180, 252, .3);
+    user-select: none;
+    transition: -webkit-text-stroke-color .4s ease, color .4s ease, transform .5s cubic-bezier(.22, 1, .36, 1);
+}
+.tl:hover .tl__level {
+    color: rgba(129, 140, 248, .1);
+    -webkit-text-stroke-color: rgba(165, 180, 252, .7);
+    transform: translateX(-4px);
+}
+:root[data-theme="light"] .tl__level { -webkit-text-stroke-color: rgba(67, 56, 202, .28); }
+:root[data-theme="light"] .tl:hover .tl__level { -webkit-text-stroke-color: rgba(67, 56, 202, .6); }
+
 /* Education — copy */
 .tl__copy { min-width: 0; }
 
@@ -1777,6 +1908,9 @@ body.is-ready .accent.is-flowing .char {
     color: var(--acc);
     transition: color .5s ease;
 }
+/* Some brand colours are near white (Next.js, GitHub). On the light theme
+   each one is deepened towards the ink colour so every name stays readable. */
+:root[data-theme="light"] .focus__name { color: color-mix(in srgb, var(--acc) 45%, #0d1430); }
 .focus__cat {
     font-size: .62rem;
     font-weight: 600;
@@ -1834,11 +1968,15 @@ body.is-ready .accent.is-flowing .char {
 /* Skills — the orbital system. Positions are driven from script so every
    logo stays upright as it travels, and the ones at the front of the sweep
    come forward while the ones behind fall back. */
+/* The orbits are tilted flat, so the top and bottom of the square box are
+   empty. The negative margins hand that space back to the layout. */
 .solar {
     --acc: var(--indigo-400);
+    --sw: min(520px, 84vw, 100%);
     position: relative;
-    width: min(460px, 84vw, 100%);
+    width: var(--sw);
     aspect-ratio: 1;
+    margin-block: calc(var(--sw) * -.2);
     justify-self: center;
 }
 
@@ -1976,6 +2114,26 @@ body.is-ready .accent.is-flowing .char {
 }
 
 .ai__inner { position: relative; padding: 36px 38px; max-width: 86ch; }
+
+@media (min-width: 1081px) {
+    .ai__inner {
+        max-width: none;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+        grid-template-rows: auto auto auto auto 1fr;
+        column-gap: 56px;
+        padding: 40px 44px;
+    }
+    .ai__inner > * { grid-column: 1; }
+    .ai__inner > .ai__badge { justify-self: start; }
+    .ai__inner > .practice {
+        grid-column: 2;
+        grid-row: 1 / -1;
+        align-self: center;
+        margin-top: 0;
+    }
+    .ai__inner > .practice .practice__item:first-child { border-top: 0; padding-top: 4px; }
+}
 
 .ai__badge {
     display: inline-block;
@@ -2783,13 +2941,23 @@ body.is-ready .accent.is-flowing .char {
 
 .xp {
     position: relative;
-    border-bottom: 1px solid var(--border);
+    margin-bottom: 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    transition: border-color .4s ease, background .4s ease, box-shadow .4s ease;
 }
-.xp:last-child { border-bottom: 0; }
+.xp.is-open {
+    border-color: rgba(129, 140, 248, .36);
+    background: linear-gradient(135deg, rgba(99, 102, 241, .09), rgba(99, 102, 241, .02) 60%), var(--surface);
+    box-shadow: 0 24px 54px rgba(2, 4, 16, .35);
+}
+:root[data-theme="light"] .xp.is-open { box-shadow: 0 20px 44px rgba(30, 41, 110, .12); }
+.xp:last-child { margin-bottom: 0; }
 
 .xp__node {
     position: absolute;
-    left: -30px; top: 27px;
+    left: -30px; top: 40px;
     width: 11px; height: 11px;
     margin-left: -5px;
     border-radius: 50%;
@@ -2817,12 +2985,12 @@ body.is-ready .accent.is-flowing .char {
     align-items: center;
     gap: 20px;
     width: 100%;
-    padding: 18px 6px;
+    padding: 18px 22px;
     text-align: left;
-    border-radius: 12px;
+    border-radius: 20px;
     transition: background .35s ease, padding-left .35s ease;
 }
-.xp__toggle:hover { background: rgba(129, 140, 248, .05); padding-left: 12px; }
+.xp__toggle:hover { background: rgba(129, 140, 248, .05); padding-left: 26px; }
 
 /* Both marks are dark-on-white artwork, and Mega Packaging's has white in it,
    so each sits on a light tile the way the education crests do */
@@ -2911,7 +3079,9 @@ body.is-ready .accent.is-flowing .char {
 }
 .xp.is-open .xp__panel { opacity: 1; }
 
-.xp__inner { padding: 2px 6px 24px 76px; }
+.xp__inner { padding: 2px 28px 26px 96px; }
+.xp__summary,
+.xp__list { max-width: 74ch; }
 
 .xp__summary {
     font-size: .88rem;
@@ -4185,6 +4355,34 @@ html:not(.js) .cstory + .cstory { border-top: 1px solid var(--border); }
     color: var(--muted);
 }
 
+.foot__nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 22px;
+}
+.foot__nav a {
+    position: relative;
+    font-size: .8rem;
+    font-weight: 500;
+    color: var(--muted);
+    transition: color .3s ease;
+}
+.foot__nav a::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -3px;
+    height: 1px;
+    background: var(--indigo-400);
+    transform: scaleX(0);
+    transition: transform .35s cubic-bezier(.22, 1, .36, 1);
+}
+.foot__nav a:hover { color: var(--text); }
+.foot__nav a:hover::after { transform: scaleX(1); }
+@media (max-width: 1100px) and (min-width: 621px) {
+    .foot__nav { order: 3; width: 100%; padding-top: 6px; }
+}
+
 .foot__social { display: flex; gap: 8px; }
 .foot__social a {
     display: grid;
@@ -4266,6 +4464,42 @@ html:not(.js) .cstory + .cstory { border-top: 1px solid var(--border); }
 .foot__up:hover svg { transform: translateY(-3px); }
 
 
+/* Light theme - the pale indigo is made for the night sky. On the light
+   background the same small labels take the deeper indigo, so they stay
+   readable instead of fading into the page. */
+:root[data-theme="light"] .story__marker,
+:root[data-theme="light"] .node.is-on .node__label,
+:root[data-theme="light"] .section__label,
+:root[data-theme="light"] .about__badge-value,
+:root[data-theme="light"] .about__lead strong,
+:root[data-theme="light"] .tl__years,
+:root[data-theme="light"] .ai__badge,
+:root[data-theme="light"] .quote__by,
+:root[data-theme="light"] .sheet__cat,
+:root[data-theme="light"] .xp__when,
+:root[data-theme="light"] .xp.is-open .xp__chev,
+:root[data-theme="light"] .panel__no,
+:root[data-theme="light"] .line__icon,
+:root[data-theme="light"] .line__time,
+:root[data-theme="light"] .field__input:not(:placeholder-shown) + .field__label { color: var(--indigo-600); }
+
+/* ...and the few texts set in a fixed pale colour for the dark sky */
+:root[data-theme="light"] .hero__role { color: #2a3360; }
+:root[data-theme="light"] .focus__exp { color: #3d4670; }
+
+/* the greens deepen the same way, from neon on navy to a readable leaf green */
+:root[data-theme="light"] .hero__status {
+    color: #15803d;
+    border-color: rgba(21, 128, 61, .3);
+    background: rgba(34, 197, 94, .1);
+}
+:root[data-theme="light"] .tl__badge,
+:root[data-theme="light"] .proj__live,
+:root[data-theme="light"] .xp__now,
+:root[data-theme="light"] .line__copy.is-done,
+:root[data-theme="light"] .note__hint.is-good { color: #15803d; }
+
+
 /* Responsive */
 /* Eight links need about 1180px beside the wordmark; below that the menu
    moves behind the burger rather than squeezing the name */
@@ -4320,7 +4554,7 @@ html:not(.js) .cstory + .cstory { border-top: 1px solid var(--border); }
 
 @media (max-width: 860px) {
     .system { grid-template-columns: 1fr; gap: 30px; }
-    .solar { width: min(420px, 82vw, 100%); }
+    .solar { --sw: min(420px, 82vw, 100%); }
     .ai__inner { padding: 28px 24px; }
 }
 
@@ -4336,8 +4570,11 @@ html:not(.js) .cstory + .cstory { border-top: 1px solid var(--border); }
     .xp__node { left: -22px; }
     .xp__toggle { flex-wrap: wrap; gap: 10px 14px; }
     .xp__meta { align-items: flex-start; text-align: left; margin-left: 0; width: 100%; order: 3; flex-direction: row; align-items: center; gap: 10px; }
-    .xp__chev { position: absolute; right: 6px; top: 22px; }
-    .xp__inner { padding-left: 6px; }
+    .xp__chev { position: absolute; right: 14px; top: 20px; }
+    .xp__id { flex: 1 1 0; }                         /* stays beside the logo, wrapping inside */
+    .xp__toggle { padding: 16px 58px 16px 16px; }     /* room for the arrow */
+    .xp__toggle:hover { padding-left: 16px; }
+    .xp__inner { padding: 0 18px 22px; }
     /* bottom sheet: easier to reach, and it cannot overflow off the top */
     .sheet { padding: 0; place-items: end center; }
     .sheet__panel {
@@ -4368,6 +4605,7 @@ html:not(.js) .cstory + .cstory { border-top: 1px solid var(--border); }
     .timeline__rail { display: none; }
     .tl__node { display: none; }
     .tl__card { flex-direction: column; align-items: flex-start; gap: 14px; padding: 20px; }
+    .tl__level { position: absolute; top: 16px; right: 16px; font-size: 1.8rem; }
     .tl:hover .tl__card { transform: none; }
 }
 
@@ -4401,7 +4639,7 @@ html:not(.js) .cstory + .cstory { border-top: 1px solid var(--border); }
     .hero__title { font-size: clamp(3rem, 4.8vw, 4.6rem); }
     .hero__role { font-size: 1.2rem; max-width: 50ch; }
     .section__title { font-size: clamp(2.1rem, 3.2vw, 3rem); }
-    .solar { width: min(520px, 100%); }
+    .solar { --sw: min(520px, 100%); }
     .projects__grid { gap: 18px; }
     .reach { gap: 26px; }
 }
@@ -4486,7 +4724,7 @@ html:not(.js) .cstory + .cstory { border-top: 1px solid var(--border); }
     .hero__cta { gap: 10px 14px; }
 
     .stage { width: min(260px, 76vw, 100%); }
-    .solar { width: min(290px, 88vw, 100%); }
+    .solar { --sw: min(290px, 88vw, 100%); }
     .sat { width: 42px; height: 42px; }
     .sat svg { width: 23px; height: 23px; }
 
@@ -4707,7 +4945,7 @@ html:not(.js) .cstory + .cstory { border-top: 1px solid var(--border); }
     .practice__bullet::after,
     .solar__core,
     .edu__orbit, .skills__orbit, .tl__ring,
-    .tl__badge, .tl.is-lit .tl__logo,
+    .tl__badge, .tl.is-lit .tl__logo, .hero__mouse span,
     .honors__aura, .honors__stats::before,
     .award__halo, .award__coin, .award__coin::before,
     .club__ring, .clubx__beam, .clubx__panel::before,

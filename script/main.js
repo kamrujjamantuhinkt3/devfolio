@@ -716,19 +716,26 @@
     }
     paint(0);
 
-    /* Split headings into words so each can rise out from behind a mask */
+    /* Split headings into words so each can rise out from behind a mask. Words
+       inside an <em> are the heading's accent and keep that as a class. */
     document.querySelectorAll("[data-words]").forEach(function (el) {
-        var words = el.textContent.trim().split(/\s+/);
+        var words = [];
+        Array.prototype.forEach.call(el.childNodes, function (node) {
+            var accent = node.nodeType === 1 && node.tagName === "EM";
+            (node.textContent || "").trim().split(/\s+/).forEach(function (w) {
+                if (w) words.push({ text: w, accent: accent });
+            });
+        });
         el.textContent = "";
 
         words.forEach(function (word, i) {
             var outer = document.createElement("span");
-            outer.className = "word";
+            outer.className = "word" + (word.accent ? " word--accent" : "");
 
             var inner = document.createElement("span");
             inner.className = "word__in";
             inner.style.setProperty("--wi", i);
-            inner.textContent = word;
+            inner.textContent = word.text;
 
             outer.appendChild(inner);
             el.appendChild(outer);
