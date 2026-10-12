@@ -27,6 +27,9 @@
                 body.style.width = "100%";
             },
             off: function () {
+                // Escape closes the menu even when it is not open; without a
+                // lock to release this would jump the page back up
+                if (depth <= 0) return;
                 depth -= 1;
                 if (depth > 0) return;
                 depth = 0;
