@@ -98,10 +98,20 @@
         try { localStorage.setItem("kt-theme", root.getAttribute("data-theme")); } catch (e) { /* ignore */ }
     });
 
-    /* Preloader */
+    /* Preloader - the dial fills with the load (--p), and the line under the
+       name changes as it goes */
     var preloader = document.getElementById("preloader");
-    var preBar = document.getElementById("preBar");
     var prePct = document.getElementById("prePct");
+    var preStatus = document.getElementById("preStatus");
+    var PRE_STEPS = [[0, "Aligning the stars"], [30, "Charging the engines"], [62, "Loading the worlds"], [90, "Almost there"]];
+
+    function paintLoad(p) {
+        preloader.style.setProperty("--p", (p / 100).toFixed(3));
+        prePct.textContent = String(Math.floor(p));
+        var line = PRE_STEPS[0][1];
+        PRE_STEPS.forEach(function (s) { if (p >= s[0]) line = s[1]; });
+        if (preStatus.textContent !== line) preStatus.textContent = line;
+    }
 
     var pct = 0;
     var pageLoaded = false;
@@ -132,8 +142,9 @@
         if (finished) return;
         finished = true;
 
-        preBar.style.width = "100%";
-        prePct.textContent = "100";
+        paintLoad(100);
+        preStatus.textContent = "Ready";
+        preloader.classList.add("is-full");
 
         setTimeout(function () {
             preloader.classList.add("is-done");
@@ -150,8 +161,8 @@
                 if (linked) linked.scrollIntoView();
                 sendMode("classic");
             }
-            setTimeout(function () { preloader.style.display = "none"; }, 900);
-        }, 340);
+            setTimeout(function () { preloader.style.display = "none"; }, 1100);
+        }, 480);
     }
 
     var timer = setInterval(function () {
@@ -160,8 +171,7 @@
         pct += Math.max((target - pct) * 0.11, 0.35);
         if (pct > target) pct = target;
 
-        preBar.style.width = pct + "%";
-        prePct.textContent = String(Math.floor(pct));
+        paintLoad(pct);
 
         if (pageLoaded && pct >= 99.4) { clearInterval(timer); finish(); }
     }, 40);
@@ -189,17 +199,22 @@
     var warp = { v: 0, target: 0 };
 
     // the few words about me rise in one at a time, so each is its own span;
-    // the names in bold stay bold
+    // the names in bold rise whole, as capsules with a light running round them
     var gateLine = document.getElementById("gateLine");
     if (gateLine) {
-        var wordAt = 0;
+        var wordAt = 0, capAt = 0;
         Array.prototype.slice.call(gateLine.childNodes).forEach(function (node) {
-            var bold = node.nodeType === 1;
+            if (node.nodeType === 1) {
+                node.classList.add("gw", "cap");
+                node.style.setProperty("--w", wordAt++);
+                node.style.setProperty("--capd", (capAt++ * 1.8) + "s");
+                return;
+            }
             var words = document.createDocumentFragment();
             (node.textContent || "").split(/(\s+)/).forEach(function (part) {
                 if (!part) return;
                 if (/^\s+$/.test(part)) { words.appendChild(document.createTextNode(part)); return; }
-                var word = document.createElement(bold ? "b" : "span");
+                var word = document.createElement("span");
                 word.className = "gw";
                 word.style.setProperty("--w", wordAt++);
                 word.textContent = part;
@@ -252,9 +267,9 @@
     // bobs between the line and the x-height, climbs for the tall letters and
     // dips for the ones that hang below
     function penHeight(ch, k) {
-        var y = EM * 0.13 * (1 - Math.cos(k * Math.PI * 2.5));
-        if (/[A-Zbdfhklt]/.test(ch)) y += EM * 0.34 * Math.max(0, Math.sin(k * Math.PI * 2));
-        if (/[fgjpqyz]/.test(ch)) y -= EM * 0.3 * Math.max(0, -Math.sin(k * Math.PI * 2));
+        var y = EM * 0.17 * (1 - Math.cos(k * Math.PI * 2.5));
+        if (/[A-Zbdfhklt]/.test(ch)) y += EM * 0.3 * Math.max(0, Math.sin(k * Math.PI * 2));
+        if (/[fgjpqyz]/.test(ch)) y -= EM * 0.24 * Math.max(0, -Math.sin(k * Math.PI * 2));
         if (/[,.]/.test(ch)) y = EM * 0.05 * (1 - k);
         return y;
     }
@@ -330,7 +345,8 @@
             // glyphs themselves (an SVG box is the font's, much taller); the
             // letters' own positions come from the SVG
             var probe = document.createElement("canvas").getContext("2d");
-            probe.font = EM + "px " + getComputedStyle(lines[0].text).fontFamily;
+            var face = getComputedStyle(lines[0].text);
+            probe.font = face.fontWeight + " " + EM + "px " + face.fontFamily;
             var top = Infinity, bottom = -Infinity, reach = 0;
             lines.forEach(function (l) {
                 var mt = probe.measureText(l.str);
@@ -581,7 +597,7 @@
     function fontsIn() {
         var wait = new Promise(function (done) { setTimeout(done, 1800); });
         if (!document.fonts || !document.fonts.load) return wait;
-        return Promise.race([document.fonts.load('100px "Great Vibes"').then(null, function () {}), wait]);
+        return Promise.race([document.fonts.load('700 100px "Dancing Script"').then(null, function () {}), wait]);
     }
 
     function layoutHands() {
@@ -647,6 +663,8 @@
             gate.classList.add("is-set");
             later(450, function () {
                 hello.play(function () {
+                    // finishing early (a skip) lands here too; the skip has it from there
+                    if (skipped) return;
                     greeted();
                     later(1500, function () {
                         gate.classList.add("is-asking");
@@ -662,9 +680,9 @@
     function skipIntro() {
         if (!gateOpen || gate.classList.contains("is-choosing")) return;
         skipped = true;
-        clearIntro();
         gate.classList.add("is-quick", "is-set", "is-asking");
         if (hello) { hello.finish(); asker.finish(); }
+        clearIntro();
         greeted();
         showChoices();
     }
@@ -808,9 +826,9 @@
         }
     });
 
-    // the little ship in the gaming picture is SMIL, which CSS cannot pause
-    if (gate && reduced) {
-        gate.querySelectorAll("svg").forEach(function (s) { if (s.pauseAnimations) s.pauseAnimations(); });
+    // the moons and the ships in these pictures are SMIL, which CSS cannot pause
+    if (reduced) {
+        document.querySelectorAll("#gate svg, #preloader svg").forEach(function (s) { if (s.pauseAnimations) s.pauseAnimations(); });
     }
 
 
@@ -1493,6 +1511,78 @@
             }, { threshold: .6 });
 
             counters.forEach(function (el) { countObs.observe(el); });
+        }
+    }
+
+
+    /* Education - the road. On wide screens the stops climb from left to
+       right, and a road of light is drawn through them. It is measured from
+       the stops themselves, so it always meets them, and drawn again whenever
+       a card changes size. Once it is in, a comet runs along it. */
+    var journey = document.querySelector(".journey");
+    var roadSvg = journey ? journey.querySelector(".journey__road") : null;
+
+    if (roadSvg) {
+        var roadPaths = Array.prototype.slice.call(roadSvg.querySelectorAll("path"));
+        var roadGlow = roadSvg.querySelector(".journey__glow");
+        var roadStops = Array.prototype.slice.call(journey.querySelectorAll(".edu-step__node"));
+        var roadQueued = false;
+
+        var drawRoad = function () {
+            roadQueued = false;
+            if (getComputedStyle(roadSvg).display === "none" || !roadStops.length) return;
+            var box = journey.getBoundingClientRect();
+            if (!box.width) return;
+            var pts = roadStops.map(function (n) {
+                var r = n.getBoundingClientRect();
+                return [r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top];
+            });
+            var first = pts[0], last = pts[pts.length - 1];
+            // level into the first stop from the left edge; then from each stop to
+            // the next an S-curve that leaves and arrives level, so every stop
+            // sits on a landing of its own; and a last climb out towards today,
+            // kept inside the section
+            var end = [box.width - 6, Math.max(44, last[1] - 46)];
+            var all = pts.concat([end]);
+            var d = "M0 " + first[1].toFixed(1) + " L" + first[0].toFixed(1) + " " + first[1].toFixed(1);
+            for (var i = 0; i < all.length - 1; i++) {
+                var p = all[i], q = all[i + 1], half = (q[0] - p[0]) / 2;
+                d += " C" + [p[0] + half, p[1], q[0] - half, q[1], q[0], q[1]]
+                    .map(function (n) { return n.toFixed(1); }).join(" ");
+            }
+            roadSvg.setAttribute("viewBox", "0 0 " + box.width.toFixed(0) + " " + box.height.toFixed(0));
+            roadPaths.forEach(function (p) { p.setAttribute("d", d); });
+            journey.style.setProperty("--road", Math.ceil(roadGlow.getTotalLength()));
+            journey.style.setProperty("--now-x", end[0].toFixed(0) + "px");
+            journey.style.setProperty("--now-y", end[1].toFixed(0) + "px");
+        };
+
+        var queueRoad = function () {
+            if (roadQueued) return;
+            roadQueued = true;
+            requestAnimationFrame(drawRoad);
+        };
+
+        drawRoad();
+        window.addEventListener("resize", queueRoad);
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(queueRoad);
+        if ("ResizeObserver" in window) {
+            var roadWatch = new ResizeObserver(queueRoad);
+            journey.querySelectorAll(".edu-step__card").forEach(function (card) { roadWatch.observe(card); });
+        }
+
+        // the comet sets off once the road has been drawn
+        if (!reduced && "IntersectionObserver" in window) {
+            var cometWatch = new IntersectionObserver(function (entries) {
+                if (!entries[0].isIntersecting) return;
+                cometWatch.disconnect();
+                setTimeout(function () {
+                    roadSvg.querySelectorAll(".journey__comet animate, .journey__comet animateMotion").forEach(function (a) {
+                        if (a.beginElement) a.beginElement();
+                    });
+                }, 2400);
+            }, { threshold: .3 });
+            cometWatch.observe(journey);
         }
     }
 

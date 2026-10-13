@@ -17,7 +17,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Great+Vibes&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/universe.css">
@@ -28,21 +28,41 @@
     <!-- Starfield behind the entire page -->
     <div class="space" aria-hidden="true"><canvas class="stars" id="stars"></canvas></div>
 
-    <!-- Preloader -->
+    <!-- Preloader: the monogram inside a dial that fills as the page loads,
+         a moon on a wide orbit round it, and the name spelled out beneath -->
     <div class="preloader" id="preloader">
         <div class="preloader__inner">
-            <span class="mark">
-                <svg class="mark__orbit" viewBox="0 0 120 120" aria-hidden="true">
-                    <g class="mark__tilt">
-                        <circle class="mark__ring" cx="60" cy="60" r="52" vector-effect="non-scaling-stroke"/>
-                        <g class="mark__spin"><circle class="mark__moon" cx="112" cy="60" r="6"/></g>
+            <div class="preloader__core">
+                <span class="preloader__wave" aria-hidden="true"></span>
+                <svg class="preloader__dial" viewBox="0 0 200 200" aria-hidden="true">
+                    <defs>
+                        <linearGradient id="plArc" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#e0e7ff"/>
+                            <stop offset=".5" stop-color="#818cf8"/>
+                            <stop offset="1" stop-color="#4f46e5"/>
+                        </linearGradient>
+                    </defs>
+                    <circle class="preloader__ticks" cx="100" cy="100" r="97" pathLength="120"/>
+                    <circle class="preloader__track" cx="100" cy="100" r="86"/>
+                    <circle class="preloader__arc" cx="100" cy="100" r="86" pathLength="100"/>
+                    <g transform="rotate(16 100 100)">
+                        <ellipse class="preloader__orbit" cx="100" cy="100" rx="128" ry="34"/>
+                        <circle class="preloader__moon" r="5"><animateMotion dur="6s" repeatCount="indefinite" path="M-28,100 a128,34 0 1,0 256,0 a128,34 0 1,0 -256,0"/></circle>
                     </g>
                 </svg>
-                <span class="mark__kt">KT</span>
-            </span>
-            <span class="preloader__caption">Kamrujjaman&nbsp;Tuhin</span>
-            <div class="preloader__track"><span class="preloader__bar" id="preBar"></span></div>
-            <span class="preloader__pct"><span id="prePct">0</span>%</span>
+                <span class="preloader__head" aria-hidden="true"></span>
+                <span class="mark">
+                    <svg class="mark__orbit" viewBox="0 0 120 120" aria-hidden="true">
+                        <g class="mark__tilt">
+                            <circle class="mark__ring" cx="60" cy="60" r="52" vector-effect="non-scaling-stroke"/>
+                            <g class="mark__spin"><circle class="mark__moon" cx="112" cy="60" r="6"/></g>
+                        </g>
+                    </svg>
+                    <span class="mark__kt">KT</span>
+                </span>
+            </div>
+            <p class="preloader__name" aria-label="Kamrujjaman Tuhin"><span class="preloader__letters" aria-hidden="true"><span style="--i:0">K</span><span style="--i:1">a</span><span style="--i:2">m</span><span style="--i:3">r</span><span style="--i:4">u</span><span style="--i:5">j</span><span style="--i:6">j</span><span style="--i:7">a</span><span style="--i:8">m</span><span style="--i:9">a</span><span style="--i:10">n</span><span style="--i:11">&nbsp;</span><span style="--i:12">T</span><span style="--i:13">u</span><span style="--i:14">h</span><span style="--i:15">i</span><span style="--i:16">n</span></span></p>
+            <p class="preloader__status"><span id="preStatus">Aligning the stars</span><span class="preloader__pct"><span id="prePct">0</span>%</span></p>
         </div>
     </div>
 
@@ -91,86 +111,129 @@
                 </p>
 
                 <div class="gate__choices" role="group" aria-labelledby="gateQ">
-                    <button class="choice" type="button" data-choose="classic">
-                        <span class="choice__art">
-                            <svg class="art" viewBox="0 0 300 150" preserveAspectRatio="xMinYMid slice" aria-hidden="true">
+                    <button class="choice choice--classic" type="button" data-choose="classic">
+                        <span class="choice__scene">
+                            <svg class="scene" viewBox="0 0 480 220" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
                                 <defs>
-                                    <linearGradient id="gaPageBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141b46"/><stop offset="1" stop-color="#070b1e"/></linearGradient>
-                                    <linearGradient id="gaInk" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#818cf8"/><stop offset="1" stop-color="#c7d2fe"/></linearGradient>
-                                    <clipPath id="gaView"><rect x="24" y="38" width="252" height="112"/></clipPath>
+                                    <radialGradient id="scGlow" cx=".76" cy=".42" r=".62"><stop offset="0" stop-color="#4f46e5" stop-opacity=".62"/><stop offset=".55" stop-color="#1e3a8a" stop-opacity=".25"/><stop offset="1" stop-color="#070b1f" stop-opacity="0"/></radialGradient>
+                                    <linearGradient id="scWin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#18205a"/><stop offset="1" stop-color="#0a0f2c"/></linearGradient>
+                                    <linearGradient id="scInk" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#818cf8"/><stop offset="1" stop-color="#e0e7ff"/></linearGradient>
+                                    <linearGradient id="scTileA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#38bdf8"/></linearGradient>
+                                    <linearGradient id="scTileB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#6366f1"/></linearGradient>
+                                    <linearGradient id="scTileC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#14b8a6"/><stop offset="1" stop-color="#3b82f6"/></linearGradient>
+                                    <clipPath id="scView"><rect x="268" y="46" width="196" height="150"/></clipPath>
                                 </defs>
-                                <rect width="300" height="150" fill="url(#gaPageBg)"/>
-                                <rect x="24" y="16" width="252" height="150" rx="10" fill="#0b1130" stroke="rgba(165,180,252,.28)"/>
-                                <circle cx="36" cy="27" r="2.6" fill="#f87171"/><circle cx="44" cy="27" r="2.6" fill="#fbbf24"/><circle cx="52" cy="27" r="2.6" fill="#34d399"/>
-                                <rect x="96" y="23" width="108" height="8" rx="4" fill="rgba(255,255,255,.08)"/>
-                                <line x1="24" y1="37.5" x2="276" y2="37.5" stroke="rgba(165,180,252,.14)"/>
-                                <g clip-path="url(#gaView)">
-                                    <g class="art__scroll">
-                                        <rect x="38" y="52" width="44" height="5" rx="2.5" fill="url(#gaInk)"/>
-                                        <rect x="38" y="62" width="104" height="10" rx="5" fill="#e0e7ff"/>
-                                        <rect x="38" y="77" width="84" height="10" rx="5" fill="url(#gaInk)"/>
-                                        <rect x="38" y="93" width="96" height="4" rx="2" fill="rgba(255,255,255,.22)"/>
-                                        <rect x="38" y="101" width="72" height="4" rx="2" fill="rgba(255,255,255,.14)"/>
-                                        <rect x="38" y="112" width="36" height="11" rx="5.5" fill="#6366f1"/>
-                                        <rect x="79" y="112" width="32" height="11" rx="5.5" fill="none" stroke="rgba(165,180,252,.45)"/>
-                                        <ellipse cx="216" cy="86" rx="44" ry="13" fill="none" stroke="rgba(165,180,252,.35)" transform="rotate(-16 216 86)"/>
-                                        <circle cx="216" cy="86" r="27" fill="#26246b" stroke="#818cf8" stroke-width="1.5"/>
-                                        <circle cx="216" cy="80" r="9" fill="#a5b4fc"/>
-                                        <path d="M199 104c3-9 10-13 17-13s14 4 17 13" fill="#a5b4fc"/>
-                                        <g fill="rgba(255,255,255,.05)" stroke="rgba(165,180,252,.2)">
-                                            <rect x="38" y="140" width="70" height="46" rx="7"/>
-                                            <rect x="115" y="140" width="70" height="46" rx="7"/>
-                                            <rect x="192" y="140" width="70" height="46" rx="7"/>
-                                        </g>
-                                        <g fill="url(#gaInk)" opacity=".8">
-                                            <rect x="46" y="170" width="40" height="4" rx="2"/>
-                                            <rect x="123" y="170" width="40" height="4" rx="2"/>
-                                            <rect x="200" y="170" width="40" height="4" rx="2"/>
+                                <rect width="480" height="220" fill="#070b1f"/>
+                                <rect width="480" height="220" fill="url(#scGlow)"/>
+                                <g fill="rgba(165,180,252,.16)"><circle cx="18" cy="16" r="1"/><circle cx="18" cy="38" r="1"/><circle cx="18" cy="60" r="1"/><circle cx="18" cy="82" r="1"/><circle cx="18" cy="104" r="1"/><circle cx="18" cy="126" r="1"/><circle cx="18" cy="148" r="1"/><circle cx="18" cy="170" r="1"/><circle cx="18" cy="192" r="1"/><circle cx="18" cy="214" r="1"/><circle cx="40" cy="16" r="1"/><circle cx="40" cy="38" r="1"/><circle cx="40" cy="60" r="1"/><circle cx="40" cy="82" r="1"/><circle cx="40" cy="104" r="1"/><circle cx="40" cy="126" r="1"/><circle cx="40" cy="148" r="1"/><circle cx="40" cy="170" r="1"/><circle cx="40" cy="192" r="1"/><circle cx="40" cy="214" r="1"/><circle cx="62" cy="16" r="1"/><circle cx="62" cy="38" r="1"/><circle cx="62" cy="60" r="1"/><circle cx="62" cy="82" r="1"/><circle cx="62" cy="104" r="1"/><circle cx="62" cy="126" r="1"/><circle cx="62" cy="148" r="1"/><circle cx="62" cy="170" r="1"/><circle cx="62" cy="192" r="1"/><circle cx="62" cy="214" r="1"/><circle cx="84" cy="16" r="1"/><circle cx="84" cy="38" r="1"/><circle cx="84" cy="60" r="1"/><circle cx="84" cy="82" r="1"/><circle cx="84" cy="104" r="1"/><circle cx="84" cy="126" r="1"/><circle cx="84" cy="148" r="1"/><circle cx="84" cy="170" r="1"/><circle cx="84" cy="192" r="1"/><circle cx="84" cy="214" r="1"/><circle cx="106" cy="16" r="1"/><circle cx="106" cy="38" r="1"/><circle cx="106" cy="60" r="1"/><circle cx="106" cy="82" r="1"/><circle cx="106" cy="104" r="1"/><circle cx="106" cy="126" r="1"/><circle cx="106" cy="148" r="1"/><circle cx="106" cy="170" r="1"/><circle cx="106" cy="192" r="1"/><circle cx="106" cy="214" r="1"/><circle cx="128" cy="16" r="1"/><circle cx="128" cy="38" r="1"/><circle cx="128" cy="60" r="1"/><circle cx="128" cy="82" r="1"/><circle cx="128" cy="104" r="1"/><circle cx="128" cy="126" r="1"/><circle cx="128" cy="148" r="1"/><circle cx="128" cy="170" r="1"/><circle cx="128" cy="192" r="1"/><circle cx="128" cy="214" r="1"/><circle cx="150" cy="16" r="1"/><circle cx="150" cy="38" r="1"/><circle cx="150" cy="60" r="1"/><circle cx="150" cy="82" r="1"/><circle cx="150" cy="104" r="1"/><circle cx="150" cy="126" r="1"/><circle cx="150" cy="148" r="1"/><circle cx="150" cy="170" r="1"/><circle cx="150" cy="192" r="1"/><circle cx="150" cy="214" r="1"/><circle cx="172" cy="16" r="1"/><circle cx="172" cy="38" r="1"/><circle cx="172" cy="60" r="1"/><circle cx="172" cy="82" r="1"/><circle cx="172" cy="104" r="1"/><circle cx="172" cy="126" r="1"/><circle cx="172" cy="148" r="1"/><circle cx="172" cy="170" r="1"/><circle cx="172" cy="192" r="1"/><circle cx="172" cy="214" r="1"/><circle cx="194" cy="16" r="1"/><circle cx="194" cy="38" r="1"/><circle cx="194" cy="60" r="1"/><circle cx="194" cy="82" r="1"/><circle cx="194" cy="104" r="1"/><circle cx="194" cy="126" r="1"/><circle cx="194" cy="148" r="1"/><circle cx="194" cy="170" r="1"/><circle cx="194" cy="192" r="1"/><circle cx="194" cy="214" r="1"/><circle cx="216" cy="16" r="1"/><circle cx="216" cy="38" r="1"/><circle cx="216" cy="60" r="1"/><circle cx="216" cy="82" r="1"/><circle cx="216" cy="104" r="1"/><circle cx="216" cy="126" r="1"/><circle cx="216" cy="148" r="1"/><circle cx="216" cy="170" r="1"/><circle cx="216" cy="192" r="1"/><circle cx="216" cy="214" r="1"/><circle cx="238" cy="16" r="1"/><circle cx="238" cy="38" r="1"/><circle cx="238" cy="60" r="1"/><circle cx="238" cy="82" r="1"/><circle cx="238" cy="104" r="1"/><circle cx="238" cy="126" r="1"/><circle cx="238" cy="148" r="1"/><circle cx="238" cy="170" r="1"/><circle cx="238" cy="192" r="1"/><circle cx="238" cy="214" r="1"/></g>
+                                <g class="scene__win" transform="translate(476 112) scale(.86) translate(-476 -112)">
+                                    <rect x="256" y="20" width="220" height="186" rx="13" fill="url(#scWin)" stroke="rgba(165,180,252,.4)"/>
+                                    <circle cx="271" cy="33" r="3" fill="#f87171"/><circle cx="281" cy="33" r="3" fill="#fbbf24"/><circle cx="291" cy="33" r="3" fill="#34d399"/>
+                                    <rect x="318" y="28" width="118" height="10" rx="5" fill="rgba(255,255,255,.08)"/>
+                                    <line x1="256" y1="45.5" x2="476" y2="45.5" stroke="rgba(165,180,252,.18)"/>
+                                    <g clip-path="url(#scView)">
+                                        <g class="scene__scroll">
+                                            <circle cx="296" cy="76" r="17" fill="#26246b" stroke="#818cf8" stroke-width="1.4"/>
+                                            <ellipse cx="296" cy="76" rx="27" ry="8" fill="none" stroke="rgba(165,180,252,.5)" transform="rotate(-18 296 76)"/>
+                                            <circle cx="296" cy="71" r="6.5" fill="#c7d2fe"/>
+                                            <path d="M284 88c2.4-6 6.6-8.4 12-8.4s9.6 2.4 12 8.4" fill="#c7d2fe"/>
+                                            <rect x="324" y="62" width="48" height="6" rx="3" fill="url(#scInk)"/>
+                                            <rect x="324" y="73" width="104" height="10" rx="5" fill="#e0e7ff"/>
+                                            <rect x="324" y="88" width="84" height="4" rx="2" fill="rgba(255,255,255,.26)"/>
+                                            <rect x="280" y="104" width="44" height="12" rx="6" fill="#6366f1"/>
+                                            <rect x="330" y="104" width="40" height="12" rx="6" fill="none" stroke="rgba(165,180,252,.55)"/>
+                                            <rect x="280" y="128" width="56" height="46" rx="7" fill="rgba(255,255,255,.05)" stroke="rgba(165,180,252,.2)"/>
+                                            <rect x="342" y="128" width="56" height="46" rx="7" fill="rgba(255,255,255,.05)" stroke="rgba(165,180,252,.2)"/>
+                                            <rect x="404" y="128" width="56" height="46" rx="7" fill="rgba(255,255,255,.05)" stroke="rgba(165,180,252,.2)"/>
+                                            <rect x="280" y="128" width="56" height="20" rx="7" fill="url(#scTileA)"/>
+                                            <rect x="342" y="128" width="56" height="20" rx="7" fill="url(#scTileB)"/>
+                                            <rect x="404" y="128" width="56" height="20" rx="7" fill="url(#scTileC)"/>
+                                            <rect x="286" y="156" width="36" height="4" rx="2" fill="rgba(255,255,255,.5)"/>
+                                            <rect x="348" y="156" width="40" height="4" rx="2" fill="rgba(255,255,255,.5)"/>
+                                            <rect x="410" y="156" width="32" height="4" rx="2" fill="rgba(255,255,255,.5)"/>
+                                            <rect x="286" y="164" width="26" height="3" rx="1.5" fill="rgba(255,255,255,.22)"/>
+                                            <rect x="348" y="164" width="30" height="3" rx="1.5" fill="rgba(255,255,255,.22)"/>
+                                            <rect x="410" y="164" width="24" height="3" rx="1.5" fill="rgba(255,255,255,.22)"/>
+                                            <rect x="280" y="190" width="64" height="5" rx="2.5" fill="url(#scInk)"/>
+                                            <line x1="284" y1="212" x2="456" y2="212" stroke="rgba(165,180,252,.3)" stroke-width="2"/>
+                                            <circle cx="300" cy="212" r="5" fill="#818cf8"/><circle cx="370" cy="212" r="5" fill="#818cf8"/><circle cx="440" cy="212" r="5" fill="#c7d2fe"/>
+                                            <rect x="284" y="224" width="44" height="4" rx="2" fill="rgba(255,255,255,.3)"/>
+                                            <rect x="354" y="224" width="44" height="4" rx="2" fill="rgba(255,255,255,.3)"/>
+                                            <rect x="424" y="224" width="34" height="4" rx="2" fill="rgba(255,255,255,.3)"/>
+                                            <rect x="280" y="244" width="180" height="40" rx="8" fill="rgba(99,102,241,.16)" stroke="rgba(165,180,252,.25)"/>
+                                            <rect x="292" y="256" width="70" height="5" rx="2.5" fill="rgba(255,255,255,.5)"/>
+                                            <rect x="292" y="266" width="110" height="4" rx="2" fill="rgba(255,255,255,.22)"/>
+                                            <rect x="404" y="254" width="44" height="18" rx="9" fill="#6366f1"/>
                                         </g>
                                     </g>
                                 </g>
+                                <g class="scene__chip" style="--d:0s"><rect x="292" y="52" width="62" height="20" rx="10" fill="rgba(15,20,52,.9)" stroke="rgba(165,180,252,.5)"/><circle cx="304" cy="62" r="3" fill="#38bdf8"/><text x="312" y="65.5">Projects</text></g>
+                                <g class="scene__chip" style="--d:1.2s"><rect x="300" y="178" width="54" height="20" rx="10" fill="rgba(15,20,52,.9)" stroke="rgba(165,180,252,.5)"/><circle cx="312" cy="188" r="3" fill="#a78bfa"/><text x="320" y="191.5">Skills</text></g>
+                                <g class="scene__cursor"><path d="M0 0v13.5l3.6-3.3 2.5 5.6 2.3-1-2.4-5.5h5z" fill="#fff" stroke="#0a0f2c" stroke-width="1"/><animateMotion dur="9s" repeatCount="indefinite" keyPoints="0;.3;.3;.62;.62;1" keyTimes="0;.22;.4;.62;.8;1" calcMode="linear" path="M440 190 C 420 150, 380 120, 352 112 S 320 140, 312 160 C 340 190, 410 200, 440 190"/></g>
                             </svg>
                         </span>
-                        <span class="choice__copy">
-                            <span class="choice__kicker"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg> Standard view <em class="choice__last">Last time</em></span>
+                        <span class="choice__shade" aria-hidden="true"></span>
+                        <span class="choice__body">
+                            <span class="choice__top"><kbd class="choice__key">1</kbd><span class="choice__kicker">Standard view</span><em class="choice__last">Last time</em></span>
                             <span class="choice__title">As a standard portfolio</span>
-                            <span class="choice__text">Everything on one clean page &mdash; my work, skills and experience. Quick to scan, and made for recruiters.</span>
+                            <span class="choice__text">Everything on one clean page &mdash; my work, skills and experience. Quick to scan, made for recruiters.</span>
+                            <span class="choice__foot">
+                                <span class="choice__cta"><span>Open the portfolio</span><span class="choice__go"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></span>
+                                <span class="choice__meta"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg> About 2 min</span>
+                            </span>
                         </span>
-                        <span class="choice__meta"><kbd>1</kbd><span>About two minutes</span><span class="choice__go"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></span>
                     </button>
 
                     <button class="choice choice--game" type="button" data-choose="game">
-                        <span class="choice__art">
-                            <svg class="art" viewBox="0 0 300 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                        <span class="choice__scene">
+                            <svg class="scene" viewBox="0 0 480 220" preserveAspectRatio="xMaxYMid slice" aria-hidden="true">
                                 <defs>
-                                    <radialGradient id="gaSky" cx=".5" cy=".45" r=".8"><stop offset="0" stop-color="#1d1957"/><stop offset="1" stop-color="#04061a"/></radialGradient>
-                                    <radialGradient id="gaNeb" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#7c3aed" stop-opacity=".45"/><stop offset="1" stop-color="#7c3aed" stop-opacity="0"/></radialGradient>
-                                    <radialGradient id="gaP1" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#c7d2fe"/><stop offset=".5" stop-color="#6366f1"/><stop offset="1" stop-color="#1e1b4b"/></radialGradient>
-                                    <radialGradient id="gaP2" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#bae6fd"/><stop offset=".5" stop-color="#0ea5e9"/><stop offset="1" stop-color="#0c1e4a"/></radialGradient>
-                                    <radialGradient id="gaP3" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#fef3c7"/><stop offset=".5" stop-color="#f59e0b"/><stop offset="1" stop-color="#4a2306"/></radialGradient>
+                                    <radialGradient id="suNeb" cx=".74" cy=".42" r=".7"><stop offset="0" stop-color="#7c3aed" stop-opacity=".62"/><stop offset=".45" stop-color="#3730a3" stop-opacity=".34"/><stop offset="1" stop-color="#05061a" stop-opacity="0"/></radialGradient>
+                                    <radialGradient id="suNeb2" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#22d3ee" stop-opacity=".28"/><stop offset="1" stop-color="#22d3ee" stop-opacity="0"/></radialGradient>
+                                    <radialGradient id="suGiant" cx=".34" cy=".3" r=".78"><stop offset="0" stop-color="#f5f3ff"/><stop offset=".3" stop-color="#a5b4fc"/><stop offset=".68" stop-color="#4f46e5"/><stop offset="1" stop-color="#1e1b4b"/></radialGradient>
+                                    <radialGradient id="suMoon" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#cffafe"/><stop offset=".5" stop-color="#22d3ee"/><stop offset="1" stop-color="#0e3a52"/></radialGradient>
+                                    <radialGradient id="suSun" cx=".35" cy=".3" r=".75"><stop offset="0" stop-color="#fef3c7"/><stop offset=".5" stop-color="#f59e0b"/><stop offset="1" stop-color="#5a2a06"/></radialGradient>
+                                    <linearGradient id="suRing" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c4b5fd" stop-opacity=".2"/><stop offset=".5" stop-color="#e9d5ff" stop-opacity=".95"/><stop offset="1" stop-color="#c4b5fd" stop-opacity=".2"/></linearGradient>
+                                    <path id="suOrbit" d="M268 120 a124 34 0 1 0 248 0 a124 34 0 1 0 -248 0"/>
+                                    <path id="suRoute" d="M150 214 C 214 196, 236 130, 300 132 S 404 186, 470 70"/>
+                                    <mask id="suBehind" maskUnits="userSpaceOnUse" x="0" y="0" width="480" height="220"><rect width="480" height="220" fill="#fff"/><circle cx="392" cy="104" r="44" fill="#000"/></mask>
                                 </defs>
-                                <rect width="300" height="150" fill="url(#gaSky)"/>
-                                <circle cx="180" cy="70" r="80" fill="url(#gaNeb)"/>
-                                <g fill="#fff" opacity=".75"><circle cx="18" cy="20" r="0.9"/><circle cx="44" cy="58" r="0.6"/><circle cx="70" cy="14" r="1.1"/><circle cx="96" cy="40" r="0.7"/><circle cx="122" cy="22" r="0.6"/><circle cx="150" cy="52" r="0.9"/><circle cx="176" cy="12" r="0.7"/><circle cx="204" cy="30" r="1.0"/><circle cx="232" cy="16" r="0.6"/><circle cx="258" cy="60" r="0.8"/><circle cx="284" cy="24" r="0.9"/><circle cx="30" cy="96" r="0.7"/><circle cx="62" cy="132" r="0.9"/><circle cx="110" cy="108" r="0.6"/><circle cx="138" cy="140" r="0.8"/><circle cx="170" cy="120" r="0.6"/><circle cx="226" cy="128" r="0.9"/><circle cx="252" cy="104" r="0.6"/><circle cx="280" cy="136" r="0.8"/><circle cx="12" cy="140" r="0.6"/></g>
-                                <path d="M44 108 C 96 34, 140 136, 190 76 S 246 30, 262 46" fill="none" stroke="rgba(165,180,252,.4)" stroke-width="1.2" stroke-dasharray="4 5"/>
-                                <ellipse cx="44" cy="108" rx="27" ry="7" fill="none" stroke="rgba(165,180,252,.55)" stroke-width="1.6" transform="rotate(-14 44 108)"/>
-                                <circle cx="44" cy="108" r="16" fill="url(#gaP1)"/>
-                                <circle cx="190" cy="76" r="10" fill="url(#gaP2)"/>
-                                <ellipse cx="262" cy="46" rx="22" ry="6" fill="none" stroke="rgba(253,230,138,.6)" stroke-width="1.5" transform="rotate(-14 262 46)"/>
-                                <circle cx="262" cy="46" r="13" fill="url(#gaP3)"/>
-                                <g class="art__ship">
-                                    <path d="M-12 0 L-5 -1.6 L-5 1.6 Z" fill="#818cf8" opacity=".8"/>
-                                    <path d="M8 0 L-5 -5 L-3 0 L-5 5 Z" fill="#eef2ff"/>
-                                    <animateMotion dur="7s" repeatCount="indefinite" rotate="auto" path="M44 108 C 96 34, 140 136, 190 76 S 246 30, 262 46"/>
+                                <rect width="480" height="220" fill="#05061a"/>
+                                <rect width="480" height="220" fill="url(#suNeb)"/>
+                                <ellipse cx="300" cy="182" rx="120" ry="60" fill="url(#suNeb2)"/>
+                                <g class="scene__stars" fill="#fff"><circle cx="169" cy="42" r="0.9" style="--t:2.6s"/><circle cx="41" cy="214" r="1.1" style="--t:0.4s"/><circle cx="302" cy="18" r="1.1" style="--t:0.9s"/><circle cx="48" cy="115" r="0.9" style="--t:0.3s"/><circle cx="50" cy="145" r="0.9" style="--t:0.2s"/><circle cx="293" cy="35" r="0.7" style="--t:2.5s"/><circle cx="302" cy="19" r="1.1" style="--t:2.3s"/><circle cx="29" cy="60" r="0.6" style="--t:2.2s"/><circle cx="72" cy="78" r="0.9" style="--t:0.6s"/><circle cx="64" cy="150" r="0.8" style="--t:2.2s"/><circle cx="353" cy="50" r="0.6" style="--t:2.3s"/><circle cx="331" cy="52" r="0.8" style="--t:0.4s"/><circle cx="368" cy="20" r="1.1" style="--t:0.2s"/><circle cx="109" cy="131" r="1.3" style="--t:2.1s"/><circle cx="401" cy="84" r="0.9" style="--t:2.3s"/><circle cx="236" cy="96" r="0.8" style="--t:1.0s"/><circle cx="96" cy="182" r="0.7" style="--t:0.3s"/><circle cx="157" cy="138" r="0.9" style="--t:3.5s"/><circle cx="377" cy="118" r="0.8" style="--t:2.4s"/><circle cx="41" cy="34" r="1.1" style="--t:1.7s"/><circle cx="391" cy="91" r="0.7" style="--t:3.7s"/><circle cx="219" cy="14" r="1.3" style="--t:0.3s"/><circle cx="289" cy="150" r="0.8" style="--t:1.4s"/><circle cx="183" cy="156" r="0.9" style="--t:2.3s"/><circle cx="237" cy="21" r="0.6" style="--t:3.8s"/><circle cx="246" cy="182" r="1.3" style="--t:0.3s"/><circle cx="378" cy="183" r="0.8" style="--t:2.6s"/><circle cx="352" cy="214" r="0.9" style="--t:1.1s"/><circle cx="201" cy="175" r="0.8" style="--t:0.1s"/><circle cx="240" cy="94" r="0.7" style="--t:2.4s"/><circle cx="256" cy="19" r="0.7" style="--t:3.1s"/><circle cx="70" cy="193" r="0.7" style="--t:1.6s"/><circle cx="473" cy="131" r="0.6" style="--t:0.7s"/><circle cx="209" cy="144" r="0.8" style="--t:3.5s"/><circle cx="423" cy="114" r="1.1" style="--t:1.1s"/><circle cx="216" cy="95" r="1.3" style="--t:3.5s"/><circle cx="122" cy="42" r="0.6" style="--t:0.7s"/><circle cx="122" cy="172" r="0.7" style="--t:0.0s"/><circle cx="429" cy="154" r="0.7" style="--t:1.1s"/><circle cx="6" cy="41" r="0.9" style="--t:2.1s"/><circle cx="316" cy="148" r="0.8" style="--t:3.8s"/><circle cx="357" cy="135" r="1.1" style="--t:2.6s"/><circle cx="382" cy="17" r="0.9" style="--t:3.6s"/><circle cx="403" cy="178" r="1.1" style="--t:1.6s"/><circle cx="208" cy="104" r="0.6" style="--t:1.9s"/><circle cx="209" cy="19" r="0.7" style="--t:0.3s"/></g>
+                                <use href="#suOrbit" fill="none" stroke="rgba(196,181,253,.3)" stroke-dasharray="3 6" transform="rotate(-10 392 120)"/>
+                                <g transform="rotate(-18 392 104)">
+                                    <path d="M330 104 a62 17 0 0 1 124 0" fill="none" stroke="url(#suRing)" stroke-width="5"/>
                                 </g>
+                                <circle cx="392" cy="104" r="44" fill="url(#suGiant)"/>
+                                <path d="M352 92c18 6 54 6 80-2M350 110c22 7 60 6 84-3" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="5" stroke-linecap="round"/>
+                                <g transform="rotate(-18 392 104)">
+                                    <path d="M454 104 a62 17 0 0 1 -124 0" fill="none" stroke="url(#suRing)" stroke-width="5"/>
+                                </g>
+                                <circle cx="302" cy="40" r="11" fill="url(#suSun)"/>
+                                <g mask="url(#suBehind)"><g transform="rotate(-10 392 120)"><circle r="8" fill="url(#suMoon)"><animateMotion dur="16s" repeatCount="indefinite"><mpath href="#suOrbit"/></animateMotion></circle></g></g>
+                                <use href="#suRoute" fill="none" stroke="rgba(196,181,253,.38)" stroke-width="1.2" stroke-dasharray="4 6"/>
+                                <g class="scene__ship">
+                                    <path d="M-22 0 L-8 -2.4 L-8 2.4 Z" fill="#a78bfa" opacity=".75"/>
+                                    <path d="M-34 0 L-10 -1 L-10 1 Z" fill="#e9d5ff" opacity=".35"/>
+                                    <path d="M11 0 L-7 -7 L-4 0 L-7 7 Z" fill="#f5f3ff"/>
+                                    <circle cx="1" cy="0" r="2" fill="#7c3aed"/>
+                                    <animateMotion dur="8s" repeatCount="indefinite" rotate="auto"><mpath href="#suRoute"/></animateMotion>
+                                </g>
+                                <line class="scene__shoot" x1="0" y1="0" x2="46" y2="16" stroke="url(#suRing)" stroke-width="1.6" stroke-linecap="round"/>
                             </svg>
                         </span>
-                        <span class="choice__copy">
-                            <span class="choice__kicker"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5c2.6-1.1 4.6-1.1 5-.7.4.4.4 2.4-.7 5L12.5 15 9 11.5z"/><path d="M9 11.5 5.5 12 4 14l3.5 1M12.5 15l-.5 3.5L10 20l-1-3.5"/><circle cx="15" cy="9" r="1.3"/></svg> Universe view <em class="choice__last">Last time</em></span>
+                        <span class="choice__shade" aria-hidden="true"></span>
+                        <span class="choice__body">
+                            <span class="choice__top"><kbd class="choice__key">2</kbd><span class="choice__kicker">Universe view</span><em class="choice__last">Last time</em></span>
                             <span class="choice__title">Explore me like a universe</span>
-                            <span class="choice__text">Pilot a ship between eight worlds of my career &mdash; and land on each one.</span>
+                            <span class="choice__text">Pilot a ship between eight worlds of my career, and land on each one &mdash; or let the autopilot fly.</span>
+                            <span class="choice__foot">
+                                <span class="choice__cta"><span>Launch the mission</span><span class="choice__go"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></span>
+                                <span class="choice__meta"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M3.5 15.5c-1.2 2 .1 3.1 3.5 2.4 2.6-.5 6-2 9.2-4.1 3.1-2.1 5.3-4.4 5.6-6 .3-1.9-1.6-2.2-4.6-1"/></svg> 8 worlds</span>
+                            </span>
                         </span>
-                        <span class="choice__meta"><kbd>2</kbd><span>Keyboard, mouse or touch</span><span class="choice__go"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></span>
                     </button>
                 </div>
 
@@ -466,14 +529,35 @@
             </p>
         </header>
 
+        <!-- The journey. On wide screens a road of light rises through the three
+             stops like a line on a chart, from 2013 up to today; it is drawn by
+             main.js through the stops themselves. On narrow screens the stops
+             sit on a straight line down the left instead. -->
         <div class="journey" data-reveal data-glow-group>
+            <svg class="journey__road" aria-hidden="true">
+                <defs>
+                    <linearGradient id="eduRoadInk" x1="0" y1="1" x2="1" y2="0">
+                        <stop offset="0" stop-color="#4338ca"/>
+                        <stop offset=".55" stop-color="#818cf8"/>
+                        <stop offset="1" stop-color="#eef2ff"/>
+                    </linearGradient>
+                </defs>
+                <path class="journey__haze" id="eduRoad" d="M0 0"/>
+                <path class="journey__glow" d="M0 0"/>
+                <g class="journey__comet" opacity="0">
+                    <circle class="journey__comet-halo" r="10"/>
+                    <circle class="journey__comet-core" r="3.6"/>
+                    <animateMotion dur="7s" begin="indefinite" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;.62;1" calcMode="linear"><mpath href="#eduRoad"/></animateMotion>
+                    <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;.06;.56;.66;1" dur="7s" begin="indefinite" repeatCount="indefinite"/>
+                </g>
+            </svg>
             <div class="journey__track" aria-hidden="true">
                 <span class="journey__line"><span class="journey__fill"></span></span>
-                <span class="journey__now"><i></i>Now</span>
             </div>
+            <span class="journey__now" aria-hidden="true"><i></i>Today</span>
 
             <ol class="journey__list">
-                <li class="tl edu-step" style="--si:0">
+                <li class="tl edu-step" style="--si:0; --rise:0">
                     <span class="edu-step__node" data-year="2013" aria-hidden="true"></span>
                     <article class="edu-step__card" data-glow>
                         <header class="edu-step__head">
@@ -490,7 +574,7 @@
                     </article>
                 </li>
 
-                <li class="tl edu-step" style="--si:1">
+                <li class="tl edu-step" style="--si:1; --rise:1">
                     <span class="edu-step__node" data-year="2018" aria-hidden="true"></span>
                     <article class="edu-step__card" data-glow>
                         <header class="edu-step__head">
@@ -507,7 +591,7 @@
                     </article>
                 </li>
 
-                <li class="tl edu-step edu-step--now" style="--si:2">
+                <li class="tl edu-step edu-step--now" style="--si:2; --rise:2">
                     <span class="edu-step__node" data-year="2022" aria-hidden="true"></span>
                     <article class="edu-step__card" data-glow>
                         <header class="edu-step__head">
@@ -520,8 +604,21 @@
                         <p class="edu-step__when"><span class="tl__years">2022 &mdash; 2026 <span class="tl__badge">Ongoing</span></span><span class="edu-step__span">4 years</span></p>
                         <h3 class="tl__school edu-step__school">Daffodil International University</h3>
                         <p class="tl__degree edu-step__degree">B.Sc. in Computer Science &amp; Engineering</p>
-                        <p class="tl__meta edu-step__meta edu-step__meta--gpa">CGPA <b>3.50</b> <span>/ 4.00</span></p>
-                        <span class="edu-step__gpa" aria-hidden="true"><i style="--v:.875"></i></span>
+                        <div class="edu-step__score">
+                            <span class="gauge" aria-hidden="true">
+                                <svg class="gauge__ring" viewBox="0 0 84 84">
+                                    <defs><linearGradient id="gaugeInk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c7d2fe"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs>
+                                    <circle class="gauge__track" cx="42" cy="42" r="36"/>
+                                    <circle class="gauge__fill" cx="42" cy="42" r="36" pathLength="100"/>
+                                </svg>
+                                <span class="gauge__value"><b data-count="3.50">0.00</b></span>
+                            </span>
+                            <span class="edu-step__score-copy">
+                                <span class="edu-step__score-k">Current CGPA</span>
+                                <span class="edu-step__score-v">Out of a possible <b>4.00</b></span>
+                            </span>
+                            <span class="tl__meta sr-only">CGPA 3.50 / 4.00</span>
+                        </div>
                     </article>
                 </li>
             </ol>
