@@ -77,16 +77,16 @@
 
         <div class="gate__inner">
             <div class="gate__greet">
-                <p class="gate__who">
-                    <span class="gate__face">
-                        <svg class="gate__orbit" viewBox="0 0 220 220" aria-hidden="true">
+                <p class="who gate__who">
+                    <span class="who__face">
+                        <svg class="who__orbit" viewBox="0 0 220 220" aria-hidden="true">
                             <ellipse cx="110" cy="110" rx="106" ry="34"/>
                             <circle r="9"><animateMotion dur="7s" repeatCount="indefinite" path="M4,110 a106,34 0 1,0 212,0 a106,34 0 1,0 -212,0"/></circle>
                         </svg>
-                        <img src="assets/images/profile/tuhin-formal-900.jpg" alt="" width="46" height="46">
+                        <img src="assets/images/profile/kamrujjaman-tuhin-headshot-900.jpg" alt="" width="46" height="46">
                     </span>
-                    <span class="gate__id"><b>Kamrujjaman Tuhin</b><span>Full-Stack Developer</span></span>
-                    <span class="gate__status"><span aria-hidden="true"></span>Open to opportunities</span>
+                    <span class="who__id"><b>Kamrujjaman Tuhin</b><span>Full-Stack Developer</span></span>
+                    <span class="who__status"><span aria-hidden="true"></span>Open to opportunities</span>
                 </p>
 
                 <h2 class="gate__title" id="gateTitle">
@@ -212,7 +212,7 @@
                                     <line x1="256" y1="45.5" x2="476" y2="45.5" stroke="rgba(165,180,252,.18)"/>
                                     <g clip-path="url(#scView)">
                                         <rect x="268" y="46" width="196" height="150" fill="#070b1f"/>
-                                        <image class="scene__page" href="assets/images/intro/standard-view.webp" x="268" y="46" width="196" height="1576" preserveAspectRatio="xMidYMin meet"/>
+                                        <image class="scene__page" href="assets/images/intro/standard-view.webp" x="268" y="46" width="196" height="1586" preserveAspectRatio="xMidYMin meet"/>
                                     </g>
                                 </g>
                                 <g class="scene__chip" style="--d:0s"><rect x="292" y="52" width="62" height="20" rx="10" fill="rgba(15,20,52,.9)" stroke="rgba(165,180,252,.5)"/><circle cx="304" cy="62" r="3" fill="#38bdf8"/><text x="312" y="65.5">Projects</text></g>
@@ -415,7 +415,7 @@
                 <figure class="portrait">
                     <span class="portrait__glow" aria-hidden="true"></span>
                     <div class="portrait__frame">
-                        <img src="assets/images/profile/tuhin-formal-900.jpg" alt="Portrait of Kamrujjaman Tuhin"
+                        <img src="assets/images/profile/kamrujjaman-tuhin-headshot-900.jpg" alt="Portrait of Kamrujjaman Tuhin"
                              width="440" height="440" fetchpriority="high" decoding="async">
                         <span class="portrait__tone" aria-hidden="true"></span>
                         <span class="portrait__vignette" aria-hidden="true"></span>
@@ -457,29 +457,45 @@
 
         <div class="about__grid">
 
-            <figure class="about__figure">
-                <span class="about__outline" data-reveal="zoom" style="--rd:.24s" aria-hidden="true"></span>
+            <!-- The photos, in one 4:5 frame, each cropped to that shape so it is
+                 shown whole. The next slides in over the one before; two cards
+                 stacked behind the frame give it a little shuffle each time. The
+                 thumbnails below pick a photo, and the one showing fills its line
+                 while it stays. Arrows, the arrow keys and a swipe also move. -->
+            <figure class="about__figure" data-photos>
+                <div class="about__stage">
+                    <span class="about__deck about__deck--back" aria-hidden="true"></span>
+                    <span class="about__deck about__deck--mid" aria-hidden="true"></span>
 
-                <!-- Three photos take turns in the one frame: each opens out from
-                     the middle like an iris, and the bars along the top show how
-                     long each stays. The bars also pick a photo. -->
-                <div class="about__photo" data-reveal="zoom" data-photos>
-                    <img class="is-on" src="assets/images/profile/tuhin-casual-1000.jpg" alt="Kamrujjaman Tuhin on campus" loading="lazy" width="640" height="640">
-                    <img src="assets/images/profile/tuhin-casual-1-1000.jpg" alt="Kamrujjaman Tuhin on a balcony above the campus" loading="lazy" width="640" height="762" style="--fit: 50% 12%; --zoom: 1.02">
-                    <img src="assets/images/profile/tuhin-casual-2-1000.jpg" alt="Kamrujjaman Tuhin leaning on a railing above the trees" loading="lazy" width="640" height="762" style="--fit: 50% 34%; --zoom: 1.06">
-                    <span class="about__tint" aria-hidden="true"></span>
-                    <span class="about__iris" aria-hidden="true"></span>
-                    <span class="about__bars">
-                        <button class="about__bar is-now" type="button" aria-label="Photo 1 of 3" aria-pressed="true"><i></i></button>
-                        <button class="about__bar" type="button" aria-label="Photo 2 of 3" aria-pressed="false"><i></i></button>
-                        <button class="about__bar" type="button" aria-label="Photo 3 of 3" aria-pressed="false"><i></i></button>
-                    </span>
+                    <div class="about__photo" data-reveal="zoom">
+                        <span class="about__slides">
+                            <span class="about__slide is-on"><img src="assets/images/profile/kamrujjaman-tuhin-campus-1000.jpg" alt="Kamrujjaman Tuhin on campus, sitting in a swing" loading="lazy" width="1000" height="1250"></span>
+                            <span class="about__slide"><img src="assets/images/profile/kamrujjaman-tuhin-skyline-1000.jpg" alt="Kamrujjaman Tuhin leaning on a railing high above the city" loading="lazy" width="1000" height="1250"></span>
+                            <span class="about__slide"><img src="assets/images/profile/kamrujjaman-tuhin-reading-1000.jpg" alt="Kamrujjaman Tuhin reading a book at a book stall" loading="lazy" width="1000" height="1250"></span>
+                            <span class="about__slide"><img src="assets/images/profile/kamrujjaman-tuhin-cafe-1000.jpg" alt="Kamrujjaman Tuhin at a table in a wood-panelled cafe, checking a phone" loading="lazy" width="1000" height="1250"></span>
+                            <span class="about__slide"><img src="assets/images/profile/kamrujjaman-tuhin-urban-1000.jpg" alt="Kamrujjaman Tuhin in a cap and a checked jacket" loading="lazy" width="1000" height="1250"></span>
+                            <span class="about__slide"><img src="assets/images/profile/kamrujjaman-tuhin-riverside-1000.jpg" alt="Kamrujjaman Tuhin by a river, leaning on the rail of a boat" loading="lazy" width="1000" height="1250"></span>
+                        </span>
+                        <span class="about__tint" aria-hidden="true"></span>
+                        <button class="about__nav about__nav--prev" type="button" aria-label="Previous photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg></button>
+                        <button class="about__nav about__nav--next" type="button" aria-label="Next photo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg></button>
+                        <span class="about__count" aria-hidden="true"><b>01</b><i>/</i>06</span>
+                    </div>
+
+                    <div class="about__badge" data-reveal="pop" style="--rd:.52s">
+                        <span class="about__badge-value" data-count="3.50">0.00</span>
+                        <span class="about__badge-label">Current CGPA</span>
+                    </div>
                 </div>
 
-                <figcaption class="about__badge" data-reveal="pop" style="--rd:.52s">
-                    <span class="about__badge-value" data-count="3.50">0.00</span>
-                    <span class="about__badge-label">Current CGPA</span>
-                </figcaption>
+                <div class="about__thumbs" role="group" aria-label="Choose a photo">
+                    <button class="about__thumb is-now" type="button" aria-label="Photo 1 of 6" aria-pressed="true"><img src="assets/images/profile/thumbs/kamrujjaman-tuhin-campus.jpg" alt="" loading="lazy" width="160" height="200"><i></i></button>
+                    <button class="about__thumb" type="button" aria-label="Photo 2 of 6" aria-pressed="false"><img src="assets/images/profile/thumbs/kamrujjaman-tuhin-skyline.jpg" alt="" loading="lazy" width="160" height="200"><i></i></button>
+                    <button class="about__thumb" type="button" aria-label="Photo 3 of 6" aria-pressed="false"><img src="assets/images/profile/thumbs/kamrujjaman-tuhin-reading.jpg" alt="" loading="lazy" width="160" height="200"><i></i></button>
+                    <button class="about__thumb" type="button" aria-label="Photo 4 of 6" aria-pressed="false"><img src="assets/images/profile/thumbs/kamrujjaman-tuhin-cafe.jpg" alt="" loading="lazy" width="160" height="200"><i></i></button>
+                    <button class="about__thumb" type="button" aria-label="Photo 5 of 6" aria-pressed="false"><img src="assets/images/profile/thumbs/kamrujjaman-tuhin-urban.jpg" alt="" loading="lazy" width="160" height="200"><i></i></button>
+                    <button class="about__thumb" type="button" aria-label="Photo 6 of 6" aria-pressed="false"><img src="assets/images/profile/thumbs/kamrujjaman-tuhin-riverside.jpg" alt="" loading="lazy" width="160" height="200"><i></i></button>
+                </div>
             </figure>
 
             <div class="about__body">
@@ -2111,17 +2127,18 @@
         <canvas class="uni__canvas" id="uniCanvas" tabindex="-1" aria-label="The universe. Fly the ship between worlds and land on them to explore the portfolio."></canvas>
 
         <header class="uni__top">
-            <div class="uni__brand">
-                <span class="mark" aria-hidden="true">
-                    <svg class="mark__orbit" viewBox="0 0 120 120">
-                        <g class="mark__tilt">
-                            <circle class="mark__ring" cx="60" cy="60" r="52" vector-effect="non-scaling-stroke"/>
-                            <g class="mark__spin"><circle class="mark__moon" cx="112" cy="60" r="6"/></g>
-                        </g>
+            <!-- the welcome's own badge: the photo in its orbit, the name and role,
+                 and open to work; the same component as on the welcome -->
+            <div class="who uni__brand">
+                <span class="who__face">
+                    <svg class="who__orbit" viewBox="0 0 220 220" aria-hidden="true">
+                        <ellipse cx="110" cy="110" rx="106" ry="34"/>
+                        <circle r="9"><animateMotion dur="7s" repeatCount="indefinite" path="M4,110 a106,34 0 1,0 212,0 a106,34 0 1,0 -212,0"/></circle>
                     </svg>
-                    <span class="mark__kt">KT</span>
+                    <img src="assets/images/profile/kamrujjaman-tuhin-headshot-900.jpg" alt="" width="46" height="46">
                 </span>
-                <span class="uni__who"><b>Kamrujjaman&nbsp;Tuhin</b><span>Full-Stack Developer</span></span>
+                <span class="who__id"><b>Kamrujjaman Tuhin</b><span>Full-Stack Developer</span></span>
+                <span class="who__status"><span aria-hidden="true"></span>Open to opportunities</span>
             </div>
 
             <div class="uni__progress">
@@ -2138,7 +2155,7 @@
         </header>
 
         <div class="uni__comms" id="uniComms" hidden aria-live="polite">
-            <img class="uni__face" src="assets/images/profile/tuhin-formal-900.jpg" alt="">
+            <img class="uni__face" src="assets/images/profile/kamrujjaman-tuhin-headshot-900.jpg" alt="">
             <div>
                 <p class="uni__comms-from"><span aria-hidden="true"></span>Transmission from Kamrujjaman</p>
                 <p class="uni__comms-text" id="uniCommsText"></p>

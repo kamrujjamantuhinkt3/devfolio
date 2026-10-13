@@ -1357,7 +1357,7 @@
 
     // the moons and the ships in these pictures are SMIL, which CSS cannot pause
     if (reduced) {
-        document.querySelectorAll("#gate svg, #preloader svg").forEach(function (s) { if (s.pauseAnimations) s.pauseAnimations(); });
+        document.querySelectorAll("#gate svg, #preloader svg, .uni__brand svg").forEach(function (s) { if (s.pauseAnimations) s.pauseAnimations(); });
     }
 
 
@@ -2044,71 +2044,118 @@
     }
 
 
-    /* About - the photos take turns. Each bar fills while its photo is up, and
-       when it is full the next photo opens out over it. They hold still while
-       the pointer is on the photo or the photo is off screen, and any bar picks
-       its photo. With motion turned down they change only when asked. */
-    var photoFrame = document.querySelector("[data-photos]");
+    /* About - the photos, as a slider. The thumbnail of the one showing fills
+       its line; when it is full the next photo slides in over the one before,
+       which drifts back and dims, and the cards behind give a little shuffle.
+       They hold still while the pointer is on them or they are off screen. The
+       thumbnails, the arrows, the arrow keys and a swipe all move between them.
+       With motion turned down they change only when asked, and without sliding. */
+    var photoRoot = document.querySelector("[data-photos]");
 
-    if (photoFrame) {
-        var photos = Array.prototype.slice.call(photoFrame.querySelectorAll("img"));
-        var photoBars = Array.prototype.slice.call(photoFrame.querySelectorAll(".about__bar"));
+    if (photoRoot) {
+        var photoStage = photoRoot.querySelector(".about__stage");
+        var photoBox = photoRoot.querySelector(".about__photo");
+        var slides = Array.prototype.slice.call(photoRoot.querySelectorAll(".about__slide"));
+        var thumbs = Array.prototype.slice.call(photoRoot.querySelectorAll(".about__thumb"));
+        var photoCount = photoRoot.querySelector(".about__count b");
         var photoAt = 0;
-        var photoTurn = null;           // the turn in progress, so a quick second pick can finish it
+        var photoTurn = null;           // the slide in progress, so a quick second pick can end it
         var photoHover = false, photoSeen = false;
+        var swipe = null;
 
-        var settlePhoto = function () {
+        var settlePhotos = function () {
             if (!photoTurn) return;
-            clearTimeout(photoTurn.timer);
-            photoTurn.done();
+            var turn = photoTurn;
             photoTurn = null;
+            turn.moves.forEach(function (move) { move.onfinish = null; move.cancel(); });
+            turn.done();
         };
 
-        var showPhoto = function (k) {
-            if (k === photoAt || !photos[k]) return;
-            settlePhoto();
-            var before = photos[photoAt], next = photos[k];
+        // dir: 1 slides the next one in from the right, -1 from the left
+        var showPhoto = function (k, dir) {
+            k = (k + slides.length) % slides.length;
+            if (k === photoAt) return;
+            settlePhotos();
+            dir = dir || (k > photoAt ? 1 : -1);
+            var from = slides[photoAt], to = slides[k];
             photoAt = k;
             // the one after this is fetched ahead of its turn
-            var ahead = photos[(k + 1) % photos.length];
-            if (ahead.loading === "lazy") ahead.loading = "eager";
+            var ahead = slides[(k + 1) % slides.length].querySelector("img");
+            if (ahead && ahead.loading === "lazy") ahead.loading = "eager";
 
-            next.classList.add("is-entering");
-            void next.offsetWidth;
-            next.classList.add("is-on");
-            photoFrame.classList.remove("is-turning");
-            void photoFrame.offsetWidth;
-            photoFrame.classList.add("is-turning");
-            photoTurn = {
+            from.classList.add("is-leaving");
+            from.classList.remove("is-on");
+            to.classList.add("is-on");
+            var turn = {
+                moves: [],
                 done: function () {
-                    before.classList.remove("is-on");
-                    next.classList.remove("is-entering");
+                    from.classList.remove("is-leaving");
+                    to.classList.remove("is-coming");
                 }
             };
-            photoTurn.timer = setTimeout(settlePhoto, reduced ? 0 : 1500);
+            if (reduced || !to.animate) {
+                turn.done();
+            } else {
+                var ease = "cubic-bezier(.77, 0, .18, 1)";
+                to.style.setProperty("--from", dir);
+                to.classList.add("is-coming");
+                turn.moves = [
+                    to.animate([{ transform: "translateX(" + dir * 100 + "%)" }, { transform: "none" }],
+                               { duration: 1050, easing: ease }),
+                    from.animate([{ transform: "none", filter: "brightness(1)" },
+                                  { transform: "translateX(" + dir * -32 + "%) scale(.94)", filter: "brightness(.35)" }],
+                                 { duration: 1050, easing: ease })
+                ];
+                turn.moves[0].onfinish = function () { if (photoTurn === turn) settlePhotos(); };
+                photoTurn = turn;
 
-            photoBars.forEach(function (b, i) {
-                b.classList.toggle("is-done", i < k);
-                b.classList.toggle("is-now", i === k);
-                b.setAttribute("aria-pressed", String(i === k));
+                // and the pile behind gives a little shuffle
+                photoStage.classList.remove("is-shuffling");
+                void photoStage.offsetWidth;
+                photoStage.classList.add("is-shuffling");
+            }
+
+            thumbs.forEach(function (thumb, i) {
+                thumb.classList.toggle("is-now", i === k);
+                thumb.setAttribute("aria-pressed", String(i === k));
             });
+            if (photoCount) photoCount.textContent = (k < 9 ? "0" : "") + (k + 1);
         };
 
-        var holdPhotos = function () { photoFrame.classList.toggle("is-paused", photoHover || !photoSeen); };
+        var holdPhotos = function () { photoRoot.classList.toggle("is-paused", photoHover || !photoSeen); };
 
-        photoFrame.addEventListener("animationend", function (e) {
-            if (e.animationName !== "photoBar" || e.target.parentNode !== photoBars[photoAt]) return;
-            showPhoto((photoAt + 1) % photos.length);
+        photoRoot.addEventListener("animationend", function (e) {
+            if (e.animationName !== "photoBar" || e.target.parentNode !== thumbs[photoAt]) return;
+            showPhoto(photoAt + 1, 1);
         });
-        photoBars.forEach(function (b, i) {
-            b.addEventListener("click", function () { showPhoto(i); });
+        thumbs.forEach(function (thumb, i) {
+            thumb.addEventListener("click", function () { showPhoto(i); });
         });
-        photoFrame.addEventListener("pointerenter", function (e) {
+        photoRoot.querySelector(".about__nav--prev").addEventListener("click", function () { showPhoto(photoAt - 1, -1); });
+        photoRoot.querySelector(".about__nav--next").addEventListener("click", function () { showPhoto(photoAt + 1, 1); });
+        photoRoot.addEventListener("keydown", function (e) {
+            if (e.key === "ArrowLeft") { e.preventDefault(); showPhoto(photoAt - 1, -1); }
+            else if (e.key === "ArrowRight") { e.preventDefault(); showPhoto(photoAt + 1, 1); }
+        });
+
+        // a swipe across the photo, on a touch screen
+        photoBox.addEventListener("pointerdown", function (e) {
+            if (e.pointerType === "touch") swipe = { x: e.clientX, y: e.clientY };
+        });
+        photoBox.addEventListener("pointerup", function (e) {
+            if (!swipe) return;
+            var dx = e.clientX - swipe.x, dy = e.clientY - swipe.y;
+            swipe = null;
+            if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) showPhoto(photoAt + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+        });
+        photoBox.addEventListener("pointercancel", function () { swipe = null; });
+
+        photoRoot.addEventListener("pointerenter", function (e) {
             if (e.pointerType === "touch") return;
             photoHover = true;
             holdPhotos();
         });
-        photoFrame.addEventListener("pointerleave", function () {
+        photoRoot.addEventListener("pointerleave", function () {
             photoHover = false;
             holdPhotos();
         });
@@ -2117,7 +2164,7 @@
             new IntersectionObserver(function (entries) {
                 photoSeen = entries[0].isIntersecting;
                 holdPhotos();
-            }, { threshold: .4 }).observe(photoFrame);
+            }, { threshold: .4 }).observe(photoBox);
         } else {
             photoSeen = true;
             holdPhotos();
