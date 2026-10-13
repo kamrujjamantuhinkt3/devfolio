@@ -46,34 +46,37 @@
         </div>
     </div>
 
-    <!-- Welcome: after the loader, a short introduction and one question -
-         the classic portfolio or the space mission. Opened by script, so
-         without it the page simply loads as it always has. -->
-    <div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateName" aria-describedby="gateLine" hidden>
+    <!-- Welcome: after the loader, a greeting written out by hand, a few words
+         about me, and one question - the standard portfolio or the universe.
+         Opened by script, so without it the page simply loads as it always
+         has. The handwriting is drawn by script from data-hand; the same
+         words are in the headings for screen readers. -->
+    <div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gateTitle" aria-describedby="gateLine" hidden>
         <span class="gate__glow gate__glow--1" aria-hidden="true"></span>
         <span class="gate__glow gate__glow--2" aria-hidden="true"></span>
 
         <div class="gate__inner">
-            <div class="gate__intro">
-                <figure class="gate__face" style="--gi:0">
-                    <svg class="gate__orbit" viewBox="0 0 220 220" aria-hidden="true">
-                        <ellipse cx="110" cy="110" rx="106" ry="34"/>
-                        <circle r="4.5"><animateMotion dur="9s" repeatCount="indefinite" path="M4,110 a106,34 0 1,0 212,0 a106,34 0 1,0 -212,0"/></circle>
-                    </svg>
-                    <img src="assets/images/profile/tuhin-formal-900.jpg" alt="" width="132" height="132">
-                </figure>
-                <p class="gate__status" style="--gi:1"><span aria-hidden="true"></span>Open to opportunities</p>
-                <p class="gate__hello" style="--gi:2">Hello, I&rsquo;m</p>
-                <h2 class="gate__name" id="gateName" style="--gi:3">Kamrujjaman Tuhin</h2>
-                <p class="gate__role" style="--gi:4">Full-Stack Developer</p>
-                <p class="gate__line" id="gateLine" style="--gi:5">I build production software for the web &mdash; interface, server and everything in between.</p>
-                <ul class="gate__facts" style="--gi:6">
-                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12.5h18"/></svg><span>Software Engineer at <b>Mega Packaging Bangladesh</b></span></li>
-                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/><path d="M3.5 4.5V9H8M12 7.5V12l3 2"/></svg><span>Previously at <b>Brain Station 23</b></span></li>
-                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5 12 4.8l9.5 4.7L12 14.2 2.5 9.5Z"/><path d="M6.5 11.8v4c0 1.5 2.5 2.8 5.5 2.8s5.5-1.3 5.5-2.8v-4"/></svg><span><b>B.Sc. in CSE</b>, Daffodil International University</span></li>
-                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg><span><b>Savar, Dhaka</b>, Bangladesh</span></li>
-                </ul>
-                <dl class="gate__stats" style="--gi:7">
+            <div class="gate__greet">
+                <p class="gate__who">
+                    <span class="gate__face">
+                        <svg class="gate__orbit" viewBox="0 0 220 220" aria-hidden="true">
+                            <ellipse cx="110" cy="110" rx="106" ry="34"/>
+                            <circle r="9"><animateMotion dur="7s" repeatCount="indefinite" path="M4,110 a106,34 0 1,0 212,0 a106,34 0 1,0 -212,0"/></circle>
+                        </svg>
+                        <img src="assets/images/profile/tuhin-formal-900.jpg" alt="" width="46" height="46">
+                    </span>
+                    <span class="gate__id"><b>Kamrujjaman Tuhin</b><span>Full-Stack Developer</span></span>
+                    <span class="gate__status"><span aria-hidden="true"></span>Open to opportunities</span>
+                </p>
+
+                <h2 class="gate__title" id="gateTitle">
+                    <span class="sr-only">Hey there, wanna know about me?</span>
+                    <svg class="hand hand--hello" data-hand="Hey there,|wanna know about me?" data-hand-wave data-hand-flourish aria-hidden="true" focusable="false"></svg>
+                </h2>
+
+                <p class="gate__line" id="gateLine">I&rsquo;m <b>Kamrujjaman Tuhin</b>, a full-stack developer from Dhaka. I build production software for the web &mdash; right now as a Software Engineer at <b>Mega Packaging Bangladesh</b>.</p>
+
+                <dl class="gate__stats">
                     <div><dt>Technologies</dt><dd data-gate-count=".sat">13</dd></div>
                     <div><dt>Companies</dt><dd data-gate-count=".xp">2</dd></div>
                     <div><dt>National awards</dt><dd data-gate-count=".award">2</dd></div>
@@ -82,13 +85,15 @@
             </div>
 
             <div class="gate__ask">
-                <p class="gate__kicker">One question before we start</p>
-                <p class="gate__q" id="gateQ">How would you like to explore my portfolio?</p>
+                <p class="gate__q" id="gateQ">
+                    <span class="sr-only">How would you like to explore me?</span>
+                    <svg class="hand hand--ask" data-hand="How would you like to explore me?" data-hand-narrow="How would you like|to explore me?" aria-hidden="true" focusable="false"></svg>
+                </p>
 
                 <div class="gate__choices" role="group" aria-labelledby="gateQ">
                     <button class="choice" type="button" data-choose="classic">
                         <span class="choice__art">
-                            <svg class="art" viewBox="0 0 300 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                            <svg class="art" viewBox="0 0 300 150" preserveAspectRatio="xMinYMid slice" aria-hidden="true">
                                 <defs>
                                     <linearGradient id="gaPageBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#141b46"/><stop offset="1" stop-color="#070b1e"/></linearGradient>
                                     <linearGradient id="gaInk" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#818cf8"/><stop offset="1" stop-color="#c7d2fe"/></linearGradient>
@@ -127,9 +132,9 @@
                             </svg>
                         </span>
                         <span class="choice__copy">
-                            <span class="choice__kicker"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg> Classic view <em class="choice__last">Last time</em></span>
-                            <span class="choice__title">Everything on one page</span>
-                            <span class="choice__text">A clean scroll through my work, skills and experience &mdash; quick to scan, and made for recruiters.</span>
+                            <span class="choice__kicker"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg> Standard view <em class="choice__last">Last time</em></span>
+                            <span class="choice__title">As a standard portfolio</span>
+                            <span class="choice__text">Everything on one clean page &mdash; my work, skills and experience. Quick to scan, and made for recruiters.</span>
                         </span>
                         <span class="choice__meta"><kbd>1</kbd><span>About two minutes</span><span class="choice__go"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></span>
                     </button>
@@ -161,17 +166,19 @@
                             </svg>
                         </span>
                         <span class="choice__copy">
-                            <span class="choice__kicker"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5c2.6-1.1 4.6-1.1 5-.7.4.4.4 2.4-.7 5L12.5 15 9 11.5z"/><path d="M9 11.5 5.5 12 4 14l3.5 1M12.5 15l-.5 3.5L10 20l-1-3.5"/><circle cx="15" cy="9" r="1.3"/></svg> Gaming view <em class="choice__last">Last time</em></span>
-                            <span class="choice__title">Fly through my career</span>
-                            <span class="choice__text">Pilot a ship between eight worlds &mdash; education, skills, projects, experience &mdash; and land on each one.</span>
+                            <span class="choice__kicker"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 4.5c2.6-1.1 4.6-1.1 5-.7.4.4.4 2.4-.7 5L12.5 15 9 11.5z"/><path d="M9 11.5 5.5 12 4 14l3.5 1M12.5 15l-.5 3.5L10 20l-1-3.5"/><circle cx="15" cy="9" r="1.3"/></svg> Universe view <em class="choice__last">Last time</em></span>
+                            <span class="choice__title">Explore me like a universe</span>
+                            <span class="choice__text">Pilot a ship between eight worlds of my career &mdash; and land on each one.</span>
                         </span>
                         <span class="choice__meta"><kbd>2</kbd><span>Keyboard, mouse or touch</span><span class="choice__go"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span></span>
                     </button>
                 </div>
 
-                <p class="gate__note">You can switch between the two views at any time.</p>
+                <p class="gate__note">Press <kbd>1</kbd> or <kbd>2</kbd> &middot; you can switch views at any time</p>
             </div>
         </div>
+
+        <button class="gate__skip" type="button" data-gate-skip><span>Skip intro</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5v11l7.5-5.5L5 6.5ZM12.5 6.5v11L20 12l-7.5-5.5Z"/></svg></button>
     </div>
 
     <div class="scroll-progress" id="scrollProgress"></div>
@@ -2032,12 +2039,23 @@
         </button>
 
         <footer class="uni__bottom">
-            <p class="uni__hint" id="uniHintKeys"><kbd>W A S D</kbd> fly <kbd>Shift</kbd> boost <kbd>Space</kbd> land <span>&middot; or click anywhere to set a course</span></p>
-            <p class="uni__hint" id="uniHintTouch" hidden>Tap to fly &middot; tap a world to land &middot; hold to steer</p>
-            <button class="uni__next" id="uniNext" type="button">
-                <span class="uni__next-copy"><small id="uniNextKicker">Next &middot; About me</small><b id="uniNextLabel">Origin</b></span>
-                <span class="uni__next-go"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-            </button>
+            <p class="uni__hint" id="uniHintKeys"><kbd>W A S D</kbd> fly <kbd>Shift</kbd> boost <kbd>Space</kbd> land <kbd>P</kbd> autopilot <span>&middot; or click anywhere to set a course</span></p>
+            <p class="uni__hint" id="uniHintTouch" hidden>Tap to fly &middot; tap a world to land &middot; or let the autopilot fly</p>
+            <div class="uni__drive">
+                <!-- the autopilot: a guided tour of every world, paused by any hand on the controls -->
+                <button class="uni__auto" id="uniAuto" type="button" aria-pressed="false" title="Autopilot (P)">
+                    <span class="uni__auto-icon">
+                        <svg class="uni__auto-ring" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="20"/></svg>
+                        <svg class="ui-i uni-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.8v12.4a.8.8 0 0 0 1.2.7l9.6-6.2a.8.8 0 0 0 0-1.4L9.2 5.1A.8.8 0 0 0 8 5.8z"/></svg>
+                        <svg class="ui-i uni-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>
+                    </span>
+                    <span class="uni__auto-copy"><small>Autopilot</small><b id="uniAutoLabel">Take the tour</b></span>
+                </button>
+                <button class="uni__next" id="uniNext" type="button">
+                    <span class="uni__next-copy"><small id="uniNextKicker">Next &middot; About me</small><b id="uniNextLabel">Origin</b></span>
+                    <span class="uni__next-go"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+                </button>
+            </div>
             <canvas class="uni__mini" id="uniMini" role="img" aria-label="Star map: click a world to fly there"></canvas>
         </footer>
 
@@ -2050,6 +2068,15 @@
                 <button class="uni__panel-close" id="uniPanelClose" type="button" aria-label="Take off"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
             </header>
             <div class="uni__panel-body" id="uniPanelBody"></div>
+            <!-- the autopilot, while landed: what comes next, and when -->
+            <div class="uni__tour" id="uniTour">
+                <span class="uni__tour-track" aria-hidden="true"><i id="uniTourFill"></i></span>
+                <button class="uni__tour-btn" id="uniTourBtn" type="button" aria-label="Start the autopilot">
+                    <svg class="ui-i uni-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.8v12.4a.8.8 0 0 0 1.2.7l9.6-6.2a.8.8 0 0 0 0-1.4L9.2 5.1A.8.8 0 0 0 8 5.8z"/></svg>
+                    <svg class="ui-i uni-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>
+                </button>
+                <p class="uni__tour-copy"><b id="uniTourTitle">Autopilot</b><span id="uniTourText">Let the ship fly on to the next world</span></p>
+            </div>
             <footer class="uni__panel-foot">
                 <button class="uni__panel-nav" id="uniPrev" type="button"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6M11 6l-6 6 6 6"/></svg><span></span></button>
                 <button class="uni__panel-classic" id="uniClassic" type="button">Read on the classic page</button>

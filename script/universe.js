@@ -240,6 +240,8 @@
         mail: '<rect x="2.6" y="4.8" width="18.8" height="14.4" rx="2.6"/><path d="M3.3 7.1 12 13.4l8.7-6.3"/>',
         pin: '<path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/>',
         down: '<path d="M12 3.5v11M7.5 10.5 12 15l4.5-4.5M4.5 18.5h15"/>',
+        play: '<path fill="currentColor" stroke="none" d="M8 5.8v12.4a.8.8 0 0 0 1.2.7l9.6-6.2a.8.8 0 0 0 0-1.4L9.2 5.1A.8.8 0 0 0 8 5.8z"/>',
+        pause: '<path stroke-width="3" d="M9 6v12M15 6v12"/>',
         star: '<path d="M12 2.5l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 16.9 6.3 20l1.2-6.4-4.7-4.4 6.4-.8Z"/>',
         linkedin: '<path fill="currentColor" stroke="none" d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3.2 9h3.6v12H3.2zM9.2 9h3.45v1.64h.05c.48-.9 1.66-1.85 3.42-1.85 3.66 0 4.33 2.4 4.33 5.52V21h-3.6v-5.02c0-1.2-.02-2.74-1.67-2.74-1.67 0-1.93 1.3-1.93 2.65V21H9.2z"/>',
         github: '<path fill="currentColor" stroke="none" d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/>'
@@ -770,6 +772,10 @@
     var BOUND = { x: 500, y: 200, r: 3900 };
 
     var auto = null;            // autopilot: { x, y } or { body, land: true }
+    // the autopilot's tour: whether it is flying, the stop on the route it is
+    // bound for, the time left at the current stop, and whether the pointer is
+    // holding it there (see "Autopilot" below)
+    var tour = { on: false, paused: false, at: -1, left: 0, dwell: 0, hold: false, idle: 0, woke: false };
     var keys = { up: false, down: false, left: false, right: false, boost: false };
     var steer = null;           // a pointer held down: { sx, sy }
     var particles = [];
@@ -812,8 +818,9 @@
 
     function landRange(b) { return b.r + (b.r > 40 ? 130 : 70); }
 
-    function flyTo(target, landWhenThere) {
+    function flyTo(target, landWhenThere, byTour) {
         if (!target) return;
+        if (!byTour) tourPause(true);      // a hand on the controls
         if (landed) takeOff(true);
         auto = target.r ? { body: target, land: landWhenThere !== false } : { x: target.x, y: target.y };
     }
@@ -906,6 +913,7 @@
         collectCrystals(dt);
         checkProximity();
         checkTransmissions();
+        tourTick();
 
         // the camera leads the ship a little, and leans in while it is landed
         var lead = 0.35;
@@ -937,6 +945,7 @@
             ay = iy / l * ACCEL;
             input = true;
             auto = null;
+            tourPause(true);
         } else if (steer) {
             var p = toWorld(steer.sx, steer.sy);
             var dx = p.x - ship.x, dy = p.y - ship.y, d = Math.hypot(dx, dy);
@@ -947,6 +956,7 @@
                 input = true;
             }
             auto = null;
+            tourPause(true);
         } else if (auto) {
             var tx = auto.body ? auto.body.x : auto.x, ty = auto.body ? auto.body.y : auto.y;
             var ex = tx - ship.x, ey = ty - ship.y, dist = Math.hypot(ex, ey);
@@ -1069,7 +1079,11 @@
         prompt.classList.remove("is-on");
         prompt.hidden = true;
     }
-    prompt.addEventListener("click", function () { if (near) land(near); });
+    prompt.addEventListener("click", function () {
+        if (!near) return;
+        tourPause(true);
+        land(near);
+    });
 
 
     /* Transmissions - a line from the pilot as each world comes into range */
@@ -1829,6 +1843,7 @@
             notify(w.name + " explored", exploredCount() + " of " + WORLDS.length + " worlds", w.icon);
         }
         renderHud();
+        tourArrive(b);
     }
 
     function closePanel() {
@@ -1848,6 +1863,7 @@
     function showView(b, view, push) {
         if (push) viewStack.push(view);
         else viewStack = [view];
+        if (push && tour.on) tour.left = Math.max(tour.left, 9);
         var w = WORLD[b.world];
         $("uniPanelKicker").textContent = view.kicker || w.kicker;
         $("uniPanelTitle").textContent = view.title;
@@ -1893,13 +1909,17 @@
         if (classic) { e.preventDefault(); switchView("classic", classic.getAttribute("data-classic")); }
     });
 
-    $("uniPanelClose").addEventListener("click", function () { takeOff(); });
+    $("uniPanelClose").addEventListener("click", function () {
+        if (tour.on) tourNext();
+        else takeOff();
+    });
     $("uniPrev").addEventListener("click", function () {
         var w = WORLDS[WORLD[landed ? landed.world : "about"].index - 1];
         if (w) flyTo(nextBodyOf(w), true);
     });
     $("uniNextWorld").addEventListener("click", function () {
-        if (landed) flyTo(stepAfter(landed), true);
+        if (tour.on) tourNext();
+        else if (landed) flyTo(stepAfter(landed), true);
     });
 
     // the next stop on the route: the rest of this world first, then the next world
@@ -1911,6 +1931,209 @@
         return next ? nextBodyOf(next) : null;
     }
     $("uniClassic").addEventListener("click", function () { switchView("classic", this.getAttribute("data-to")); });
+
+
+    /* Autopilot - a guided tour. The ship flies the route on its own, every
+       world in order: it lands, waits while the panel is read (longer for a
+       longer panel, and not at all while the pointer is on it), then moves
+       on. A hand on the controls pauses it, and P or the play button carries
+       on to the same stop. Left idle for a while, the ship offers the tour by
+       starting it, once. */
+    var ROUTE = [];
+    WORLDS.forEach(function (w) { w.mains.forEach(function (b) { ROUTE.push(b); }); });
+
+    var autoBtn = $("uniAuto");
+    var autoLabel = $("uniAutoLabel");
+    var tourBtn = $("uniTourBtn");
+    var tourFill = $("uniTourFill");
+    var tourTitle = $("uniTourTitle");
+    var tourText = $("uniTourText");
+    var tourShown = "";                     // the countdown text last written
+    var IDLE_TOUR = 16;                     // seconds before an idle ship starts the tour
+
+    function stopName(b) {
+        return b.main && b.world !== "experience" ? WORLD[b.world].name : b.name;
+    }
+
+    // the stop after the body the ship is on, or else the one it is bound for
+    function upcoming() {
+        var i = landed ? ROUTE.indexOf(landed) : -1;
+        if (i >= 0) return ROUTE[i + 1] || null;
+        return ROUTE[tour.at >= 0 ? tour.at : firstStop()] || null;
+    }
+
+    function firstStop() {
+        for (var i = 0; i < ROUTE.length; i++) if (!state.visited[ROUTE[i].id]) return i;
+        return 0;
+    }
+
+    // reading time: more for a longer panel, within reason
+    function dwellFor() {
+        return clamp(6 + (panelBody.textContent || "").length / 220, 7, 13);
+    }
+
+    function countdownText() {
+        var next = upcoming();
+        if (!next) return "Last stop · the tour ends here";
+        if (tour.hold) return "Waiting while you read";
+        return "Next stop: " + stopName(next) + " in " + Math.max(1, Math.ceil(tour.left)) + "s";
+    }
+
+    function paintTour() {
+        var on = tour.on;
+        var bound = ROUTE[tour.at];
+        autoBtn.classList.toggle("is-on", on);
+        autoBtn.setAttribute("aria-pressed", String(on));
+        autoBtn.setAttribute("aria-label", on ? "Pause the autopilot" : "Start the autopilot");
+        autoLabel.textContent = on ? (landed || !bound ? "On the tour" : "Flying to " + stopName(bound))
+                              : tour.paused ? "Paused · carry on" : "Take the tour";
+
+        tourBtn.classList.toggle("is-on", on);
+        tourBtn.setAttribute("aria-label", on ? "Pause the autopilot" : "Start the autopilot");
+        var next = upcoming();
+        tourTitle.textContent = on ? "Autopilot" : tour.paused ? "Autopilot paused" : "Autopilot";
+        tourShown = on ? countdownText()
+                       : next ? (tour.paused ? "Carry on to " : "Let the ship fly on to ") + stopName(next)
+                              : "This is the last stop on the tour";
+        tourText.textContent = tourShown;
+        paintCountdown();
+    }
+
+    function paintCountdown() {
+        var k = tour.on && landed && tour.dwell ? clamp(1 - tour.left / tour.dwell, 0, 1) : 0;
+        tourFill.style.transform = "scaleX(" + k.toFixed(3) + ")";
+        if (tour.on && landed) {
+            var t = countdownText();
+            if (t !== tourShown) tourText.textContent = tourShown = t;
+        }
+    }
+
+    function tourGo() {
+        var b = ROUTE[tour.at];
+        if (!b) { tourEnd(); return; }
+        flyTo(b, true, true);
+        paintTour();
+    }
+
+    function tourPlay(byIdle) {
+        if (tour.on) return;
+        tour.on = true;
+        tour.paused = false;
+        tour.hold = false;
+        if (landed) {
+            var i = ROUTE.indexOf(landed);
+            if (i >= 0) tour.at = i;
+            else if (!ROUTE[tour.at]) tour.at = firstStop();
+            // pressed while reading, it leaves soon; a paused countdown carries on.
+            // Landed off the route, it leads back to the stop it was bound for.
+            if (!(tour.left > 0)) tour.left = tour.dwell = 3.5;
+            paintTour();
+        } else {
+            if (!ROUTE[tour.at]) tour.at = firstStop();
+            tourGo();
+        }
+        sound.play("click");
+        if (byIdle) {
+            transmit("Not sure where to start? I'll fly you round every world. Take the controls whenever you like, or press P to pause.");
+        } else if (!state.heard.autopilot) {
+            state.heard.autopilot = true;
+            save();
+            transmit("Autopilot on. I'll fly you through every world and wait while you read. Touch the controls any time to take over.");
+        }
+    }
+
+    function tourPause(byHand) {
+        if (!tour.on) return;
+        tour.on = false;
+        tour.paused = true;
+        if (!landed && auto && auto.body === ROUTE[tour.at]) auto = null;   // the ship eases to a stop
+        paintTour();
+        if (byHand) notify("Autopilot paused", "Press P, or play, to carry on", "pause");
+    }
+
+    function tourToggle() {
+        if (tour.on) tourPause(false);
+        else tourPlay(false);
+    }
+
+    // on to the next stop, now
+    function tourNext() {
+        var i = landed ? ROUTE.indexOf(landed) : -1;
+        if (i >= 0) tour.at = i + 1;
+        tour.left = 0;
+        if (!ROUTE[tour.at]) { tourEnd(); return; }
+        tourGo();
+    }
+
+    // the last stop is the beacon, so the tour ends there with its panel open
+    function tourEnd() {
+        tour.on = false;
+        tour.paused = false;
+        tour.at = -1;
+        tour.left = 0;
+        paintTour();
+        notify("Tour complete", exploredCount() + " of " + WORLDS.length + " worlds explored", "check");
+    }
+
+    function tourArrive(b) {
+        if (!tour.on) { paintTour(); return; }
+        var i = ROUTE.indexOf(b);
+        if (i >= 0) tour.at = i;
+        tour.dwell = tour.left = dwellFor();
+        tour.hold = false;
+        paintTour();
+    }
+
+    // The countdown keeps real seconds: the game's own step is capped per
+    // frame, so on a slow device it would run slow. Capped here too, so a
+    // tab coming back from the background does not skip a stop.
+    var tourClock = 0;
+
+    function tourTick() {
+        var now = performance.now();
+        var dt = tourClock ? Math.min((now - tourClock) / 1000, 0.25) : 0;
+        tourClock = now;
+        if (tour.on) {
+            if (!landed || ship.state !== "landed") return;
+            if (!tour.hold && finale.hidden && mapEl.hidden) {
+                tour.left -= dt;
+                if (tour.left <= 0) { tourNext(); return; }
+            }
+            paintCountdown();
+            return;
+        }
+        // an idle ship offers the tour, once, if it has never been paused
+        if (tour.woke || tour.paused || !started || landed || ship.state !== "flying" || auto || steer ||
+            !finale.hidden || !mapEl.hidden) { tour.idle = 0; return; }
+        tour.idle += dt;
+        if (tour.idle > IDLE_TOUR) {
+            tour.woke = true;
+            tourPlay(true);
+        }
+    }
+
+    function tourAwake() { tour.idle = 0; }
+
+    autoBtn.addEventListener("click", function () { tourToggle(); canvas.focus({ preventScroll: true }); });
+    tourBtn.addEventListener("click", tourToggle);
+
+    // reading holds the countdown: the pointer on the panel, or scrolling it
+    panel.addEventListener("pointerenter", function (e) {
+        if (e.pointerType === "touch") return;
+        tour.hold = true;
+        paintCountdown();
+    });
+    panel.addEventListener("pointerleave", function () {
+        tour.hold = false;
+        paintCountdown();
+    });
+    panelBody.addEventListener("scroll", function () {
+        if (tour.on) tour.left = Math.max(tour.left, 5);
+    }, { passive: true });
+
+    uni.addEventListener("pointerdown", tourAwake);
+    uni.addEventListener("wheel", tourAwake, { passive: true });
+    paintTour();
 
     function copyText(value, btn) {
         function done() {
@@ -2253,13 +2476,22 @@
 
     document.addEventListener("keydown", function (e) {
         if (mode !== "game" || typing()) return;
+        tourAwake();
         if (e.key === "Escape") {
             if (!finale.hidden) closeFinale();
             else if (!mapEl.hidden) closeMap();
-            else if (landed) takeOff();
+            else if (landed) {
+                if (tour.on) tourNext();
+                else takeOff();
+            }
             return;
         }
         if (!finale.hidden || !mapEl.hidden) return;
+        if (e.code === "KeyP" && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            e.preventDefault();
+            tourToggle();
+            return;
+        }
         if (landed) return;                          // the panel has the keyboard while landed
         if (setKey(e, true)) {
             if (started) e.preventDefault();
@@ -2268,6 +2500,7 @@
         var onStage = e.target === document.body || e.target === canvas;
         if (near && (e.code === "KeyE" || ((e.key === " " || e.key === "Enter") && onStage))) {
             e.preventDefault();
+            tourPause(true);
             land(near);
         } else if (e.code === "KeyN" && !e.ctrlKey && !e.metaKey) {
             nextBtn.click();
@@ -2335,8 +2568,8 @@
             save();
             setTimeout(function () {
                 transmit(touchFirst
-                    ? "Welcome aboard. Tap anywhere to fly there, or tap a world to land on it. Origin is right ahead."
-                    : "Welcome aboard. Fly with WASD or the arrow keys, or click anywhere to set a course. Origin is right ahead.");
+                    ? "Welcome aboard. Tap anywhere to fly there, or tap a world to land on it - or tap Autopilot and I'll show you round."
+                    : "Welcome aboard. Fly with WASD or the arrow keys, or click anywhere to set a course. Press P and the autopilot gives you the tour.");
             }, 700);
         } else {
             setTimeout(function () { transmit("Welcome back, pilot. " + exploredCount() + " of " + WORLDS.length + " worlds explored so far."); }, 600);
@@ -2418,6 +2651,7 @@
             else canvas.focus({ preventScroll: true });
         } else {
             stop();
+            tourPause(false);
             if (landed) { landed = null; ship.state = "flying"; closePanel(); }
             if (to) {
                 var el = document.querySelector(to);
@@ -2447,6 +2681,7 @@
         if (running) return;
         running = true;
         last = 0;
+        tourClock = 0;
         rafId = requestAnimationFrame(frame);
     }
     function stop() {

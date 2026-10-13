@@ -349,6 +349,82 @@ kbd {
 }
 .uni__hint kbd { margin-right: 2px; }
 
+/* "Next" and the autopilot, side by side in the middle */
+.uni__drive { justify-self: center; display: flex; align-items: center; gap: 12px; }
+
+/* Autopilot - plays the tour, and pauses it. While it flies, a light runs
+   round its button. */
+.uni__auto {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 7px 20px 7px 7px;
+    border-radius: 999px;
+    border: 1px solid var(--u-line);
+    background: rgba(8, 12, 32, .72);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    color: var(--u-text);
+    text-align: left;
+    transition: border-color .3s ease, background .3s ease, transform .35s cubic-bezier(.22, 1, .36, 1);
+}
+.uni__auto:hover { transform: translateY(-3px); border-color: var(--indigo-400); background: rgba(30, 27, 75, .82); }
+.uni__auto.is-on { border-color: rgba(129, 140, 248, .55); }
+.uni__auto-icon {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: rgba(129, 140, 248, .16);
+    color: #fff;
+    transition: background .3s ease, box-shadow .3s ease;
+}
+.uni__auto.is-on .uni__auto-icon {
+    background: linear-gradient(120deg, var(--indigo-700), var(--indigo-500));
+    box-shadow: 0 0 22px rgba(99, 102, 241, .55);
+}
+.uni__auto-icon .ui-i { width: 18px; height: 18px; }
+.uni__auto-ring {
+    position: absolute;
+    inset: -4px;
+    width: calc(100% + 8px);
+    height: calc(100% + 8px);
+    transform: rotate(-90deg);
+    overflow: visible;
+}
+.uni__auto-ring circle {
+    fill: none;
+    stroke: var(--indigo-300);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 30 96;
+    opacity: 0;
+    transition: opacity .3s ease;
+}
+.uni__auto.is-on .uni__auto-ring circle { opacity: 1; animation: autoRun 1.6s linear infinite; }
+@keyframes autoRun { to { stroke-dashoffset: -126; } }
+.uni__auto-copy { display: flex; flex-direction: column; line-height: 1.2; }
+.uni__auto-copy small { font-size: .6rem; font-weight: 600; letter-spacing: 1.8px; text-transform: uppercase; color: var(--indigo-300); }
+.uni__auto-copy b {
+    max-width: 190px;
+    overflow: hidden;
+    font-size: .92rem;
+    letter-spacing: -.2px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* play and pause share a button; the state picks which shows */
+.uni-play path { fill: currentColor; stroke: none; }
+.uni-pause { stroke-width: 3; }
+.uni__auto .uni-pause,
+.uni__tour-btn .uni-pause,
+.uni__auto.is-on .uni-play,
+.uni__tour-btn.is-on .uni-play { display: none; }
+.uni__auto.is-on .uni-pause,
+.uni__tour-btn.is-on .uni-pause { display: block; }
+
 .uni__next {
     position: relative;
     z-index: 0;
@@ -430,6 +506,51 @@ kbd {
     overflow: hidden;
 }
 .uni__panel.is-open { opacity: 1; transform: none; }
+
+/* Autopilot in the panel - what comes next and when, with the time left
+   drawn along its top edge. It holds while the pointer is on the panel. */
+.uni__tour {
+    position: relative;
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px 11px 16px;
+    border-top: 1px solid var(--u-line);
+    background: rgba(99, 102, 241, .07);
+}
+.uni__tour-track { position: absolute; left: 0; right: 0; top: -1px; height: 2px; overflow: hidden; pointer-events: none; }
+.uni__tour-track i {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--indigo-500), var(--indigo-300));
+    box-shadow: 0 0 10px rgba(129, 140, 248, .8);
+    transform: scaleX(0);
+    transform-origin: left center;
+}
+.uni__tour-btn {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid rgba(129, 140, 248, .45);
+    background: rgba(129, 140, 248, .14);
+    color: #fff;
+    transition: transform .3s ease, background .3s ease, border-color .3s ease;
+}
+.uni__tour-btn:hover { transform: scale(1.07); background: rgba(129, 140, 248, .28); }
+.uni__tour-btn.is-on { border-color: transparent; background: linear-gradient(120deg, var(--indigo-700), var(--indigo-500)); }
+.uni__tour-btn .ui-i { width: 16px; height: 16px; }
+.uni__tour-copy { min-width: 0; font-size: .8rem; line-height: 1.35; color: var(--u-muted); }
+.uni__tour-copy b {
+    display: block;
+    font-size: .6rem;
+    font-weight: 600;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--indigo-300);
+}
 
 .uni__panel-head {
     display: flex;
@@ -1145,6 +1266,7 @@ kbd {
     .uni__tool { width: 38px; padding: 0; justify-content: center; }
     .uni__hint { display: none; }
     .uni__bottom { grid-template-columns: 1fr auto; }
+    .uni__drive,
     .uni__next { justify-self: start; }
 
     /* the sheet already says it all, and the world needs the space above it */
@@ -1179,7 +1301,10 @@ kbd {
     .uni__toast { top: auto; bottom: 92px; right: 12px; left: 12px; }
 
     .uni__bottom { grid-template-columns: 1fr; padding: 20px 12px 14px; }
-    .uni__next { justify-self: center; width: 100%; justify-content: space-between; }
+    .uni__drive { justify-self: stretch; gap: 10px; }
+    .uni__auto { flex: none; padding: 6px; }
+    .uni__auto-copy { display: none; }
+    .uni__next { flex: 1; min-width: 0; justify-content: space-between; }
     .uni__mini { display: none; }
     .uni__prompt { bottom: 92px; }
 
@@ -1209,5 +1334,6 @@ kbd {
     .uni-enter::before,
     .uni-finale__ring,
     .uni__prompt,
+    .uni__auto-ring circle,
     .uni__comms-from span { animation: none !important; }
 }

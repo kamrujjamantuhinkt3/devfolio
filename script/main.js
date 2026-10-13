@@ -169,14 +169,45 @@
     // never leave anyone stuck behind the loader
     setTimeout(function () { clearInterval(timer); finish(); }, 3200);
 
-    /* Welcome - after the loader, a short introduction and then one question:
-       the classic portfolio or the space mission. The answer goes out as a
-       "kt:mode" event. The game listens for it, and sends the same event when
-       someone switches views from inside it, so the two always agree. */
+    /* Welcome - after the loader, a greeting written out by hand, a few words
+       about me, and one question: the standard portfolio or the universe. The
+       answer goes out as a "kt:mode" event. The game listens for it, and sends
+       the same event when someone switches views from inside it, so the two
+       always agree. */
     var gate = document.getElementById("gate");
     var gateOpen = false;
     var entered = false;
     var gateChoices = gate ? Array.prototype.slice.call(gate.querySelectorAll("[data-choose]")) : [];
+    var gateSkip = gate ? gate.querySelector("[data-gate-skip]") : null;
+    var gateGreet = gate ? gate.querySelector(".gate__greet") : null;
+    var gateWho = gate ? gate.querySelector(".gate__who") : null;
+    var gateLast = null;            // the view chosen last time, where focus lands
+    var hello = null, asker = null; // the two handwritten lines
+    var introTimers = [];
+    var skipped = false;
+    // the starfield's jump to light speed - the starfield eases towards the target
+    var warp = { v: 0, target: 0 };
+
+    // the few words about me rise in one at a time, so each is its own span;
+    // the names in bold stay bold
+    var gateLine = document.getElementById("gateLine");
+    if (gateLine) {
+        var wordAt = 0;
+        Array.prototype.slice.call(gateLine.childNodes).forEach(function (node) {
+            var bold = node.nodeType === 1;
+            var words = document.createDocumentFragment();
+            (node.textContent || "").split(/(\s+)/).forEach(function (part) {
+                if (!part) return;
+                if (/^\s+$/.test(part)) { words.appendChild(document.createTextNode(part)); return; }
+                var word = document.createElement(bold ? "b" : "span");
+                word.className = "gw";
+                word.style.setProperty("--w", wordAt++);
+                word.textContent = part;
+                words.appendChild(word);
+            });
+            gateLine.replaceChild(words, node);
+        });
+    }
 
     // the classic page makes its entrance once, whenever it is first shown
     function enterPage() {
@@ -194,62 +225,583 @@
         if (!e.detail || e.detail.mode !== "game") enterPage();
     });
 
+
+    /* Handwriting - script written out a letter at a time by a pen of light.
+       An <svg class="hand"> lists its lines in data-hand, with "|" between
+       them (data-hand-narrow, where there is one, is used on small screens).
+       Once the script font is in, every letter is measured, and the ink is
+       uncovered through them at a pace set by each letter's width, the pen
+       lifting between words. data-hand-wave waves after the first line, and
+       data-hand-flourish underlines the last. */
+    var INK_NS = "http://www.w3.org/2000/svg";
+    var EM = 100;                  // the script's size, in the drawing's own units
+    var FEATHER = 14;              // the soft leading edge of the ink
+    var WET = 74;                  // how far behind the pen the ink still glows
+    var handCount = 0;
+
+    function svgEl(name, attrs, parent) {
+        var node = document.createElementNS(INK_NS, name);
+        Object.keys(attrs).forEach(function (k) { node.setAttribute(k, attrs[k]); });
+        if (parent) parent.appendChild(node);
+        return node;
+    }
+
+    function fix(n) { return (Math.round(n * 10) / 10).toString(); }
+
+    // How high the pen is inside a letter, as k runs 0 to 1 through it: it
+    // bobs between the line and the x-height, climbs for the tall letters and
+    // dips for the ones that hang below
+    function penHeight(ch, k) {
+        var y = EM * 0.13 * (1 - Math.cos(k * Math.PI * 2.5));
+        if (/[A-Zbdfhklt]/.test(ch)) y += EM * 0.34 * Math.max(0, Math.sin(k * Math.PI * 2));
+        if (/[fgjpqyz]/.test(ch)) y -= EM * 0.3 * Math.max(0, -Math.sin(k * Math.PI * 2));
+        if (/[,.]/.test(ch)) y = EM * 0.05 * (1 - k);
+        return y;
+    }
+
+    function makeHand(svg) {
+        var id = "hand" + (++handCount);
+        var lines = [];
+        var nib = null, sparkLayer = null, sparks = [];
+        var swash = null, swashLen = 0, swashAt = Infinity;
+        var wave = null, waveAt = Infinity;
+        var total = 0, start = 0, last = 0, raf = 0;
+        var playing = false, finished = false;
+        var onDone = null, onProgress = null;
+
+        function rect(node, x, width) {
+            node.setAttribute("x", fix(x));
+            node.setAttribute("width", fix(Math.max(0, width)));
+        }
+
+        function layout(narrow) {
+            cancelAnimationFrame(raf);
+            playing = false;
+            finished = false;
+            onDone = onProgress = null;
+            svg.textContent = "";
+            sparks = [];
+            swash = wave = null;
+            swashAt = waveAt = Infinity;
+
+            var src = (narrow && svg.getAttribute("data-hand-narrow")) || svg.getAttribute("data-hand") || "";
+            var waves = svg.hasAttribute("data-hand-wave");
+            var flourish = svg.hasAttribute("data-hand-flourish");
+            var room = waves ? EM * 0.9 : 0;           // the wave sits after the first line
+
+            var defs = svgEl("defs", {}, svg);
+            var ink = svgEl("linearGradient", { id: id + "-ink", gradientUnits: "userSpaceOnUse" }, defs);
+            svgEl("stop", { offset: "0", "class": "hand__s1" }, ink);
+            svgEl("stop", { offset: ".55", "class": "hand__s2" }, ink);
+            svgEl("stop", { offset: "1", "class": "hand__s3" }, ink);
+            var edge = svgEl("linearGradient", { id: id + "-edge" }, defs);
+            svgEl("stop", { offset: "0", "stop-color": "#fff" }, edge);
+            svgEl("stop", { offset: "1", "stop-color": "#000" }, edge);
+            var band = svgEl("linearGradient", { id: id + "-band" }, defs);
+            svgEl("stop", { offset: "0", "stop-color": "#000" }, band);
+            svgEl("stop", { offset: ".8", "stop-color": "#fff" }, band);
+            svgEl("stop", { offset: "1", "stop-color": "#000" }, band);
+            [["glow", "3", "-10%", "120%"], ["halo", "2.6", "-400%", "900%"]].forEach(function (f) {
+                var filter = svgEl("filter", { id: id + "-" + f[0], x: f[2], y: f[2], width: f[3], height: f[3] }, defs);
+                svgEl("feGaussianBlur", { stdDeviation: f[1], result: "soft" }, filter);
+                var merge = svgEl("feMerge", {}, filter);
+                svgEl("feMergeNode", { "in": "soft" }, merge);
+                svgEl("feMergeNode", { "in": "SourceGraphic" }, merge);
+            });
+
+            lines = src.split("|").map(function (str, i) {
+                var y = i * EM * 1.12;
+                var x = i === 0 ? -room / 2 : 0;
+                var mask = svgEl("mask", { id: id + "-m" + i, maskUnits: "userSpaceOnUse" }, defs);
+                var solid = svgEl("rect", { fill: "#fff", width: 0, height: 0 }, mask);
+                var feather = svgEl("rect", { fill: "url(#" + id + "-edge)", width: 0, height: 0 }, mask);
+                var wetMask = svgEl("mask", { id: id + "-w" + i, maskUnits: "userSpaceOnUse" }, defs);
+                var wet = svgEl("rect", { fill: "url(#" + id + "-band)", width: 0, height: 0 }, wetMask);
+                var text = svgEl("text", { "class": "hand__ink", x: x, y: y, "text-anchor": "middle", "font-size": EM,
+                                           fill: "url(#" + id + "-ink)", mask: "url(#" + id + "-m" + i + ")" }, svg);
+                var wetText = svgEl("text", { "class": "hand__wet", x: x, y: y, "text-anchor": "middle", "font-size": EM,
+                                              filter: "url(#" + id + "-glow)", mask: "url(#" + id + "-w" + i + ")" }, svg);
+                text.textContent = wetText.textContent = str;
+                return { str: str, x: x, y: y, text: text, wetText: wetText, masks: [mask, wetMask],
+                         solid: solid, feather: feather, wet: wet };
+            });
+
+            // The ink's real extent comes from the canvas, which measures the
+            // glyphs themselves (an SVG box is the font's, much taller); the
+            // letters' own positions come from the SVG
+            var probe = document.createElement("canvas").getContext("2d");
+            probe.font = EM + "px " + getComputedStyle(lines[0].text).fontFamily;
+            var top = Infinity, bottom = -Infinity, reach = 0;
+            lines.forEach(function (l) {
+                var mt = probe.measureText(l.str);
+                var startX = l.x - mt.width / 2;
+                l.inkLeft = startX - (mt.actualBoundingBoxLeft || 0);
+                l.inkRight = startX + (mt.actualBoundingBoxRight || mt.width);
+                top = Math.min(top, l.y - (mt.actualBoundingBoxAscent || EM * 0.75));
+                bottom = Math.max(bottom, l.y + (mt.actualBoundingBoxDescent || EM * 0.3));
+                reach = Math.max(reach, -l.inkLeft, l.inkRight);
+                l.chars = [];
+                for (var c = 0; c < l.str.length; c++) {
+                    var e = null;
+                    try { e = l.text.getExtentOfChar(c); } catch (err) { /* not laid out */ }
+                    l.chars.push({
+                        ch: l.str.charAt(c),
+                        a: e ? e.x : startX + mt.width * c / l.str.length,
+                        b: e ? e.x + e.width : startX + mt.width * (c + 1) / l.str.length
+                    });
+                }
+            });
+
+            if (waves) {
+                var first = lines[0];
+                wave = svgEl("text", { "class": "hand__wave", x: fix(first.inkRight + EM * 0.16), y: fix(first.y - EM * 0.04),
+                                       "font-size": fix(EM * 0.6) }, svg);
+                wave.textContent = "\uD83D\uDC4B";
+                reach = Math.max(reach, first.inkRight + EM * 0.9);
+                top = Math.min(top, first.y - EM * 0.66);
+            }
+
+            if (flourish) {
+                // an underline swash beneath the last line, from a third of the
+                // way in to just past its end
+                var endLine = lines[lines.length - 1];
+                var x0 = endLine.inkLeft, span = endLine.inkRight - x0, by = endLine.y + EM * 0.2;
+                var d = "M" + fix(x0 + span * 0.24) + " " + fix(by + EM * 0.05) +
+                        " C" + fix(x0 + span * 0.5) + " " + fix(by + EM * 0.19) + ", " +
+                        fix(x0 + span * 0.8) + " " + fix(by + EM * 0.15) + ", " +
+                        fix(endLine.inkRight + EM * 0.08) + " " + fix(by - EM * 0.05);
+                swash = svgEl("path", { "class": "hand__swash", d: d, stroke: "url(#" + id + "-ink)" }, svg);
+                swashLen = swash.getTotalLength();
+                swash.style.strokeDasharray = fix(swashLen);
+                swash.style.strokeDashoffset = fix(swashLen);
+                bottom = Math.max(bottom, by + EM * 0.24);
+            }
+
+            sparkLayer = svgEl("g", {}, svg);
+            nib = svgEl("circle", { "class": "hand__nib", r: "3.8", cx: "-999", cy: "-999", filter: "url(#" + id + "-halo)" }, svg);
+            nib.style.opacity = "0";
+
+            // centred on x = 0, so the writing sits in the middle of the page
+            reach += EM * 0.14;
+            top -= EM * 0.14;
+            bottom += EM * 0.1;
+            var vbW = reach * 2, vbH = bottom - top;
+            svg.setAttribute("viewBox", [fix(-reach), fix(top), fix(vbW), fix(vbH)].join(" "));
+            ink.setAttribute("x1", fix(-reach * 0.8));
+            ink.setAttribute("x2", fix(reach * 0.8));
+            lines.forEach(function (l) {
+                l.masks.forEach(function (mk) {
+                    mk.setAttribute("x", fix(-reach)); mk.setAttribute("y", fix(top));
+                    mk.setAttribute("width", fix(vbW)); mk.setAttribute("height", fix(vbH));
+                });
+                [l.solid, l.feather, l.wet].forEach(function (r) {
+                    r.setAttribute("y", fix(top));
+                    r.setAttribute("height", fix(vbH));
+                });
+            });
+
+            // the drawing is sized from the font-size the stylesheet gives it,
+            // and never wider than the room it has
+            var px = parseFloat(getComputedStyle(svg).fontSize) || 60;
+            var scale = px / EM;
+            var roomPx = svg.parentNode.clientWidth || window.innerWidth;
+            if (vbW * scale > roomPx) scale = roomPx / vbW;
+            svg.style.width = fix(vbW * scale) + "px";
+            svg.style.height = fix(vbH * scale) + "px";
+
+            // The plan: each letter takes time in proportion to its width; a
+            // space is the pen lifting and moving on to the next word
+            var at = 0;
+            lines.forEach(function (l, i) {
+                var fr = Math.min(l.inkLeft, l.chars.length ? l.chars[0].a : l.inkLeft) - 4;
+                l.from = fr;
+                l.at = at;
+                l.steps = [];
+                l.chars.forEach(function (c, ci) {
+                    if (c.ch === " ") {
+                        var next = l.chars[ci + 1];
+                        var to = next ? Math.max(fr, next.a) : fr;
+                        l.steps.push({ lift: true, at: at, ms: 120, from: fr, to: to });
+                        at += 120;
+                        fr = to;
+                        return;
+                    }
+                    var reachTo = Math.max(fr, c.b);
+                    var ms = 24 + (reachTo - fr) * 1.15;
+                    l.steps.push({ at: at, ms: ms, from: fr, to: reachTo, ch: c.ch });
+                    fr = reachTo;
+                    at += ms;
+                });
+                // whatever ink runs on past the last letter's own box
+                if (l.inkRight + 4 > fr) {
+                    var tail = 40 + (l.inkRight + 4 - fr) * 0.8;
+                    l.steps.push({ at: at, ms: tail, from: fr, to: l.inkRight + 4, ch: "" });
+                    at += tail;
+                    fr = l.inkRight + 4;
+                }
+                l.to = fr;
+                l.end = at;
+                if (i === 0 && wave) { waveAt = at; at += 420; }
+                at += 170;
+            });
+            if (swash) { swashAt = at; at += 640; }
+            total = at;
+
+            render(0);
+        }
+
+        // the leading edge of the ink on one line at time t, and the pen
+        function edgeAt(l, t) {
+            if (t <= l.at) return { x: l.from, pen: null };
+            if (t >= l.end) return { x: l.to, pen: null };
+            for (var s = 0; s < l.steps.length; s++) {
+                var st = l.steps[s];
+                if (t >= st.at + st.ms) continue;
+                var k = Math.max(0, (t - st.at) / st.ms);
+                if (st.lift) {
+                    return { x: st.from, pen: { x: st.from + (st.to - st.from) * k, y: l.y - EM * (0.3 + 0.22 * Math.sin(k * Math.PI)), up: true } };
+                }
+                // a hand never moves at one speed: a small waver that never runs backwards
+                var e = k + 0.08 * Math.sin(k * Math.PI * 2);
+                var x = st.from + (st.to - st.from) * e;
+                return { x: x, pen: { x: x, y: l.y - penHeight(st.ch, k), up: false } };
+            }
+            return { x: l.to, pen: null };
+        }
+
+        function render(t) {
+            var pen = null;
+            lines.forEach(function (l) {
+                var r = edgeAt(l, t);
+                rect(l.solid, l.from - EM, r.x - FEATHER - (l.from - EM));
+                rect(l.feather, r.x - FEATHER, FEATHER);
+                rect(l.wet, r.x - WET, WET);
+                // the ink glows while it is wet, and cools once the line is done
+                var glow = t <= l.at ? 0 : t < l.end ? 1 : Math.max(0, 1 - (t - l.end) / 500);
+                l.wetText.style.opacity = fix(glow);
+                if (r.pen) pen = r.pen;
+            });
+
+            if (wave) wave.classList.toggle("is-on", t >= waveAt);
+
+            if (swash) {
+                var k = Math.max(0, Math.min(1, (t - swashAt) / 640));
+                var eased = 1 - Math.pow(1 - k, 3);
+                swash.style.strokeDashoffset = fix(swashLen * (1 - eased));
+                if (k > 0 && k < 1) {
+                    var p = swash.getPointAtLength(swashLen * eased);
+                    pen = { x: p.x, y: p.y, up: false };
+                }
+            }
+
+            if (pen) {
+                nib.setAttribute("cx", fix(pen.x));
+                nib.setAttribute("cy", fix(pen.y));
+                nib.style.opacity = pen.up ? ".35" : "1";
+            } else {
+                nib.style.opacity = "0";
+            }
+            return pen;
+        }
+
+        // sparks shed by the pen as it writes, drifting down as they fade
+        function sparkle(pen, dt) {
+            if (pen && !pen.up && sparks.length < 36 && Math.random() < 0.6) {
+                sparks.push({
+                    node: svgEl("circle", { "class": "hand__spark", r: fix(Math.random() * 1.6 + 1.1) }, sparkLayer),
+                    x: pen.x, y: pen.y,
+                    vx: (Math.random() - 0.5) * 0.07,
+                    vy: Math.random() * 0.05 + 0.012,
+                    life: 0, max: 420 + Math.random() * 480
+                });
+            }
+            sparks = sparks.filter(function (s) {
+                s.life += dt;
+                if (s.life >= s.max) { sparkLayer.removeChild(s.node); return false; }
+                s.x += s.vx * dt;
+                s.y += s.vy * dt;
+                s.vy += 0.00012 * dt;
+                s.node.setAttribute("cx", fix(s.x));
+                s.node.setAttribute("cy", fix(s.y));
+                s.node.style.opacity = fix(1 - s.life / s.max);
+                return true;
+            });
+        }
+
+        function frame(now) {
+            if (!playing) return;
+            var t = now - start;
+            var dt = Math.min(50, now - last);
+            last = now;
+            sparkle(render(t), dt);
+            if (onProgress) onProgress(Math.min(1, t / total));
+            if (t >= total && !finished) {
+                finished = true;
+                if (onDone) onDone();
+            }
+            // runs on a little, while the last of the ink cools and the sparks fade
+            if (t < total + 600 || sparks.length) raf = requestAnimationFrame(frame);
+            else playing = false;
+        }
+
+        function play(done, progress) {
+            onDone = done || null;
+            onProgress = progress || null;
+            if (reduced) { finish(); return; }
+            finished = false;
+            playing = true;
+            start = last = performance.now();
+            raf = requestAnimationFrame(frame);
+        }
+
+        // straight to the written page
+        function finish() {
+            playing = false;
+            cancelAnimationFrame(raf);
+            sparks.forEach(function (s) { sparkLayer.removeChild(s.node); });
+            sparks = [];
+            if (lines.length) render(total + 600);
+            if (!finished) {
+                finished = true;
+                if (onDone) onDone();
+            }
+        }
+
+        return { svg: svg, layout: layout, play: play, finish: finish };
+    }
+
+
+    /* Welcome - the introduction, in order: the greeting is written in the
+       middle of the screen, a few words about me rise in under it, it glides
+       up, and the question is written above the two ways in. A click, a key
+       or "Skip intro" lands on the last frame at once. */
+    function later(ms, fn) { introTimers.push(setTimeout(fn, ms)); }
+    function clearIntro() { introTimers.forEach(clearTimeout); introTimers = []; }
+
+    function fontsIn() {
+        var wait = new Promise(function (done) { setTimeout(done, 1800); });
+        if (!document.fonts || !document.fonts.load) return wait;
+        return Promise.race([document.fonts.load('100px "Great Vibes"').then(null, function () {}), wait]);
+    }
+
+    function layoutHands() {
+        hello.layout(hello.svg.parentNode.clientWidth < 520);
+        asker.layout(asker.svg.parentNode.clientWidth < 520);
+    }
+
+    // the greeting starts larger and in the middle of the screen; this works
+    // out how far down that is from where it settles
+    function centreGreeting() {
+        if (reduced || !gateGreet || !gateWho) return;
+        var who = gateWho.getBoundingClientRect();
+        var hand = hello.svg.getBoundingClientRect();
+        var block = gateGreet.getBoundingClientRect();
+        var mid = (who.top + hand.bottom) / 2;
+        // it starts there, rather than sliding there
+        gateGreet.style.transition = "none";
+        gate.style.setProperty("--lift", Math.max(0, window.innerHeight / 2 - mid).toFixed(0) + "px");
+        gate.style.setProperty("--lift-at", (mid - block.top).toFixed(0) + "px");
+        gate.style.setProperty("--zoom", window.innerWidth > 720 ? "1.1" : "1");
+        void gateGreet.offsetWidth;
+        gateGreet.style.transition = "";
+    }
+
+    function countStats() {
+        gate.querySelectorAll("[data-gate-count]").forEach(function (dd) {
+            var to = +dd.getAttribute("data-n");
+            if (reduced || skipped) { dd.textContent = to; return; }
+            var t0 = performance.now();
+            (function tick(now) {
+                var k = Math.min(1, (now - t0) / 1100);
+                dd.textContent = Math.round(to * (1 - Math.pow(1 - k, 3)));
+                if (k < 1) requestAnimationFrame(tick);
+            })(t0);
+        });
+    }
+
+    function greeted() {
+        if (gate.classList.contains("is-greeted")) return;
+        gate.classList.add("is-greeted");
+        if (reduced || skipped) countStats();
+        else later(450, countStats);
+    }
+
+    function showChoices() {
+        if (gate.classList.contains("is-choosing")) return;
+        gate.classList.add("is-choosing");
+        setTimeout(function () {
+            if (gateOpen) (gateLast || gateChoices[0]).focus({ preventScroll: true });
+        }, reduced ? 0 : 450);
+    }
+
+    function runIntro() {
+        fontsIn().then(function () {
+            if (!gateOpen) return;
+            layoutHands();
+            if (skipped || reduced) {
+                hello.finish();
+                asker.finish();
+                return;
+            }
+            centreGreeting();
+            gate.classList.add("is-set");
+            later(450, function () {
+                hello.play(function () {
+                    greeted();
+                    later(1500, function () {
+                        gate.classList.add("is-asking");
+                        later(560, function () {
+                            asker.play(showChoices, function (p) { if (p > 0.62) showChoices(); });
+                        });
+                    });
+                });
+            });
+        });
+    }
+
+    function skipIntro() {
+        if (!gateOpen || gate.classList.contains("is-choosing")) return;
+        skipped = true;
+        clearIntro();
+        gate.classList.add("is-quick", "is-set", "is-asking");
+        if (hello) { hello.finish(); asker.finish(); }
+        greeted();
+        showChoices();
+    }
+
     function openGate() {
         // the counts are read from the page itself, so they never go stale
         gate.querySelectorAll("[data-gate-count]").forEach(function (dd) {
-            dd.textContent = document.querySelectorAll(dd.getAttribute("data-gate-count")).length;
+            var n = document.querySelectorAll(dd.getAttribute("data-gate-count")).length;
+            dd.setAttribute("data-n", n);
+            dd.textContent = reduced ? n : 0;
         });
 
         // the view chosen last time is marked, and is where focus lands
         var last = null;
         try { last = localStorage.getItem("kt-mode"); } catch (e) { /* private mode */ }
-        var lastChoice = null;
+        gateLast = null;
         gateChoices.forEach(function (c) {
             var mine = c.getAttribute("data-choose") === last;
             c.classList.toggle("is-last", mine);
-            if (mine) lastChoice = c;
+            if (mine) gateLast = c;
         });
 
         gateOpen = true;
+        skipped = false;
         body.classList.add("is-gated");
         gate.hidden = false;
+        gate.scrollTop = 0;
+        if (!hello) {
+            hello = makeHand(gate.querySelector(".hand--hello"));
+            asker = makeHand(gate.querySelector(".hand--ask"));
+        }
         requestAnimationFrame(function () { gate.classList.add("is-open"); });
+        if (gateSkip) gateSkip.focus({ preventScroll: true });
 
-        // the question arrives after the introduction, and focus waits for it
-        setTimeout(function () {
-            if (gateOpen) (lastChoice || gateChoices[0]).focus({ preventScroll: true });
-        }, reduced ? 0 : 1500);
+        if (reduced) {
+            gate.classList.add("is-set", "is-asking");
+            greeted();
+            showChoices();
+        }
+        runIntro();
     }
 
     function choose(mode) {
         if (!gateOpen) return;
         if (mode === "game" && !document.getElementById("universe")) mode = "classic";
+        var game = mode === "game";
         gateOpen = false;
+        clearIntro();
+        if (hello) { hello.finish(); asker.finish(); }
         try { localStorage.setItem("kt-mode", mode); } catch (e) { /* ignore */ }
+
+        // the universe is reached at light speed
+        if (game && !reduced) {
+            warp.target = 1;
+            gate.classList.add("is-warping");
+        }
         gate.classList.add("is-leaving");
 
         setTimeout(function () {
             gate.hidden = true;
-            gate.classList.remove("is-open", "is-leaving");
+            gate.className = "gate";
             body.classList.remove("is-gated");
             scrollLock.off();
-            sendMode(mode === "game" ? "game" : "classic");
-        }, reduced ? 0 : 520);
+            sendMode(game ? "game" : "classic");
+            warp.target = 0;
+        }, reduced ? 0 : game ? 950 : 520);
     }
 
-    gateChoices.forEach(function (c) {
-        c.addEventListener("click", function () { choose(c.getAttribute("data-choose")); });
-    });
+    if (gate) {
+        gateChoices.forEach(function (c) {
+            c.addEventListener("click", function () { choose(c.getAttribute("data-choose")); });
 
-    // 1 or C, 2 or G; arrows move between the two; Tab stays inside
+            // each way in leans a little towards the pointer, lit where it is
+            c.addEventListener("pointermove", function (e) {
+                if (reduced || e.pointerType === "touch") return;
+                var r = c.getBoundingClientRect();
+                var x = (e.clientX - r.left) / r.width;
+                var y = (e.clientY - r.top) / r.height;
+                c.style.setProperty("--mx", (x * 100).toFixed(1) + "%");
+                c.style.setProperty("--my", (y * 100).toFixed(1) + "%");
+                c.style.setProperty("--ry", ((x - 0.5) * 6).toFixed(2) + "deg");
+                c.style.setProperty("--rx", ((0.5 - y) * 6).toFixed(2) + "deg");
+            });
+            c.addEventListener("pointerleave", function () {
+                c.style.setProperty("--rx", "0deg");
+                c.style.setProperty("--ry", "0deg");
+            });
+        });
+
+        // the universe stirs the stars as soon as it is being considered
+        var gameChoice = gate.querySelector('[data-choose="game"]');
+        if (gameChoice && !reduced) {
+            var stir = function () { if (gateOpen) warp.target = 0.08; };
+            var settle = function () { if (gateOpen) warp.target = 0; };
+            gameChoice.addEventListener("pointerenter", stir);
+            gameChoice.addEventListener("pointerleave", settle);
+            gameChoice.addEventListener("focus", stir);
+            gameChoice.addEventListener("blur", settle);
+        }
+
+        // a click anywhere while it is still being written skips ahead
+        gate.addEventListener("click", function (e) {
+            if (!e.target.closest("[data-choose]")) skipIntro();
+        });
+
+        // a new size is drawn again, already written
+        var gateResize = 0;
+        window.addEventListener("resize", function () {
+            if (!gateOpen || !hello) return;
+            clearTimeout(gateResize);
+            gateResize = setTimeout(function () {
+                skipIntro();
+                layoutHands();
+                hello.finish();
+                asker.finish();
+            }, 160);
+        });
+    }
+
+    // 1 or C, 2 or G (or U) choose at any time. While the introduction runs,
+    // Space, Enter, Escape or an arrow skips it; once the choices are up, the
+    // arrows move between them and Tab stays inside.
     document.addEventListener("keydown", function (e) {
         if (!gateOpen) return;
         var k = e.key;
-        var at = gateChoices.indexOf(document.activeElement);
 
-        if (k === "1" || k === "c" || k === "C") { e.preventDefault(); choose("classic"); }
-        else if (k === "2" || k === "g" || k === "G") { e.preventDefault(); choose("game"); }
-        else if (k === "ArrowLeft" || k === "ArrowRight" || k === "ArrowUp" || k === "ArrowDown" || k === "Tab") {
+        if (k === "1" || k === "c" || k === "C") { e.preventDefault(); choose("classic"); return; }
+        if (k === "2" || k === "g" || k === "G" || k === "u" || k === "U") { e.preventDefault(); choose("game"); return; }
+
+        if (!gate.classList.contains("is-choosing")) {
+            if (k === "Tab") { e.preventDefault(); if (gateSkip) gateSkip.focus(); }
+            else if (k === " " || k === "Enter" || k === "Escape" || k.indexOf("Arrow") === 0) { e.preventDefault(); skipIntro(); }
+            return;
+        }
+
+        var at = gateChoices.indexOf(document.activeElement);
+        if (k === "ArrowLeft" || k === "ArrowRight" || k === "ArrowUp" || k === "ArrowDown" || k === "Tab") {
             var back = k === "ArrowLeft" || k === "ArrowUp" || (k === "Tab" && e.shiftKey);
             e.preventDefault();
             gateChoices[at < 0 ? 0 : (at + (back ? -1 : 1) + gateChoices.length) % gateChoices.length].focus();
@@ -348,6 +900,12 @@
 
             var near = [];
 
+            // the jump to light speed: the field streams out from the middle,
+            // each star drawn as a streak as long as its speed
+            warp.v += (warp.target - warp.v) * (warp.target > warp.v ? 0.035 : 0.06);
+            var wv = reduced ? 0 : warp.v;
+            var cx = w / 2, cy = h / 2;
+
             for (var i = 0; i < stars.length; i++) {
                 var s = stars[i];
                 var alpha = s.a;
@@ -358,6 +916,34 @@
                     alpha = s.a * (0.55 + 0.45 * Math.sin(s.tw));
                     s.y -= s.sp;                       // slow upward drift
                     if (s.y < -2) { s.y = h + 2; s.x = Math.random() * w; }
+                }
+
+                if (wv > 0.003) {
+                    var dx = s.x - cx, dy = s.y - cy;
+                    var dd = Math.sqrt(dx * dx + dy * dy) || 1;
+                    var step = wv * (0.8 + dd * 0.045) * (0.4 + s.r);
+                    s.x += dx / dd * step;
+                    s.y += dy / dd * step;
+                    if (s.x < -30 || s.x > w + 30 || s.y < -30 || s.y > h + 30) {
+                        // back in near the middle, as if from far away
+                        var ang = Math.random() * Math.PI * 2;
+                        var rad = Math.random() * Math.min(w, h) * 0.22 + 4;
+                        s.x = cx + Math.cos(ang) * rad;
+                        s.y = cy + Math.sin(ang) * rad;
+                        dx = s.x - cx; dy = s.y - cy;
+                        dd = Math.sqrt(dx * dx + dy * dy) || 1;
+                        step = wv * (0.8 + dd * 0.045) * (0.4 + s.r);
+                    }
+                    // never longer than the way back to the middle
+                    var streak = Math.min(step * 7, 240, dd);
+                    ctx.strokeStyle = "rgba(" + (s.r > 1.05 ? accent : rgb) + "," + Math.min(1, alpha + wv * 0.4).toFixed(3) + ")";
+                    ctx.lineWidth = s.r * (1 + wv * 0.6);
+                    ctx.lineCap = "round";
+                    ctx.beginPath();
+                    ctx.moveTo(s.x, s.y);
+                    ctx.lineTo(s.x - dx / dd * streak, s.y - dy / dd * streak);
+                    ctx.stroke();
+                    continue;
                 }
 
                 // Stars close to the pointer lean in towards it and brighten
