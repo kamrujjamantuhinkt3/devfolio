@@ -2244,241 +2244,188 @@
     }
 
 
-    /* Skills — the technologies orbit a core on the right, and whichever one
-       is in focus is read out on the left. Positions are computed here rather
-       than in CSS so every logo stays upright as it travels, and so the ones
-       sweeping across the front can come forward over the ones behind. */
-    var solar = document.getElementById("solar");
+    /* Skills - the stack, layer by layer. The model on the left is four
+       glass layers with the tools standing on them; the layer chosen lifts
+       away from the others and is read out on the right. It moves on through
+       the layers by itself while it is on screen, until someone picks a
+       layer or a tool - from then on it stays where they put it. */
+    var stackx = document.querySelector("[data-stack]");
 
-    if (solar) {
+    if (stackx) {
+        var stackModel = stackx.querySelector(".stackx__model");
+        var stackScene = stackx.querySelector(".stackx__scene");
+        var slabs = Array.prototype.slice.call(stackx.querySelectorAll(".slab"));
+        var layerTabs = Array.prototype.slice.call(stackx.querySelectorAll(".layers__tab"));
+        var layerPanels = Array.prototype.slice.call(stackx.querySelectorAll(".layer"));
+        var stackTools = Array.prototype.slice.call(stackx.querySelectorAll(".tool"));
+        var focusBox = document.getElementById("focus");
         var focusUse = document.getElementById("focusUse");
         var focusLogo = document.getElementById("focusLogo");
         var focusName = document.getElementById("focusName");
         var focusCat = document.getElementById("focusCat");
         var focusExp = document.getElementById("focusExp");
-        var focusDots = document.getElementById("focusDots");
-        var focusPanel = document.querySelector(".focus");
+        var layerNames = layerTabs.map(function (t) { return t.querySelector(".layers__name").textContent; });
+        var layerAt = 0;
+        var toolAt = null;
+        var stackTaken = false;              // someone has chosen; it no longer moves by itself
+        var swapTimer = 0;
+        var GAP = 0.2, OPEN = 0.13;          // between layers, and the extra either side of the one chosen
+        var LAYER_DUR = 8000;                // ms each layer is shown for, on its own
 
-        // radius as a fraction of the stage, and how fast each ring travels
-        var RINGS = [
-            { r: 0.24, speed: 0.000074 },
-            { r: 0.34, speed: 0.000055 },
-            { r: 0.44, speed: 0.000041 }
-        ];
-        var TILT = 0.42;          // flattens the circle into a viewed-from-above ellipse
+        stackx.style.setProperty("--layer-dur", LAYER_DUR + "ms");
 
-        var sats = Array.prototype.slice.call(solar.querySelectorAll(".sat")).map(function (el) {
-            return {
-                el: el,
-                ring: RINGS[parseInt(el.dataset.ring, 10)] || RINGS[0],
-                base: parseFloat(el.dataset.angle) * Math.PI / 180
+        // Each tool stands on its layer, round the port in the middle. The front
+        // of the ring is left clear, so the requests passing through stay in view.
+        stackTools.forEach(function (tool) {
+            var layer = +tool.dataset.layer;
+            var mates = stackTools.filter(function (t) { return +t.dataset.layer === layer; });
+            var n = mates.length;
+            var a = (135 + 180 / n + mates.indexOf(tool) * 360 / n) * Math.PI / 180;
+            var r = n > 4 ? 0.36 : 0.31;
+            var pin = document.createElement("span");
+            pin.className = "pin";
+            pin.style.setProperty("--px", (50 + Math.cos(a) * r * 100).toFixed(2) + "%");
+            pin.style.setProperty("--py", (50 + Math.sin(a) * r * 100).toFixed(2) + "%");
+            pin.style.setProperty("--acc", tool.style.getPropertyValue("--acc"));
+            pin.innerHTML = '<svg viewBox="0 0 24 24"><use href="#' + tool.dataset.icon + '"></use></svg>';
+            slabs[layer].appendChild(pin);
+            tool.stackPin = pin;
+            pin.addEventListener("click", function () { takeStack(); showTool(tool); });
+        });
+
+        // the layers' heights: the one chosen lifts away from those below it,
+        // and those above it lift further, so it opens up there
+        var placeLayers = function () {
+            slabs.forEach(function (slab, k) {
+                var z = (slabs.length - 1 - k) * GAP + (k <= layerAt ? OPEN : 0) + (k < layerAt ? OPEN : 0);
+                slab.style.setProperty("--z", z.toFixed(3));
+                slab.classList.toggle("is-on", k === layerAt);
+            });
+            stackScene.style.setProperty("--top-z", ((slabs.length - 1) * GAP + OPEN + (layerAt > 0 ? OPEN : 0)).toFixed(3));
+        };
+
+        var showTool = function (tool) {
+            if (+tool.dataset.layer !== layerAt) showLayer(+tool.dataset.layer, false, true);
+            if (toolAt === tool) return;
+            toolAt = tool;
+            stackTools.forEach(function (t) {
+                var on = t === tool;
+                t.classList.toggle("is-on", on);
+                t.setAttribute("aria-pressed", String(on));
+                t.stackPin.classList.toggle("is-focus", on);
+            });
+            focusBox.style.setProperty("--acc", tool.style.getPropertyValue("--acc"));
+
+            // the logo and the words swap over
+            focusLogo.classList.add("is-swapping");
+            focusExp.classList.add("is-swapping");
+            clearTimeout(swapTimer);
+            swapTimer = setTimeout(function () {
+                focusUse.setAttribute("href", "#" + tool.dataset.icon);
+                focusName.textContent = tool.dataset.name;
+                focusCat.textContent = layerNames[+tool.dataset.layer];
+                focusExp.textContent = tool.dataset.exp;
+                focusLogo.classList.remove("is-swapping");
+                focusExp.classList.remove("is-swapping");
+            }, reduced ? 0 : 200);
+        };
+
+        var showLayer = function (k, focusTab, keepTool) {
+            layerAt = (k + slabs.length) % slabs.length;
+            layerTabs.forEach(function (t, i) {
+                var on = i === layerAt;
+                t.classList.toggle("is-on", on);
+                t.setAttribute("aria-selected", String(on));
+                t.tabIndex = on ? 0 : -1;
+            });
+            layerPanels.forEach(function (p, i) { p.hidden = i !== layerAt; });
+            stackx.style.setProperty("--layer-c", layerTabs[layerAt].style.getPropertyValue("--c"));
+            placeLayers();
+
+            // this layer's own time starts from empty
+            var bar = layerTabs[layerAt].querySelector(".layers__time i");
+            if (bar) {
+                bar.style.animation = "none";
+                void bar.offsetWidth;
+                bar.style.animation = "";
+            }
+            if (!keepTool) {
+                var first = stackTools.filter(function (t) { return +t.dataset.layer === layerAt; })[0];
+                if (first) showTool(first);
+            }
+            if (focusTab) layerTabs[layerAt].focus();
+        };
+
+        // once someone chooses, it stays where they put it
+        var takeStack = function () {
+            stackTaken = true;
+            stackx.classList.remove("is-playing");
+        };
+
+        layerTabs.forEach(function (tab, i) {
+            tab.addEventListener("click", function () { takeStack(); showLayer(i); });
+            var bar = tab.querySelector(".layers__time i");
+            if (bar) {
+                bar.addEventListener("animationend", function () {
+                    if (!stackTaken && tab.classList.contains("is-on") && stackx.classList.contains("is-playing")) showLayer(layerAt + 1);
+                });
+            }
+        });
+        stackx.querySelector(".layers").addEventListener("keydown", function (e) {
+            var k = e.key;
+            var to = k === "ArrowRight" || k === "ArrowDown" ? layerAt + 1
+                   : k === "ArrowLeft" || k === "ArrowUp" ? layerAt - 1
+                   : k === "Home" ? 0 : k === "End" ? slabs.length - 1 : null;
+            if (to === null) return;
+            e.preventDefault();
+            takeStack();
+            showLayer(to, true);
+        });
+        stackTools.forEach(function (tool) {
+            tool.addEventListener("click", function () { takeStack(); showTool(tool); });
+        });
+        slabs.forEach(function (slab, i) {
+            slab.querySelector(".slab__face").addEventListener("click", function () { takeStack(); showLayer(i); });
+        });
+
+        showLayer(0);
+
+        if (!reduced && "IntersectionObserver" in window) {
+            new IntersectionObserver(function (entries) {
+                if (!stackTaken) stackx.classList.toggle("is-playing", entries[0].isIntersecting);
+            }, { threshold: 0.35 }).observe(stackx);
+
+            stackx.addEventListener("pointerenter", function (e) { if (e.pointerType !== "touch") stackx.classList.add("is-paused"); });
+            stackx.addEventListener("pointerleave", function () { stackx.classList.remove("is-paused"); });
+            stackx.addEventListener("focusin", function () { stackx.classList.add("is-paused"); });
+            stackx.addEventListener("focusout", function (e) {
+                if (!stackx.contains(e.relatedTarget)) stackx.classList.remove("is-paused");
+            });
+        }
+
+        // the model leans a little towards the pointer, eased
+        if (pointerFx) {
+            var lean = { x: 0, z: 0, tx: 0, tz: 0, raf: 0 };
+            var leanStep = function () {
+                lean.x += (lean.tx - lean.x) * 0.08;
+                lean.z += (lean.tz - lean.z) * 0.08;
+                stackScene.style.setProperty("--tx", lean.x.toFixed(2) + "deg");
+                stackScene.style.setProperty("--tz", lean.z.toFixed(2) + "deg");
+                lean.raf = Math.abs(lean.tx - lean.x) + Math.abs(lean.tz - lean.z) > 0.05 ? requestAnimationFrame(leanStep) : 0;
             };
-        });
-
-        var beam = document.getElementById("solarBeam");
-        var filters = Array.prototype.slice.call(document.querySelectorAll(".skills .filter"));
-
-        var inFocus = 0;
-        var focusTimer = null;
-        var held = false;
-        var activeCat = "all";
-
-        function inCategory(i) {
-            return activeCat === "all" || sats[i].el.dataset.cat === activeCat;
-        }
-
-        // the indices the rotation is allowed to visit under the current filter
-        function pool() {
-            var out = [];
-            for (var i = 0; i < sats.length; i++) if (inCategory(i)) out.push(i);
-            return out.length ? out : [0];
-        }
-
-        function nextInPool(from) {
-            var list = pool();
-            for (var k = 0; k < list.length; k++) if (list[k] > from) return list[k];
-            return list[0];
-        }
-
-        function paintFocus(i) {
-            var el = sats[i].el;
-
-            var acc = el.style.getPropertyValue("--acc") || "#818cf8";
-            focusPanel.style.setProperty("--acc", acc);
-            solar.style.setProperty("--acc", acc);
-            focusUse.setAttribute("href", "#" + el.dataset.icon);
-            focusName.textContent = el.dataset.name;
-            focusCat.textContent = el.dataset.cat;
-            focusExp.textContent = el.dataset.exp;
-
-            sats.forEach(function (s2, k) { s2.el.classList.toggle("is-focus", k === i); });
-            Array.prototype.forEach.call(focusDots.children, function (d, k) {
-                d.classList.toggle("is-on", k === i);
-                d.setAttribute("aria-selected", String(k === i));
+            var leanTo = function (x, z) {
+                lean.tx = x;
+                lean.tz = z;
+                if (!lean.raf) lean.raf = requestAnimationFrame(leanStep);
+            };
+            stackModel.addEventListener("pointermove", function (e) {
+                var r = stackModel.getBoundingClientRect();
+                var nx = (e.clientX - r.left) / r.width - 0.5;
+                var ny = (e.clientY - r.top) / r.height - 0.5;
+                leanTo(-ny * 10, nx * 16);
             });
+            stackModel.addEventListener("pointerleave", function () { leanTo(0, 0); });
         }
-
-        function setFocus(i, manual) {
-            inFocus = (i + sats.length) % sats.length;
-
-            if (reduced) {
-                paintFocus(inFocus);
-            } else {
-                focusLogo.classList.add("is-swapping");
-                focusExp.classList.add("is-swapping");
-                setTimeout(function () {
-                    paintFocus(inFocus);
-                    focusLogo.classList.remove("is-swapping");
-                    focusExp.classList.remove("is-swapping");
-                }, 230);
-            }
-            if (manual) restartFocus();
-        }
-
-        function restartFocus() {
-            clearInterval(focusTimer);
-            if (reduced) return;
-            focusTimer = setInterval(function () {
-                if (!held) setFocus(nextInPool(inFocus));
-            }, 3600);
-        }
-
-        filters.forEach(function (btn) {
-            btn.addEventListener("click", function () {
-                activeCat = btn.dataset.cat;
-
-                filters.forEach(function (b) {
-                    var on = b === btn;
-                    b.classList.toggle("is-on", on);
-                    b.setAttribute("aria-selected", String(on));
-                });
-
-                sats.forEach(function (s2, k) { s2.el.classList.toggle("is-dim", !inCategory(k)); });
-                Array.prototype.forEach.call(focusDots.children, function (d, k) {
-                    d.hidden = !inCategory(k);
-                });
-
-                if (!inCategory(inFocus)) setFocus(pool()[0], true);
-                else restartFocus();
-            });
-        });
-
-        sats.forEach(function (s2, i) {
-            var dot = document.createElement("button");
-            dot.type = "button";
-            dot.setAttribute("role", "tab");
-            dot.setAttribute("aria-label", s2.el.dataset.name);
-            dot.addEventListener("click", function () { setFocus(i, true); });
-            focusDots.appendChild(dot);
-
-            s2.el.addEventListener("click", function () { setFocus(i, true); });
-            s2.el.addEventListener("mouseenter", function () { setFocus(i, true); });
-            s2.el.addEventListener("focus", function () { setFocus(i, true); });
-        });
-
-        // hold the system still while someone is reaching for a logo
-        solar.addEventListener("mouseenter", function () { held = true; });
-        solar.addEventListener("mouseleave", function () { held = false; });
-        focusPanel.addEventListener("mouseenter", function () { held = true; });
-        focusPanel.addEventListener("mouseleave", function () { held = false; });
-
-        var stage = solar.clientWidth || 420;
-
-        // Each satellite flies out from the core when the section first arrives,
-        // one after another, then settles into its orbit.
-        var INTRO_STEP = 70;     // ms between satellites
-        var INTRO_RUN = 900;     // ms for one to travel out
-
-        function introEase(i, introT) {
-            if (introT < 0) return 0;
-            var t = (introT - i * INTRO_STEP) / INTRO_RUN;
-            if (t <= 0) return 0;
-            if (t >= 1) return 1;
-            return 1 - Math.pow(1 - t, 3);
-        }
-
-        function place(elapsed, introT) {
-            var size = stage;
-            var bx = 50, by = 50;
-
-            sats.forEach(function (s2, i) {
-                var a = s2.base + elapsed * s2.ring.speed;
-                var out = introT === undefined ? 1 : introEase(i, introT);
-
-                var x = Math.cos(a) * s2.ring.r * size * out;
-                var y = Math.sin(a) * s2.ring.r * size * TILT * out;
-
-                // 0 at the back of the sweep, 1 at the front
-                var depth = (Math.sin(a) + 1) / 2;
-                var scale = (0.74 + depth * 0.26) * (0.25 + out * 0.75);
-                if (i === inFocus) scale *= 1.22;
-
-                var dim = s2.el.classList.contains("is-dim");
-                var alpha = i === inFocus ? 1 : (0.6 + depth * 0.4) * (dim ? 0.35 : 1);
-
-                s2.el.style.transform =
-                    "translate(-50%, -50%) translate(" + x.toFixed(1) + "px, " + y.toFixed(1) + "px)" +
-                    " scale(" + scale.toFixed(3) + ")";
-                s2.el.style.zIndex = String(Math.round(depth * 10) + (i === inFocus ? 20 : 1));
-                s2.el.style.opacity = (alpha * out).toFixed(2);
-
-                if (i === inFocus) {
-                    bx = 50 + (x / size) * 100;
-                    by = 50 + (y / size) * 100;
-                }
-            });
-
-            if (beam) {
-                beam.setAttribute("x2", bx.toFixed(2));
-                beam.setAttribute("y2", by.toFixed(2));
-            }
-        }
-
-        if (reduced) {
-            place(0);
-        } else {
-            var clock = 0;
-            var last = 0;
-            var introT = -1;        // negative until the section is actually seen
-
-            // hold the satellites in the core until the section comes into view,
-            // so the entrance is not wasted above the fold
-            if ("IntersectionObserver" in window) {
-                var introObs = new IntersectionObserver(function (entries) {
-                    if (!entries[0].isIntersecting) return;
-                    if (introT < 0) introT = 0;
-                    introObs.disconnect();
-                }, { threshold: .25 });
-                introObs.observe(solar);
-                setTimeout(function () { if (introT < 0) introT = 0; }, 4000);
-            } else {
-                introT = 0;
-            }
-
-            (function spinOrbit(now) {
-                if (!last) last = now;
-                var dt = now - last;
-                last = now;
-
-                if (!held) clock += dt;             // freezing the clock freezes the system
-                if (introT >= 0) introT += dt;
-
-                place(clock, introT);
-                requestAnimationFrame(spinOrbit);
-            })(0);
-        }
-
-        paintFocus(0);
-        restartFocus();
-
-        var solarResize;
-        window.addEventListener("resize", function () {
-            clearTimeout(solarResize);
-            solarResize = setTimeout(function () {
-                stage = solar.clientWidth || 420;
-                if (reduced) place(0);     // otherwise the next frame picks it up
-            }, 160);
-        });
     }
 
 
@@ -2511,9 +2458,12 @@
         "html": "l-html", "css": "l-css", "javascript": "l-js", "typescript": "l-ts",
         "react": "l-react", "tailwind css": "l-tailwind", "next.js": "l-next", "node.js": "l-node",
         "mongodb": "l-mongo", "mongoose": "l-mongoose", "betterauth": "l-auth", "git": "l-git",
-        "github": "l-github"
+        "github": "l-github", "php": "l-php", "mysql": "l-mysql"
     };
-    var TECH_TEXT = { "php": ["PHP", "#777bb4"], "mysql": ["SQL", "#00758f"], "jspdf": ["PDF", "#e11d48"] };
+    var TECH_TEXT = {
+        "php": ["PHP", "#777bb4"], "mysql": ["SQL", "#00758f"], "jspdf": ["PDF", "#e11d48"],
+        "json-ld": ["LD", "#2563eb"], "ga4": ["GA4", "#e37400"], "formspree": ["FS", "#e5122e"]
+    };
     var SVG_NS = "http://www.w3.org/2000/svg";
 
     function addTechMark(el) {
@@ -2853,17 +2803,19 @@
         });
 
 
-        /* The case study - a short tour of the app's real screens plays in the
+        /* The case studies - each plays a short tour of its real screens in a
            browser window. Each step fills its line, then hands on to the next.
-           It plays only while it is on screen, holds still while the pointer
-           or the keyboard is on it, and any step can be chosen directly. */
-        var tour = document.querySelector("[data-tour]");
-
-        if (tour) {
+           A tour plays only while it is on screen, holds still while the
+           pointer or the keyboard is on it, and any step can be chosen. */
+        document.querySelectorAll("[data-tour]").forEach(function (tour) {
             var tourSteps = Array.prototype.slice.call(tour.querySelectorAll(".tour__step"));
             var tourShots = Array.prototype.slice.call(tour.querySelectorAll(".tour__screens img"));
             var tourUrl = tour.querySelector("[data-tour-url]");
             var tourWin = tour.querySelector(".tour__win");
+            var tourCaption = tour.querySelector(".tour__caption");
+            var tourTitle = tour.querySelector("[data-tour-title]");
+            var tourText = tour.querySelector("[data-tour-text]");
+            var captionTimer = 0;
             var tourCard = tour.closest(".proj");
             var tourAt = 0;
             var TOUR_STEP = 6000;                  // ms each screen plays for
@@ -2886,6 +2838,19 @@
                 var step = tourSteps[tourAt];
                 var shot = tourShots[tourAt];
                 if (tourUrl && shot) tourUrl.textContent = shot.getAttribute("data-url");
+
+                // the caption under the tabs says what this screen shows
+                var more = step.querySelector(".tour__more");
+                var title = step.querySelector(".tour__title");
+                if (tourCaption && tourTitle && tourText && more && title && tourTitle.textContent !== title.textContent) {
+                    clearTimeout(captionTimer);
+                    tourCaption.classList.add("is-swapping");
+                    captionTimer = setTimeout(function () {
+                        tourTitle.textContent = title.textContent;
+                        tourText.textContent = more.textContent;
+                        tourCaption.classList.remove("is-swapping");
+                    }, reduced ? 0 : 220);
+                }
                 tour.style.setProperty("--tour-hue", step.style.getPropertyValue("--hue"));
                 if (tourWin) tourWin.setAttribute("aria-labelledby", step.id);
 
@@ -2941,7 +2906,7 @@
                     if (!tour.contains(e.relatedTarget)) tour.classList.remove("is-paused");
                 });
             }
-        }
+        });
 
 
         /* The index - a preview of the row under the pointer follows it down

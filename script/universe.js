@@ -2273,7 +2273,7 @@
         return {
             title: "The tools I build with",
             html:
-                '<p class="up-text">' + esc(s.lede.replace(/ Filter by discipline.*$/, "")) + "</p>" +
+                '<p class="up-text">' + esc(s.lede.replace(/ (Filter by discipline|Pick a layer).*$/, "")) + "</p>" +
                 '<p class="up-meter"><b>' + got + " of " + crystals.length + "</b> skill crystals collected" +
                 (got < crystals.length ? " &mdash; fly through the nebula to collect the rest." : ". Every one of them.") + "</p>" +
                 '<ul class="up-skills">' + s.list.map(function (k, i) {
