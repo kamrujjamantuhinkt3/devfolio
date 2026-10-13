@@ -594,10 +594,26 @@
     function later(ms, fn) { introTimers.push(setTimeout(fn, ms)); }
     function clearIntro() { introTimers.forEach(clearTimeout); introTimers = []; }
 
+    // The script font, waited for a little while; if it is slower than that the
+    // writing starts in a stand-in, and is drawn again the moment it arrives
+    var handFont = null;
+
     function fontsIn() {
-        var wait = new Promise(function (done) { setTimeout(done, 1800); });
+        var wait = new Promise(function (done) { setTimeout(function () { done("late"); }, 2600); });
         if (!document.fonts || !document.fonts.load) return wait;
-        return Promise.race([document.fonts.load('700 100px "Dancing Script"').then(null, function () {}), wait]);
+        handFont = handFont || document.fonts.load('700 100px "Dancing Script"').then(
+            function (faces) { return faces.length > 0; }, function () { return false; });
+        return Promise.race([handFont, wait]);
+    }
+
+    // drawn again at a new size or in the real font: already written, and the
+    // introduction moves on to its last frame
+    function redrawHands() {
+        if (!gateOpen || !hello) return;
+        skipIntro();
+        layoutHands();
+        hello.finish();
+        asker.finish();
     }
 
     function layoutHands() {
@@ -648,11 +664,98 @@
         setTimeout(function () {
             if (gateOpen) (gateLast || gateChoices[0]).focus({ preventScroll: true });
         }, reduced ? 0 : 450);
+        guideLater(reduced ? 0 : 700, guideShow);
+    }
+
+
+    /* The guide - once the two ways in are up, a little astronaut me flies in
+       and says which to take: the universe, or, short of time, the standard
+       view. Each card glows as it is named. The words are typed (unless
+       motion is turned down) and also read out once, whole. The astronaut
+       hides and brings back its bubble. */
+    var guide = document.getElementById("gateGuide");
+    var guideLines = guide ? Array.prototype.slice.call(guide.querySelectorAll(".guide__line")) : [];
+    var guideTimers = [];
+
+    function guideLater(ms, fn) { guideTimers.push(setTimeout(fn, ms)); }
+
+    function guideHint(mode) {
+        gateChoices.forEach(function (c) { c.classList.toggle("is-hinted", c.getAttribute("data-choose") === mode); });
+    }
+
+    // a line is its typed part and the rest, see-through, so it keeps its size
+    function setLine(line, at) {
+        var text = line.getAttribute("data-say") || "";
+        var typed = line.querySelector(".guide__typed");
+        var rest = line.querySelector(".guide__rest");
+        if (!typed) {
+            typed = document.createElement("span");
+            typed.className = "guide__typed";
+            rest = document.createElement("span");
+            rest.className = "guide__rest";
+            line.textContent = "";
+            line.appendChild(typed);
+            line.appendChild(rest);
+        }
+        typed.textContent = text.slice(0, at);
+        rest.textContent = text.slice(at);
+    }
+
+    function typeLine(line, done) {
+        var text = line.getAttribute("data-say") || "";
+        if (reduced) { setLine(line, text.length); done(); return; }
+        var at = 0;
+        line.classList.add("is-typing");
+        (function step() {
+            // a whole character at a time, so the rocket arrives in one piece
+            at += text.codePointAt(at) > 0xffff ? 2 : 1;
+            setLine(line, at);
+            if (at < text.length) guideLater(24, step);
+            else { line.classList.remove("is-typing"); done(); }
+        })();
+    }
+
+    function guideShow() {
+        if (!guide || !gateOpen) return;
+        guideLines.forEach(function (l) { setLine(l, 0); });
+        guide.classList.add("is-on");
+        document.getElementById("guideSaid").textContent =
+            guideLines.map(function (l) { return l.getAttribute("data-say"); }).join(" ");
+
+        guideLater(reduced ? 0 : 1400, function () {
+            guide.classList.add("is-talking");
+            guideHint("game");
+            typeLine(guideLines[0], function () {
+                guideLater(reduced ? 0 : 600, function () {
+                    guideHint("classic");
+                    typeLine(guideLines[1], function () {});
+                });
+            });
+        });
+    }
+
+    function guideHide() {
+        guideTimers.forEach(clearTimeout);
+        guideTimers = [];
+        if (!guide) return;
+        guide.classList.remove("is-on", "is-talking");
+        guideHint(null);
+    }
+
+    if (guide) {
+        guide.querySelector(".guide__me").addEventListener("click", function () {
+            // anything typed so far stays; the bubble just comes and goes
+            guide.classList.toggle("is-talking");
+        });
+        guide.querySelector(".guide__close").addEventListener("click", function () {
+            guide.classList.remove("is-talking");
+        });
     }
 
     function runIntro() {
-        fontsIn().then(function () {
+        fontsIn().then(function (ready) {
             if (!gateOpen) return;
+            if (ready === "late" && handFont) handFont.then(function (ok) { if (ok) redrawHands(); });
             layoutHands();
             if (skipped || reduced) {
                 hello.finish();
@@ -731,6 +834,7 @@
         var game = mode === "game";
         gateOpen = false;
         clearIntro();
+        guideHide();
         if (hello) { hello.finish(); asker.finish(); }
         try { localStorage.setItem("kt-mode", mode); } catch (e) { /* ignore */ }
 
@@ -793,12 +897,7 @@
         window.addEventListener("resize", function () {
             if (!gateOpen || !hello) return;
             clearTimeout(gateResize);
-            gateResize = setTimeout(function () {
-                skipIntro();
-                layoutHands();
-                hello.finish();
-                asker.finish();
-            }, 160);
+            gateResize = setTimeout(redrawHands, 160);
         });
     }
 

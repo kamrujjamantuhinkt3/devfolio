@@ -619,13 +619,15 @@ body.is-gated > .uni-enter { visibility: hidden; }
     margin-top: 18px;
 }
 .gate__stats > div {
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
     display: inline-flex;
     align-items: baseline;
     gap: 7px;
     padding: 7px 15px;
     border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--surface);
+    box-shadow: 0 0 24px rgba(99, 102, 241, .2);
     opacity: 0;
     translate: 0 10px;
     transition: opacity .6s ease, translate .7s cubic-bezier(.22, 1, .36, 1);
@@ -635,6 +637,32 @@ body.is-gated > .uni-enter { visibility: hidden; }
 .gate__stats > div:nth-child(3) { transition-delay: .71s; }
 .gate__stats > div:nth-child(4) { transition-delay: .79s; }
 .gate.is-greeted .gate__stats > div { opacity: 1; translate: none; }
+
+/* a light runs round each pill, a beat behind the one before it */
+.gate__stats > div::before {
+    content: "";
+    position: absolute;
+    left: 50%; top: 50%;
+    z-index: -2;
+    width: 240%;
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    background: conic-gradient(rgba(129, 140, 248, .22) 0 58%, var(--indigo-400) 74%, #ffffff 82%, var(--indigo-400) 88%, rgba(129, 140, 248, .22) 100%);
+    animation: capRun 3.6s linear infinite;
+    animation-delay: var(--capd, 0s);
+}
+.gate__stats > div::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    z-index: -1;
+    border-radius: inherit;
+    background: linear-gradient(180deg, #1a1e52, #0f1338);
+}
+:root[data-theme="light"] .gate__stats > div::after { background: linear-gradient(180deg, #ffffff, #eef0ff); }
+.gate__stats > div:nth-child(2) { --capd: -.9s; }
+.gate__stats > div:nth-child(3) { --capd: -1.8s; }
+.gate__stats > div:nth-child(4) { --capd: -2.7s; }
 .gate__stats dd {
     order: -1;
     font-size: 1.05rem;
@@ -645,6 +673,7 @@ body.is-gated > .uni-enter { visibility: hidden; }
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    filter: drop-shadow(0 0 6px rgba(129, 140, 248, .6));
 }
 :root[data-theme="light"] .gate__stats dd { background-image: linear-gradient(160deg, var(--indigo-700), var(--indigo-500)); }
 .gate__stats dt {
@@ -673,6 +702,12 @@ body.is-gated > .uni-enter { visibility: hidden; }
 .gate .choice { opacity: 0; }
 .gate.is-choosing .choice { animation: choiceIn .9s cubic-bezier(.22, 1, .36, 1) both; }
 .gate.is-choosing .choice:nth-child(2) { animation-delay: .12s; }
+.gate.is-choosing .choice.is-hinted { animation: choiceIn .9s cubic-bezier(.22, 1, .36, 1) both, hintPulse 1.2s ease-out 2; }
+@keyframes hintPulse {
+    0%   { box-shadow: 0 24px 60px rgba(2, 4, 16, .5), 0 0 0 0 var(--glow), 0 0 0 transparent; }
+    55%  { box-shadow: 0 24px 60px rgba(2, 4, 16, .5), 0 0 0 10px transparent, 0 0 64px var(--glow); }
+    100% { box-shadow: 0 24px 60px rgba(2, 4, 16, .5), 0 0 0 14px transparent, 0 0 0 transparent; }
+}
 @keyframes choiceIn {
     from { opacity: 0; translate: 0 34px; }
     to   { opacity: 1; translate: none; }
@@ -891,12 +926,34 @@ body.is-gated > .uni-enter { visibility: hidden; }
 
 /* the scenes */
 .scene text { font-family: var(--font-body); font-size: 9px; font-weight: 600; fill: #e0e7ff; }
-.scene__scroll { animation: sceneScroll 10s cubic-bezier(.65, 0, .35, 1) infinite; }
-@keyframes sceneScroll {
-    0%, 18%   { transform: translateY(0); }
-    44%, 66%  { transform: translateY(-96px); }
-    92%, 100% { transform: translateY(0); }
+.scene .scene__url { font-size: 6.5px; font-weight: 500; letter-spacing: .3px; fill: rgba(224, 231, 255, .6); }
+.scene .scene__live { font-size: 7px; font-weight: 700; letter-spacing: 1px; fill: #fecdd3; }
+
+/* the standard view itself, read from the top down to the footer, then back up */
+.scene__page { animation: pageScroll 30s ease-in-out infinite; }
+@keyframes pageScroll {
+    0%, 6%   { transform: translateY(0); }
+    84%, 90% { transform: translateY(-1426px); }
+    100%     { transform: translateY(0); }
 }
+
+/* the universe, three moments of it, one after another */
+.scene__frame {
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: sceneFrame 12s linear infinite;
+    animation-delay: calc(var(--f) * 4s - 12s);
+}
+@keyframes sceneFrame {
+    0%       { opacity: 0; transform: scale(1.08); }
+    5%       { opacity: 1; }
+    33%      { opacity: 1; }
+    38%      { opacity: 0; transform: scale(1); }
+    100%     { opacity: 0; transform: scale(1); }
+}
+.scene__rec { animation: recBlink 1.4s steps(1) infinite; }
+@keyframes recBlink { 50% { opacity: .2; } }
 .scene__chip { animation: chipBob 5s ease-in-out infinite; animation-delay: var(--d, 0s); }
 @keyframes chipBob { 50% { transform: translateY(-5px); } }
 .scene__stars circle { animation: twinkle 3.4s ease-in-out infinite; animation-delay: var(--t, 0s); }
@@ -908,6 +965,112 @@ body.is-gated > .uni-enter { visibility: hidden; }
     11%      { opacity: 0; transform: translate(400px, 58px); }
     11.1%, to { opacity: 0; transform: translate(400px, 58px); }
 }
+
+/* The guide - me as a little astronaut, who flies in once the two ways in
+   are up and says which to take. The script types the words and sets is-on
+   (flown in) and is-talking (the bubble). The bubble and the guide let the
+   pointer through, so the cards under them still answer it. */
+.guide {
+    position: fixed;
+    right: 26px; bottom: 14px;
+    z-index: 3;
+    width: 112px;
+    pointer-events: none;
+    visibility: hidden;
+}
+.guide.is-on { visibility: visible; }
+.guide__me {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    pointer-events: auto;
+    cursor: pointer;
+    opacity: 0;
+}
+.guide.is-on .guide__me { animation: guideIn 1.5s cubic-bezier(.22, 1.15, .36, 1) forwards; }
+@keyframes guideIn {
+    0%   { opacity: 0; transform: translate(180px, 160px) rotate(30deg); }
+    18%  { opacity: 1; }
+    100% { opacity: 1; transform: none; }
+}
+@keyframes guideInPhone {
+    0%   { opacity: 0; transform: translate(-90px, 30px) rotate(-24deg); }
+    18%  { opacity: 1; }
+    100% { opacity: 1; transform: none; }
+}
+.guide__float { display: block; animation: guideBob 3.8s ease-in-out infinite; }
+@keyframes guideBob { 50% { transform: translateY(-8px) rotate(-2deg); } }
+.guide__art { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 14px 22px rgba(2, 4, 16, .5)); }
+.guide__flames {
+    transform-box: fill-box;
+    transform-origin: center top;
+    animation: guideFire .16s ease-in-out infinite alternate;
+}
+@keyframes guideFire { from { transform: scaleY(.7); opacity: .75; } to { transform: scaleY(1.15); opacity: 1; } }
+.guide__wave { transform-origin: 83px 88px; animation: guideWave 1.6s ease-in-out infinite; }
+@keyframes guideWave { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(18deg); } }
+.guide__point { transform-origin: 44px 86px; animation: guidePoint 2.4s ease-in-out infinite; }
+@keyframes guidePoint { 50% { transform: rotate(-8deg) translateX(-2px); } }
+.guide__tip { animation: recBlink 1.6s steps(1) infinite; }
+
+.guide__say {
+    position: absolute;
+    right: calc(100% - 30px);
+    bottom: calc(100% - 44px);
+    width: 252px;
+    max-width: 70vw;
+    padding: 13px 34px 14px 16px;
+    border-radius: 18px 18px 4px 18px;
+    border: 1px solid rgba(165, 180, 252, .42);
+    background: rgba(12, 16, 46, .93);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 18px 40px rgba(2, 4, 16, .5), 0 0 34px rgba(99, 102, 241, .22);
+    font-size: .8rem;
+    line-height: 1.5;
+    text-align: left;
+    color: var(--text);
+    opacity: 0;
+    transform: translateY(10px) scale(.88);
+    transform-origin: 100% 100%;
+    transition: opacity .35s ease, transform .5s cubic-bezier(.34, 1.4, .64, 1);
+    pointer-events: none;
+}
+.guide.is-talking .guide__say { opacity: 1; transform: none; }
+:root[data-theme="light"] .guide__say {
+    border-color: rgba(79, 70, 229, .22);
+    background: rgba(255, 255, 255, .96);
+    box-shadow: 0 18px 40px rgba(30, 41, 110, .18);
+}
+/* the whole line is there from the start, the part not yet typed see-through,
+   so the bubble never changes size as it is written */
+.guide__line { display: block; }
+.guide__line + .guide__line { margin-top: 6px; color: var(--muted); }
+.guide__rest { color: transparent; }
+.guide__line.is-typing .guide__typed::after {
+    content: "";
+    display: inline-block;
+    width: 2px; height: 1em;
+    margin-left: 2px;
+    vertical-align: -2px;
+    background: var(--indigo-300);
+    animation: recBlink .8s steps(1) infinite;
+}
+.guide__close {
+    position: absolute;
+    top: 8px; right: 8px;
+    display: grid;
+    place-items: center;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    color: var(--muted);
+    pointer-events: auto;
+    transition: color .25s ease, background .25s ease;
+}
+.guide__close .i { width: 12px; height: 12px; }
+.guide__close:hover { color: var(--text); background: rgba(255, 255, 255, .08); }
 
 /* skipping: always there until the choices are */
 .gate__skip {
@@ -963,6 +1126,7 @@ body.is-gated > .uni-enter { visibility: hidden; }
     .choice__title { font-size: 1.22rem; }
     .choice__text { font-size: .76rem; line-height: 1.5; }
     .gate__note { margin-top: 10px; }
+    .guide { width: 96px; }
 }
 
 @media (max-width: 720px) {
@@ -1002,6 +1166,31 @@ body.is-gated > .uni-enter { visibility: hidden; }
     .gate__note { display: none; }        /* no keyboard on a phone */
 
     .gate__skip { right: 50%; translate: 50% 0; bottom: 16px; }
+
+    /* the guide stands above the cards instead: me on the left, the words on the right */
+    .guide {
+        position: relative;
+        right: auto; bottom: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: auto;
+        margin-top: 6px;
+    }
+    .guide__me { flex: none; width: 66px; }
+    .guide__say {
+        order: 2;
+        position: relative;
+        right: auto; bottom: auto;
+        flex: 1;
+        width: auto;
+        max-width: none;
+        padding: 10px 30px 11px 13px;
+        border-radius: 16px 16px 16px 4px;
+        font-size: .76rem;
+        transform-origin: 0 100%;
+    }
+    .guide.is-on .guide__me { animation-name: guideInPhone; }
 }
 
 @media (max-width: 380px) {
@@ -6812,5 +7001,9 @@ a.tile:hover .tile__go { transform: translate(2px, -2px); color: #fff; border-co
     .case__head > *, .tour__steps > li, .tour__stage, .case__facts > *, .tour__screens img,
     .proj-index .proj::after { animation-delay: 0s !important; transition-delay: 0s !important; }
     .case__pulse, .tour__live span, .tour__fill, .journey__line::after,
-    .scene__scroll, .scene__chip, .scene__stars circle, .scene__shoot { animation: none !important; }
+    .scene__page, .scene__chip, .scene__stars circle, .scene__shoot, .scene__rec,
+    .guide__float, .guide__flames, .guide__wave, .guide__point, .guide__tip,
+    .gate__stats > div::before { animation: none !important; }
+    .scene__frame { animation: none !important; opacity: 0; }
+    .scene__frame:first-child { opacity: 1; }
 }
