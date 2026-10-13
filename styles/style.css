@@ -810,6 +810,7 @@ body.is-gated > .uni-enter { visibility: hidden; }
     border-radius: 24.5px;
     background: #070b1f;
 }
+.scene--live { position: absolute; inset: 0; }
 .choice__scene .scene {
     display: block;
     width: 100%; height: 100%;
@@ -937,21 +938,6 @@ body.is-gated > .uni-enter { visibility: hidden; }
     100%     { transform: translateY(0); }
 }
 
-/* the universe, three moments of it, one after another */
-.scene__frame {
-    opacity: 0;
-    transform-box: fill-box;
-    transform-origin: center;
-    animation: sceneFrame 12s linear infinite;
-    animation-delay: calc(var(--f) * 4s - 12s);
-}
-@keyframes sceneFrame {
-    0%       { opacity: 0; transform: scale(1.08); }
-    5%       { opacity: 1; }
-    33%      { opacity: 1; }
-    38%      { opacity: 0; transform: scale(1); }
-    100%     { opacity: 0; transform: scale(1); }
-}
 .scene__rec { animation: recBlink 1.4s steps(1) infinite; }
 @keyframes recBlink { 50% { opacity: .2; } }
 .scene__chip { animation: chipBob 5s ease-in-out infinite; animation-delay: var(--d, 0s); }
@@ -972,7 +958,7 @@ body.is-gated > .uni-enter { visibility: hidden; }
    pointer through, so the cards under them still answer it. */
 .guide {
     position: fixed;
-    right: 26px; bottom: 14px;
+    right: 20px; bottom: 14px;
     z-index: 3;
     width: 112px;
     pointer-events: none;
@@ -1014,15 +1000,18 @@ body.is-gated > .uni-enter { visibility: hidden; }
 .guide__point { transform-origin: 44px 86px; animation: guidePoint 2.4s ease-in-out infinite; }
 @keyframes guidePoint { 50% { transform: rotate(-8deg) translateX(-2px); } }
 .guide__tip { animation: recBlink 1.6s steps(1) infinite; }
+.guide__eyes { transform-origin: 60px 54.6px; animation: guideBlink 4.2s ease-in-out infinite; }
+@keyframes guideBlink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
 
+/* above the astronaut, in the margin beside the cards */
 .guide__say {
     position: absolute;
-    right: calc(100% - 30px);
-    bottom: calc(100% - 44px);
-    width: 252px;
+    right: 4px;
+    bottom: calc(100% + 4px);
+    width: 204px;
     max-width: 70vw;
-    padding: 13px 34px 14px 16px;
-    border-radius: 18px 18px 4px 18px;
+    padding: 12px 32px 13px 15px;
+    border-radius: 18px 18px 5px 18px;
     border: 1px solid rgba(165, 180, 252, .42);
     background: rgba(12, 16, 46, .93);
     -webkit-backdrop-filter: blur(12px);
@@ -1039,6 +1028,17 @@ body.is-gated > .uni-enter { visibility: hidden; }
     pointer-events: none;
 }
 .guide.is-talking .guide__say { opacity: 1; transform: none; }
+/* its tail, pointing down at the astronaut */
+.guide__say::after {
+    content: "";
+    position: absolute;
+    right: 30px; bottom: -7px;
+    width: 12px; height: 12px;
+    border-right: 1px solid rgba(165, 180, 252, .42);
+    border-bottom: 1px solid rgba(165, 180, 252, .42);
+    background: inherit;
+    transform: rotate(45deg);
+}
 :root[data-theme="light"] .guide__say {
     border-color: rgba(79, 70, 229, .22);
     background: rgba(255, 255, 255, .96);
@@ -1155,10 +1155,10 @@ body.is-gated > .uni-enter { visibility: hidden; }
     .choice__shade,
     .choice::after { border-radius: 20.5px; }
     .choice__shade {
-        background: linear-gradient(180deg, rgba(5, 8, 24, 0) 0, rgba(5, 8, 24, .1) 46px,
-                                    rgba(5, 8, 24, .94) 90px, rgba(5, 8, 24, .97) 100%);
+        background: linear-gradient(180deg, rgba(5, 8, 24, 0) 0, rgba(5, 8, 24, .1) 66px,
+                                    rgba(5, 8, 24, .94) 114px, rgba(5, 8, 24, .97) 100%);
     }
-    .choice__body { width: 100%; gap: 3px; padding: 84px 16px 14px; }
+    .choice__body { width: 100%; gap: 3px; padding: 108px 16px 14px; }
     .choice__title { font-size: 1.14rem; }
     .choice__text { font-size: .76rem; }
     .choice__foot { padding-top: 4px; }
@@ -1190,6 +1190,7 @@ body.is-gated > .uni-enter { visibility: hidden; }
         font-size: .76rem;
         transform-origin: 0 100%;
     }
+    .guide__say::after { display: none; }
     .guide.is-on .guide__me { animation-name: guideInPhone; }
 }
 
@@ -2347,20 +2348,91 @@ main { counter-reset: section; }
     box-shadow: var(--shadow);
 }
 .about__photo img {
+    position: absolute;
+    inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
-    object-position: 50% 42%;
-    transform: scale(1.18);
-    transform-origin: 50% 42%;
+    object-position: var(--fit, 50% 42%);              /* each photo can set its own framing */
+    transform: scale(var(--zoom, 1.18));
+    transform-origin: var(--fit, 50% 42%);
     filter: brightness(var(--photo-light)) contrast(1.02) saturate(1.02);
-    transition: transform 1.2s cubic-bezier(.22, 1, .36, 1);
+    transition: transform 1.2s cubic-bezier(.22, 1, .36, 1), clip-path 1.5s cubic-bezier(.65, 0, .35, 1);
 }
-.about__figure:hover .about__photo img { transform: scale(1.26); }
+.about__figure:hover .about__photo img { transform: scale(calc(var(--zoom, 1.18) + .08)); }
+
+/* the photos take turns: each new one opens out from the middle like an iris
+   over the one before (is-entering keeps it on top while it does) */
+html:not(.js) .about__photo img:not(:first-child) { display: none; }
+.js .about__photo img { clip-path: circle(0% at 50% 42%); }
+.js .about__photo img.is-on { z-index: 1; clip-path: circle(76% at 50% 42%); }
+.js .about__photo img.is-entering { z-index: 2; }
+
+/* and a ring of light rides the edge of the opening */
+.about__iris {
+    position: absolute;
+    left: 50%; top: 42%;
+    z-index: 3;
+    width: 10%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 2px solid rgba(224, 231, 255, .95);
+    box-shadow: 0 0 24px rgba(129, 140, 248, .9), inset 0 0 18px rgba(129, 140, 248, .6);
+    translate: -50% -50%;
+    opacity: 0;
+    pointer-events: none;
+}
+.about__photo.is-turning .about__iris { animation: irisOpen 1.5s cubic-bezier(.65, 0, .35, 1); }
+@keyframes irisOpen {
+    from { opacity: 1; transform: scale(0); }
+    80%  { opacity: .9; }
+    to   { opacity: 0; transform: scale(16.5); }
+}
+
+/* how long each photo stays, as bars along the top; any bar picks its photo */
+.about__bars {
+    position: absolute;
+    left: 14px; right: 14px; top: 10px;
+    z-index: 4;
+    display: flex;
+    gap: 6px;
+}
+.about__bar {
+    flex: 1;
+    display: grid;
+    align-items: center;
+    height: 16px;
+    padding: 0;
+    cursor: pointer;
+}
+.about__bar i {
+    position: relative;
+    display: block;
+    height: 3px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, .3);
+    box-shadow: 0 1px 4px rgba(2, 4, 16, .4);
+}
+.about__bar i::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #ffffff;
+    box-shadow: 0 0 8px rgba(199, 210, 254, .9);
+    transform: scaleX(0);
+    transform-origin: left center;
+}
+.about__bar.is-done i::after { transform: none; }
+.about__bar.is-now i::after { animation: photoBar 5.5s linear forwards; }
+.about__photo.is-paused .about__bar.is-now i::after { animation-play-state: paused; }
+@keyframes photoBar { to { transform: none; } }
+.about__bar:hover i { background: rgba(255, 255, 255, .5); }
 
 /* Edge-only indigo grade. The centre is left clear so skin tone stays true,
    and the darkening lives on its own layer so it cannot shift the hue. */
 .about__tint {
     position: absolute; inset: 0;
+    z-index: 3;
     background: radial-gradient(ellipse 92% 76% at 50% 40%, transparent 48%, rgba(79, 70, 229, .55) 100%);
     mix-blend-mode: color;
     opacity: .7;
@@ -2369,6 +2441,7 @@ main { counter-reset: section; }
     content: "";
     position: absolute;
     inset: 0;
+    z-index: 3;
     background:
         linear-gradient(180deg, rgba(5, 9, 22, .28) 0%, transparent 32%, transparent 58%, rgba(5, 9, 22, .62) 100%),
         radial-gradient(ellipse 96% 84% at 50% 40%, transparent 52%, rgba(5, 9, 22, .5) 100%);
@@ -7002,8 +7075,8 @@ a.tile:hover .tile__go { transform: translate(2px, -2px); color: #fff; border-co
     .proj-index .proj::after { animation-delay: 0s !important; transition-delay: 0s !important; }
     .case__pulse, .tour__live span, .tour__fill, .journey__line::after,
     .scene__page, .scene__chip, .scene__stars circle, .scene__shoot, .scene__rec,
-    .guide__float, .guide__flames, .guide__wave, .guide__point, .guide__tip,
+    .guide__float, .guide__flames, .guide__wave, .guide__point, .guide__tip, .guide__eyes, .about__iris,
     .gate__stats > div::before { animation: none !important; }
-    .scene__frame { animation: none !important; opacity: 0; }
-    .scene__frame:first-child { opacity: 1; }
+    .about__bar.is-now i::after { animation: none !important; transform: none; }
+    .about__photo img { transition: none !important; }
 }

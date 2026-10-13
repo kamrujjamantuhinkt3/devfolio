@@ -665,6 +665,7 @@
             if (gateOpen) (gateLast || gateChoices[0]).focus({ preventScroll: true });
         }, reduced ? 0 : 450);
         guideLater(reduced ? 0 : 700, guideShow);
+        liveStart();
     }
 
 
@@ -728,7 +729,16 @@
             typeLine(guideLines[0], function () {
                 guideLater(reduced ? 0 : 600, function () {
                     guideHint("classic");
-                    typeLine(guideLines[1], function () {});
+                    typeLine(guideLines[1], function () {
+                        // where the bubble has had to sit over a card, it steps
+                        // aside once there has been time to read it
+                        var say = guide.querySelector(".guide__say").getBoundingClientRect();
+                        var covers = gateChoices.some(function (card) {
+                            var r = card.getBoundingClientRect();
+                            return say.left < r.right && say.right > r.left && say.top < r.bottom && say.bottom > r.top;
+                        });
+                        if (covers && window.innerWidth > 720) guideLater(8000, function () { guide.classList.remove("is-talking"); });
+                    });
                 });
             });
         });
@@ -740,6 +750,424 @@
         if (!guide) return;
         guide.classList.remove("is-on", "is-talking");
         guideHint(null);
+    }
+
+    /* The universe, live - the universe card shows the worlds of the universe
+       view turning, and a ship flying from one to the next on its own, circling
+       each before it moves on. The worlds, their places and colours are the
+       game's own (universe.js); this is a small copy drawn for the card. It is
+       drawn only while the cards are up, and with motion turned down it is one
+       still frame. */
+    var liveCanvas = document.getElementById("liveUniverse");
+    var liveRun = { on: false, raf: 0, last: 0 };
+
+    var LIVE_WORLDS = [
+        { name: "Origin", x: 0, y: 0, r: 108, c: ["#c7d2fe", "#6366f1", "#1e1b4b"], glow: "#818cf8", ring: "#a5b4fc" },
+        { name: "Academy", x: 1180, y: -620, r: 88, c: ["#bae6fd", "#0ea5e9", "#0c1e4a"], glow: "#38bdf8", moons: 3 },
+        { name: "Tech Nebula", x: 2420, y: 60, r: 58, c: ["#ffffff", "#c4b5fd", "#4c1d95"], glow: "#c084fc", core: true },
+        { name: "Shipyard", x: 1820, y: 1380, r: 70, c: ["#e2e8f0", "#64748b", "#0f172a"], glow: "#94a3b8", moons: 5 },
+        { name: "Career Belt", x: 230, y: 1860, r: 92, c: ["#a7f3d0", "#4f46e5", "#111a46"], glow: "#34d399", ring: "#6ee7b7" },
+        { name: "Hall of Honours", x: -1500, y: 860, r: 84, c: ["#fef3c7", "#f59e0b", "#4a2306"], glow: "#fbbf24", ring: "#fde68a", moons: 2 },
+        { name: "Club Constellation", x: -1420, y: -680, r: 58, c: ["#fce7f3", "#ec4899", "#500724"], glow: "#f472b6", moons: 6 },
+        { name: "Comm Beacon", x: -160, y: -1560, r: 56, c: ["#cffafe", "#22d3ee", "#083344"], glow: "#22d3ee", beacon: true }
+    ];
+
+    var LIVE_CLOUDS = [
+        { x: 2200, y: 0, r: 1500, c: "rgba(147, 51, 234, .32)" },
+        { x: 400, y: 1700, r: 1300, c: "rgba(20, 184, 166, .18)" },
+        { x: -1500, y: -500, r: 1300, c: "rgba(236, 72, 153, .2)" },
+        { x: 600, y: -900, r: 1400, c: "rgba(79, 70, 229, .28)" },
+        { x: -1300, y: 1000, r: 1100, c: "rgba(245, 158, 11, .12)" }
+    ];
+
+    if (liveCanvas && liveCanvas.getContext) {
+        var lx = liveCanvas.getContext("2d");
+        var LW = 0, LH = 0, LDPR = 1;
+        var liveClock = 0;
+        var liveStars = [];
+        for (var ls = 0; ls < 150; ls++) {
+            liveStars.push({ x: Math.random(), y: Math.random(), z: Math.random() * 0.75 + 0.25,
+                             r: Math.random() * 1.1 + 0.35, tw: Math.random() * 6.3 });
+        }
+        var liveDust = [];
+        var craft = { x: -60, y: 260, a: -Math.PI / 2 };
+        var leg = null;
+        var liveCam = { x: 0, y: 0, z: 0.3 };
+
+        var liveSize = function () {
+            LDPR = Math.min(window.devicePixelRatio || 1, 2);
+            LW = liveCanvas.clientWidth;
+            LH = liveCanvas.clientHeight;
+            liveCanvas.width = Math.round(LW * LDPR);
+            liveCanvas.height = Math.round(LH * LDPR);
+        };
+
+        // on a phone only a band across the top of the card is clear of words,
+        // so the ship is kept in the middle of that band
+        var focus = function () {
+            return window.innerWidth <= 720
+                ? { x: 0.5, y: Math.min(0.5, 58 / (LH || 1)), span: 1000, phone: true }
+                : { x: 0.72, y: 0.52, span: 1350 };
+        };
+
+        var bez = function (p0, p1, p2, p3, t) {
+            var u = 1 - t;
+            return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3;
+        };
+
+        // a leg: from where the ship is, along a gentle curve, to the near side
+        // of the next world; then once round it before the next leg
+        var setCourse = function (to) {
+            var w = LIVE_WORLDS[to];
+            var dx = w.x - craft.x, dy = w.y - craft.y;
+            var d = Math.sqrt(dx * dx + dy * dy) || 1;
+            var ux = dx / d, uy = dy / d;
+            var orbitR = w.r + 70;
+            var end = { x: w.x - ux * orbitR, y: w.y - uy * orbitR };
+            var bend = d * 0.2 * (to % 2 ? 1 : -1);
+            leg = {
+                to: to, phase: "cruise", t: 0,
+                dur: Math.max(1.9, d / 760),
+                p: [{ x: craft.x, y: craft.y },
+                    { x: craft.x + dx / 3 - uy * bend, y: craft.y + dy / 3 + ux * bend },
+                    { x: end.x - dx / 3 - uy * bend, y: end.y - dy / 3 + ux * bend },
+                    end],
+                orbitR: orbitR,
+                orbitA: Math.atan2(end.y - w.y, end.x - w.x)
+            };
+        };
+
+        var moveCraft = function (dt) {
+            if (!leg) setCourse(0);
+            var w = LIVE_WORLDS[leg.to];
+            leg.t += dt;
+            var px = craft.x, py = craft.y;
+            if (leg.phase === "cruise") {
+                var k = Math.min(1, leg.t / leg.dur);
+                var e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+                var p = leg.p;
+                craft.x = bez(p[0].x, p[1].x, p[2].x, p[3].x, e);
+                craft.y = bez(p[0].y, p[1].y, p[2].y, p[3].y, e);
+                if (k >= 1) { leg.phase = "orbit"; leg.t = 0; }
+                // exhaust while under way
+                if (Math.random() < 0.9) {
+                    liveDust.push({ x: craft.x - Math.cos(craft.a) * 14, y: craft.y - Math.sin(craft.a) * 14,
+                                    vx: -Math.cos(craft.a) * 60 + (Math.random() - 0.5) * 40,
+                                    vy: -Math.sin(craft.a) * 60 + (Math.random() - 0.5) * 40, life: 0.6 });
+                }
+            } else {
+                // once round the world, then on to the next
+                leg.orbitA += dt * 1.7 * (110 / leg.orbitR);
+                craft.x = w.x + Math.cos(leg.orbitA) * leg.orbitR;
+                craft.y = w.y + Math.sin(leg.orbitA) * leg.orbitR;
+                if (leg.t > 2.4) setCourse((leg.to + 1) % LIVE_WORLDS.length);
+            }
+            var mx = craft.x - px, my = craft.y - py;
+            if (mx * mx + my * my > 0.01) {
+                var want = Math.atan2(my, mx);
+                var turn = Math.atan2(Math.sin(want - craft.a), Math.cos(want - craft.a));
+                craft.a += turn * Math.min(1, dt * 10);
+            }
+            liveDust = liveDust.filter(function (d) {
+                d.life -= dt;
+                d.x += d.vx * dt;
+                d.y += d.vy * dt;
+                return d.life > 0;
+            });
+        };
+
+        var planet = function (w, sx, sy, sr, t) {
+            // halo
+            var halo = lx.createRadialGradient(sx, sy, sr * 0.6, sx, sy, sr * 2.6);
+            halo.addColorStop(0, w.glow + "55");
+            halo.addColorStop(1, w.glow + "00");
+            lx.fillStyle = halo;
+            lx.beginPath();
+            lx.arc(sx, sy, sr * 2.6, 0, Math.PI * 2);
+            lx.fill();
+
+            var tilt = -0.32;
+            if (w.ring) {
+                lx.strokeStyle = w.ring;
+                lx.globalAlpha = 0.55;
+                lx.lineWidth = Math.max(1, sr * 0.09);
+                lx.beginPath();
+                lx.ellipse(sx, sy, sr * 1.75, sr * 0.42, tilt, Math.PI, Math.PI * 2);
+                lx.stroke();
+                lx.globalAlpha = 1;
+            }
+
+            if (w.core) {
+                // the nebula's heart: bright, with orbits turning round it
+                var core = lx.createRadialGradient(sx, sy, 0, sx, sy, sr);
+                core.addColorStop(0, "#ffffff");
+                core.addColorStop(0.35, w.c[1]);
+                core.addColorStop(1, "rgba(76, 29, 149, 0)");
+                lx.fillStyle = core;
+                lx.beginPath();
+                lx.arc(sx, sy, sr, 0, Math.PI * 2);
+                lx.fill();
+                lx.strokeStyle = "rgba(233, 213, 255, .55)";
+                lx.lineWidth = 1;
+                for (var o = 0; o < 2; o++) {
+                    lx.beginPath();
+                    lx.ellipse(sx, sy, sr * 1.5, sr * 0.55, t * (o ? -0.5 : 0.7) + o, 0, Math.PI * 2);
+                    lx.stroke();
+                }
+                // and the stack, as crystals drifting round it
+                var hues = ["#facc15", "#38bdf8", "#f97316", "#22c55e", "#a78bfa", "#f43f5e", "#2dd4bf"];
+                for (var q = 0; q < 13; q++) {
+                    var qa = q * 2.4 + t * 0.15;
+                    var qd = sr * (2.4 + (q % 4) * 0.55);
+                    lx.fillStyle = hues[q % hues.length];
+                    lx.beginPath();
+                    lx.arc(sx + Math.cos(qa) * qd, sy + Math.sin(qa) * qd * 0.78, Math.max(1.2, sr * 0.12), 0, Math.PI * 2);
+                    lx.fill();
+                }
+            } else {
+                var body = lx.createRadialGradient(sx - sr * 0.35, sy - sr * 0.4, sr * 0.1, sx, sy, sr);
+                body.addColorStop(0, w.c[0]);
+                body.addColorStop(0.55, w.c[1]);
+                body.addColorStop(1, w.c[2]);
+                lx.fillStyle = body;
+                lx.beginPath();
+                lx.arc(sx, sy, sr, 0, Math.PI * 2);
+                lx.fill();
+                // a few soft bands across it
+                lx.save();
+                lx.beginPath();
+                lx.arc(sx, sy, sr, 0, Math.PI * 2);
+                lx.clip();
+                lx.fillStyle = "rgba(255, 255, 255, .07)";
+                for (var b = -2; b <= 2; b++) lx.fillRect(sx - sr, sy + b * sr * 0.36 - sr * 0.07, sr * 2, sr * 0.14);
+                lx.restore();
+            }
+
+            if (w.ring) {
+                lx.strokeStyle = w.ring;
+                lx.globalAlpha = 0.85;
+                lx.lineWidth = Math.max(1, sr * 0.09);
+                lx.beginPath();
+                lx.ellipse(sx, sy, sr * 1.75, sr * 0.42, tilt, 0, Math.PI);
+                lx.stroke();
+                lx.globalAlpha = 1;
+            }
+
+            if (w.beacon) {
+                // signals going out
+                lx.strokeStyle = w.glow;
+                lx.lineWidth = 1.2;
+                for (var s = 0; s < 3; s++) {
+                    var f = (t * 0.55 + s / 3) % 1;
+                    lx.globalAlpha = (1 - f) * 0.7;
+                    lx.beginPath();
+                    lx.arc(sx, sy, sr * (1.1 + f * 1.8), 0, Math.PI * 2);
+                    lx.stroke();
+                }
+                lx.globalAlpha = 1;
+            }
+
+            if (w.moons) {
+                for (var n = 0; n < w.moons; n++) {
+                    var ma = t * 0.5 + n * (Math.PI * 2 / w.moons);
+                    var mr = sr * 1.95;
+                    lx.fillStyle = "#e2e8f0";
+                    lx.globalAlpha = Math.sin(ma) > 0 ? 1 : 0.55;      // dimmer on the far side
+                    lx.beginPath();
+                    lx.arc(sx + Math.cos(ma) * mr, sy + Math.sin(ma) * mr * 0.42, Math.max(1.3, sr * 0.13), 0, Math.PI * 2);
+                    lx.fill();
+                }
+                lx.globalAlpha = 1;
+            }
+        };
+
+        var livePill = function (x, y, w, h) {
+            var r = h / 2;
+            lx.beginPath();
+            lx.moveTo(x + r, y);
+            lx.lineTo(x + w - r, y);
+            lx.arc(x + w - r, y + r, r, -Math.PI / 2, Math.PI / 2);
+            lx.lineTo(x + r, y + h);
+            lx.arc(x + r, y + r, r, Math.PI / 2, Math.PI * 1.5);
+            lx.closePath();
+        };
+
+        var drawLive = function (t) {
+            var f = focus();
+            var zoom = LW / f.span;
+            var orbiting = leg && leg.phase === "orbit";
+            liveCam.z += ((orbiting ? zoom * 1.22 : zoom) - liveCam.z) * 0.04;
+            // the camera keeps the ship at the focus; circling a world, it leans towards the world
+            var tx = craft.x, ty = craft.y;
+            if (orbiting) {
+                var lw = LIVE_WORLDS[leg.to];
+                tx = craft.x + (lw.x - craft.x) * 0.55;
+                ty = craft.y + (lw.y - craft.y) * 0.55;
+            }
+            liveCam.x += (tx - liveCam.x) * 0.12;
+            liveCam.y += (ty - liveCam.y) * 0.12;
+            var z = liveCam.z;
+            var ox = LW * f.x - liveCam.x * z, oy = LH * f.y - liveCam.y * z;
+
+            lx.setTransform(LDPR, 0, 0, LDPR, 0, 0);
+            var sky = lx.createLinearGradient(0, 0, LW, LH);
+            sky.addColorStop(0, "#050719");
+            sky.addColorStop(1, "#0b0f33");
+            lx.fillStyle = sky;
+            lx.fillRect(0, 0, LW, LH);
+
+            // clouds of colour across the universe, slipping by as the ship flies
+            LIVE_CLOUDS.forEach(function (n) {
+                var nx = ox + n.x * z * 0.6 + LW * 0.2, ny = oy + n.y * z * 0.6 + LH * 0.2;
+                var nr = n.r * z;
+                if (nx < -nr || nx > LW + nr || ny < -nr || ny > LH + nr) return;
+                var g = lx.createRadialGradient(nx, ny, 0, nx, ny, nr);
+                g.addColorStop(0, n.c);
+                g.addColorStop(1, "rgba(0, 0, 0, 0)");
+                lx.fillStyle = g;
+                lx.fillRect(nx - nr, ny - nr, nr * 2, nr * 2);
+            });
+
+            // stars, nearer ones sliding faster
+            liveStars.forEach(function (s) {
+                var px = ((s.x * LW - liveCam.x * z * s.z * 0.35) % LW + LW) % LW;
+                var py = ((s.y * LH - liveCam.y * z * s.z * 0.35) % LH + LH) % LH;
+                lx.globalAlpha = 0.35 + 0.45 * Math.abs(Math.sin(t * 0.8 + s.tw));
+                lx.fillStyle = "#ffffff";
+                lx.fillRect(px, py, s.r, s.r);
+            });
+            lx.globalAlpha = 1;
+
+            // the route, world to world
+            lx.strokeStyle = "rgba(165, 180, 252, .2)";
+            lx.lineWidth = 1;
+            lx.setLineDash([3, 6]);
+            lx.beginPath();
+            LIVE_WORLDS.forEach(function (w, i) {
+                var sx = ox + w.x * z, sy = oy + w.y * z;
+                if (i) lx.lineTo(sx, sy); else lx.moveTo(sx, sy);
+            });
+            lx.closePath();
+            lx.stroke();
+            lx.setLineDash([]);
+
+            LIVE_WORLDS.forEach(function (w) {
+                var sx = ox + w.x * z, sy = oy + w.y * z, sr = w.r * z;
+                if (sx < -sr * 4 || sx > LW + sr * 4 || sy < -sr * 4 || sy > LH + sr * 4) return;
+                planet(w, sx, sy, sr, t);
+                lx.font = "600 9px 'Space Grotesk', sans-serif";
+                lx.textAlign = "center";
+                lx.fillStyle = "rgba(224, 231, 255, .85)";
+                lx.fillText(w.name.toUpperCase(), sx, sy + sr * (w.ring ? 1.25 : 1.15) + 13);
+            });
+
+            // the exhaust, then the ship
+            liveDust.forEach(function (d) {
+                lx.globalAlpha = Math.max(0, d.life / 0.6) * 0.8;
+                lx.fillStyle = d.life > 0.3 ? "#c7d2fe" : "#818cf8";
+                lx.beginPath();
+                lx.arc(ox + d.x * z, oy + d.y * z, 1.6, 0, Math.PI * 2);
+                lx.fill();
+            });
+            lx.globalAlpha = 1;
+            var cx = ox + craft.x * z, cy = oy + craft.y * z;
+            lx.save();
+            lx.translate(cx, cy);
+            lx.rotate(craft.a);
+            lx.scale(1.25, 1.25);
+            lx.shadowColor = "#a5b4fc";
+            lx.shadowBlur = 12;
+            lx.fillStyle = "#eef2ff";
+            lx.beginPath();
+            lx.moveTo(11, 0);
+            lx.lineTo(-7, -7);
+            lx.lineTo(-4, 0);
+            lx.lineTo(-7, 7);
+            lx.closePath();
+            lx.fill();
+            lx.shadowBlur = 0;
+            lx.fillStyle = "#6366f1";
+            lx.beginPath();
+            lx.arc(1, 0, 2, 0, Math.PI * 2);
+            lx.fill();
+            lx.restore();
+
+            // where it is: live, and the world it is bound for or circling
+            if (leg) {
+                var label = (orbiting ? "Visiting " : "Flying to ") + LIVE_WORLDS[leg.to].name;
+                lx.font = "600 9px 'Space Grotesk', sans-serif";
+                var tw = lx.measureText(label).width;
+                var pw = tw + 42, ph = 20;
+                // on a phone the label takes the top corner away from the world
+                // the ship is bound for, chosen once for each leg so it never jumps
+                if (leg.side === undefined) leg.side = f.phone && ox + LIVE_WORLDS[leg.to].x * z > LW / 2 ? "left" : "right";
+                var px = leg.side === "left" ? 12 : LW - pw - 12, py = 12;
+                lx.fillStyle = "rgba(5, 6, 26, .72)";
+                livePill(px, py, pw, ph);
+                lx.fill();
+                lx.strokeStyle = "rgba(196, 181, 253, .5)";
+                lx.lineWidth = 1;
+                lx.stroke();
+                lx.fillStyle = Math.sin(t * 5) > -0.2 ? "#f43f5e" : "rgba(244, 63, 94, .35)";
+                lx.beginPath();
+                lx.arc(px + 12, py + ph / 2, 3, 0, Math.PI * 2);
+                lx.fill();
+                lx.textAlign = "left";
+                lx.fillStyle = "#ede9fe";
+                lx.fillText(label, px + 22, py + 13.5);
+                // and how far round the tour it is (on a phone that corner is under the words)
+                var dots = f.phone ? 0 : LIVE_WORLDS.length, gap = 9;
+                var dx0 = LW - 12 - (dots - 1) * gap, dy0 = LH - 14;
+                for (var di = 0; di < dots; di++) {
+                    lx.fillStyle = di === leg.to ? "#ffffff" : di < leg.to ? "rgba(196, 181, 253, .85)" : "rgba(196, 181, 253, .25)";
+                    lx.beginPath();
+                    lx.arc(dx0 + di * gap, dy0, di === leg.to ? 2.6 : 2, 0, Math.PI * 2);
+                    lx.fill();
+                }
+            }
+        };
+
+        var liveFrame = function (now) {
+            if (!liveRun.on) return;
+            var dt = liveRun.last ? Math.min((now - liveRun.last) / 1000, 0.05) : 0.016;
+            liveRun.last = now;
+            if (!document.hidden) {
+                liveClock += dt;
+                moveCraft(dt);
+                drawLive(liveClock);
+            }
+            liveRun.raf = requestAnimationFrame(liveFrame);
+        };
+
+        // the first frame, with the ship on its way to Origin, before anything moves
+        var livePrime = function () {
+            liveSize();
+            if (!LW || !LH) return false;
+            if (!leg) {
+                setCourse(0);
+                liveCam.x = craft.x;
+                liveCam.y = craft.y;
+                liveCam.z = LW / focus().span;
+            }
+            drawLive(liveClock);
+            return true;
+        };
+
+        if ("ResizeObserver" in window) new ResizeObserver(function () { if (liveRun.on || reduced) livePrime(); }).observe(liveCanvas);
+    }
+
+    function liveStart() {
+        if (!liveCanvas || !liveCanvas.getContext || liveRun.on) return;
+        if (!livePrime()) return;
+        if (reduced) return;
+        liveRun.on = true;
+        liveRun.last = 0;
+        liveRun.raf = requestAnimationFrame(liveFrame);
+    }
+
+    function liveStop() {
+        liveRun.on = false;
+        cancelAnimationFrame(liveRun.raf);
     }
 
     if (guide) {
@@ -835,6 +1263,7 @@
         gateOpen = false;
         clearIntro();
         guideHide();
+        if (!game) liveStop();
         if (hello) { hello.finish(); asker.finish(); }
         try { localStorage.setItem("kt-mode", mode); } catch (e) { /* ignore */ }
 
@@ -846,6 +1275,7 @@
         gate.classList.add("is-leaving");
 
         setTimeout(function () {
+            liveStop();
             gate.hidden = true;
             gate.className = "gate";
             body.classList.remove("is-gated");
@@ -1610,6 +2040,87 @@
             }, { threshold: .6 });
 
             counters.forEach(function (el) { countObs.observe(el); });
+        }
+    }
+
+
+    /* About - the photos take turns. Each bar fills while its photo is up, and
+       when it is full the next photo opens out over it. They hold still while
+       the pointer is on the photo or the photo is off screen, and any bar picks
+       its photo. With motion turned down they change only when asked. */
+    var photoFrame = document.querySelector("[data-photos]");
+
+    if (photoFrame) {
+        var photos = Array.prototype.slice.call(photoFrame.querySelectorAll("img"));
+        var photoBars = Array.prototype.slice.call(photoFrame.querySelectorAll(".about__bar"));
+        var photoAt = 0;
+        var photoTurn = null;           // the turn in progress, so a quick second pick can finish it
+        var photoHover = false, photoSeen = false;
+
+        var settlePhoto = function () {
+            if (!photoTurn) return;
+            clearTimeout(photoTurn.timer);
+            photoTurn.done();
+            photoTurn = null;
+        };
+
+        var showPhoto = function (k) {
+            if (k === photoAt || !photos[k]) return;
+            settlePhoto();
+            var before = photos[photoAt], next = photos[k];
+            photoAt = k;
+            // the one after this is fetched ahead of its turn
+            var ahead = photos[(k + 1) % photos.length];
+            if (ahead.loading === "lazy") ahead.loading = "eager";
+
+            next.classList.add("is-entering");
+            void next.offsetWidth;
+            next.classList.add("is-on");
+            photoFrame.classList.remove("is-turning");
+            void photoFrame.offsetWidth;
+            photoFrame.classList.add("is-turning");
+            photoTurn = {
+                done: function () {
+                    before.classList.remove("is-on");
+                    next.classList.remove("is-entering");
+                }
+            };
+            photoTurn.timer = setTimeout(settlePhoto, reduced ? 0 : 1500);
+
+            photoBars.forEach(function (b, i) {
+                b.classList.toggle("is-done", i < k);
+                b.classList.toggle("is-now", i === k);
+                b.setAttribute("aria-pressed", String(i === k));
+            });
+        };
+
+        var holdPhotos = function () { photoFrame.classList.toggle("is-paused", photoHover || !photoSeen); };
+
+        photoFrame.addEventListener("animationend", function (e) {
+            if (e.animationName !== "photoBar" || e.target.parentNode !== photoBars[photoAt]) return;
+            showPhoto((photoAt + 1) % photos.length);
+        });
+        photoBars.forEach(function (b, i) {
+            b.addEventListener("click", function () { showPhoto(i); });
+        });
+        photoFrame.addEventListener("pointerenter", function (e) {
+            if (e.pointerType === "touch") return;
+            photoHover = true;
+            holdPhotos();
+        });
+        photoFrame.addEventListener("pointerleave", function () {
+            photoHover = false;
+            holdPhotos();
+        });
+        holdPhotos();
+        if ("IntersectionObserver" in window) {
+            new IntersectionObserver(function (entries) {
+                photoSeen = entries[0].isIntersecting;
+                holdPhotos();
+            }, { threshold: .4 }).observe(photoFrame);
+        } else {
+            photoSeen = true;
+            holdPhotos();
         }
     }
 
