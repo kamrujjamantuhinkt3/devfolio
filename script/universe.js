@@ -128,9 +128,13 @@
         };
 
         var pr = section("projects");
+        // the projects in production first, as on the page, then the rest
+        var projs = all(".proj", pr);
+        projs = projs.filter(function (p) { return p.hasAttribute("data-featured"); })
+            .concat(projs.filter(function (p) { return !p.hasAttribute("data-featured"); }));
         c.projects = {
             lede: ledeOf(pr),
-            list: all(".proj", pr).map(function (p) {
+            list: projs.map(function (p) {
                 var cover = p.querySelector(".proj__cover");
                 var tpl = p.querySelector("template.proj__detail");
                 var d = tpl ? tpl.content : null;
@@ -142,7 +146,7 @@
                     blurb: blurb, tags: tags,
                     c1: cover ? (cover.style.getPropertyValue("--c1") || "#4338ca").trim() : "#4338ca",
                     c2: cover ? (cover.style.getPropertyValue("--c2") || "#1e40af").trim() : "#1e40af",
-                    shot: shot ? attr(shot, "src") : "",
+                    shot: p.getAttribute("data-shot") || (shot ? attr(shot, "src") : ""),
                     repo: p.getAttribute("data-repo") || "", demo: p.getAttribute("data-demo") || "",
                     lede: d ? text(d.querySelector(".sheet__lede")) : blurb,
                     highlights: d ? all(".sheet__list li", d).map(text) : [],
@@ -2273,7 +2277,7 @@
         return {
             title: "The tools I build with",
             html:
-                '<p class="up-text">' + esc(s.lede.replace(/ (Filter by discipline|Pick a layer).*$/, "")) + "</p>" +
+                '<p class="up-text">' + esc(s.lede.replace(/ (Filter by discipline|Pick a layer|Spin it).*$/, "")) + "</p>" +
                 '<p class="up-meter"><b>' + got + " of " + crystals.length + "</b> skill crystals collected" +
                 (got < crystals.length ? " &mdash; fly through the nebula to collect the rest." : ". Every one of them.") + "</p>" +
                 '<ul class="up-skills">' + s.list.map(function (k, i) {
@@ -2312,7 +2316,7 @@
         var list = C.projects.list;
         return {
             title: "Things I have built",
-            html: '<p class="up-text">' + esc(C.projects.lede.replace(/ Open any card.*$/, "")) + "</p>" +
+            html: '<p class="up-text">' + esc(C.projects.lede.replace(/ Open any (card|of them).*$/, "")) + "</p>" +
                   '<p class="up-meter">Every station orbiting the Shipyard is a project. Dock at one, or pick it here.</p>' +
                   '<ul class="up-projects">' + list.map(function (p, i) {
                       return '<li><button type="button" class="up-project" data-project="' + i + '">' + projectThumb(p) +
@@ -2463,6 +2467,48 @@
         return a && (a.tagName === "INPUT" || a.tagName === "TEXTAREA" || a.isContentEditable);
     }
 
+    /* Flight controls - the card's keycaps light while their keys are held,
+       and the mouse while the stage is pressed. A few seconds into the first
+       flight the card folds into its title, unless the visitor has opened or
+       folded it themselves; the title opens it again. */
+    var keysCard = $("uniKeys");
+    var keysToggle = $("uniKeysToggle");
+    var keyCaps = {};
+    all("[data-k]", keysCard).forEach(function (el) { keyCaps[el.getAttribute("data-k")] = el; });
+    var keysChosen = false;
+    var keysFoldTimer = 0;
+
+    function capFor(e) {
+        var k = e.key, c = e.code;
+        if (k === "ArrowUp" || c === "KeyW") return "up";
+        if (k === "ArrowDown" || c === "KeyS") return "down";
+        if (k === "ArrowLeft" || c === "KeyA") return "left";
+        if (k === "ArrowRight" || c === "KeyD") return "right";
+        if (k === "Shift") return "boost";
+        if (k === " " || k === "Enter" || c === "KeyE") return "land";
+        if (c === "KeyP") return "auto";
+        if (c === "KeyM") return "map";
+        if (c === "KeyN") return "next";
+        if (k === "Escape") return "esc";
+        return null;
+    }
+    function lightCap(name, on) {
+        if (keyCaps[name]) keyCaps[name].classList.toggle("is-down", on);
+    }
+    function foldKeys(folded) {
+        keysCard.classList.toggle("is-folded", folded);
+        keysToggle.setAttribute("aria-expanded", String(!folded));
+    }
+    function keysFlown() {
+        if (keysChosen || keysFoldTimer || keysCard.classList.contains("is-folded")) return;
+        keysFoldTimer = setTimeout(function () { if (!keysChosen) foldKeys(true); }, 6000);
+    }
+    keysToggle.addEventListener("click", function () {
+        keysChosen = true;
+        clearTimeout(keysFoldTimer);
+        foldKeys(!keysCard.classList.contains("is-folded"));
+    });
+
     function setKey(e, down) {
         var k = e.key, c = e.code;
         if (k === "ArrowUp" || c === "KeyW") keys.up = down;
@@ -2476,6 +2522,11 @@
 
     document.addEventListener("keydown", function (e) {
         if (mode !== "game" || typing()) return;
+        var cap = capFor(e);
+        if (cap) {
+            lightCap(cap, true);
+            if (/^(up|down|left|right|boost)$/.test(cap)) keysFlown();
+        }
         tourAwake();
         if (e.key === "Escape") {
             if (!finale.hidden) closeFinale();
@@ -2508,11 +2559,21 @@
             openMap();
         }
     });
-    document.addEventListener("keyup", function (e) { setKey(e, false); });
-    window.addEventListener("blur", function () { keys.up = keys.down = keys.left = keys.right = keys.boost = false; steer = null; });
+    document.addEventListener("keyup", function (e) {
+        setKey(e, false);
+        var cap = capFor(e);
+        if (cap) lightCap(cap, false);
+    });
+    window.addEventListener("blur", function () {
+        keys.up = keys.down = keys.left = keys.right = keys.boost = false;
+        steer = null;
+        Object.keys(keyCaps).forEach(function (n) { lightCap(n, false); });
+    });
 
     var press = null;
     canvas.addEventListener("pointerdown", function (e) {
+        lightCap("mouse", true);
+        keysFlown();
         press = { x: e.clientX, y: e.clientY, at: performance.now(), id: e.pointerId };
         if (canvas.setPointerCapture) canvas.setPointerCapture(e.pointerId);
         // holding still steers after a moment; a quick tap picks a destination instead
@@ -2546,6 +2607,7 @@
     }
     canvas.addEventListener("pointerup", release);
     canvas.addEventListener("pointercancel", function () { if (press) clearTimeout(press.timer); press = null; steer = null; });
+    ["pointerup", "pointercancel"].forEach(function (t) { canvas.addEventListener(t, function () { lightCap("mouse", false); }); });
 
 
     /* Starting, and the finale */

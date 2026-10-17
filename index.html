@@ -212,7 +212,7 @@
                                     <line x1="256" y1="45.5" x2="476" y2="45.5" stroke="rgba(165,180,252,.18)"/>
                                     <g clip-path="url(#scView)">
                                         <rect x="268" y="46" width="196" height="150" fill="#070b1f"/>
-                                        <image class="scene__page" href="assets/images/intro/standard-view.webp" x="268" y="46" width="196" height="1661" preserveAspectRatio="xMidYMin meet"/>
+                                        <image class="scene__page" href="assets/images/intro/standard-view.webp" x="268" y="46" width="196" height="1604" preserveAspectRatio="xMidYMin meet"/>
                                     </g>
                                 </g>
                                 <g class="scene__chip" style="--d:0s"><rect x="292" y="52" width="62" height="20" rx="10" fill="rgba(15,20,52,.9)" stroke="rgba(165,180,252,.5)"/><circle cx="304" cy="62" r="3" fill="#38bdf8"/><text x="312" y="65.5">Projects</text></g>
@@ -694,123 +694,122 @@
             <p class="section__label" data-reveal><span class="section__rule"></span>Skills</p>
             <h2 class="section__title" data-reveal="words" data-words>The tools I <em>build with</em></h2>
             <p class="section__lede" data-reveal style="--rd:.14s">
-                A working stack rather than a wish list, laid out the way a product is built: what
-                people see, the server behind it, the data underneath and the workflow that ships it.
-                Pick a layer, or any tool in it.
+                A working stack rather than a wish list, set out like a solar system: the workflow on
+                the innermost orbit, then the data and the server, and the interface people see on the
+                outside. Spin it, or pick any planet.
             </p>
         </header>
 
-        <!-- The stack, layer by layer. A model on the left - four glass layers,
-             the tools standing on them and requests flowing through - opens up at
-             the layer chosen, which is read out on the right. The tabs, the
-             layers and the tools all choose; it moves through the layers on its
-             own until someone does. The model repeats the panel, so it is hidden
-             from assistive tech. -->
-        <div class="stackx" data-stack data-reveal style="--rd:.04s">
-            <div class="stackx__model" aria-hidden="true">
-                <div class="stackx__scene">
-                    <div class="slab" data-layer="0" style="--c:#818cf8"><span class="slab__face"></span><span class="slab__port"></span><span class="slab__name">01 &middot; Interface</span></div>
-                    <div class="slab" data-layer="1" style="--c:#34d399"><span class="slab__face"></span><span class="slab__port"></span><span class="slab__name">02 &middot; Server</span></div>
-                    <div class="slab" data-layer="2" style="--c:#22d3ee"><span class="slab__face"></span><span class="slab__port"></span><span class="slab__name">03 &middot; Data</span></div>
-                    <div class="slab" data-layer="3" style="--c:#fb923c"><span class="slab__face"></span><span class="slab__port"></span><span class="slab__name">04 &middot; Workflow</span></div>
-                    <span class="packet" style="--d:0s"></span>
-                    <span class="packet packet--down" style="--d:-1.2s"></span>
-                    <span class="packet" style="--d:-2.4s"></span>
-                </div>
-            </div>
-
-            <div class="stackx__panel">
-                <div class="layers" role="tablist" aria-label="The stack, layer by layer">
-                    <button class="layers__tab is-on" type="button" role="tab" id="layerTab0" aria-controls="layer0" aria-selected="true" tabindex="0" data-layer="0" style="--c:#818cf8">
-                        <span class="layers__no">01</span><span class="layers__name">Interface</span><span class="layers__count">7 tools</span>
-                        <span class="layers__time" aria-hidden="true"><i></i></span>
-                    </button>
-                    <button class="layers__tab" type="button" role="tab" id="layerTab1" aria-controls="layer1" aria-selected="false" tabindex="-1" data-layer="1" style="--c:#34d399">
-                        <span class="layers__no">02</span><span class="layers__name">Server</span><span class="layers__count">3 tools</span>
-                        <span class="layers__time" aria-hidden="true"><i></i></span>
-                    </button>
-                    <button class="layers__tab" type="button" role="tab" id="layerTab2" aria-controls="layer2" aria-selected="false" tabindex="-1" data-layer="2" style="--c:#22d3ee">
-                        <span class="layers__no">03</span><span class="layers__name">Data</span><span class="layers__count">3 tools</span>
-                        <span class="layers__time" aria-hidden="true"><i></i></span>
-                    </button>
-                    <button class="layers__tab" type="button" role="tab" id="layerTab3" aria-controls="layer3" aria-selected="false" tabindex="-1" data-layer="3" style="--c:#fb923c">
-                        <span class="layers__no">04</span><span class="layers__name">Workflow</span><span class="layers__count">2 tools</span>
-                        <span class="layers__time" aria-hidden="true"><i></i></span>
-                    </button>
-                </div>
-
-                <div class="layer" id="layer0" role="tabpanel" aria-labelledby="layerTab0" data-layer="0" style="--c:#818cf8">
-                    <h3 class="layer__tag">What people see and use</h3>
-                    <p class="layer__text">Semantic pages, layouts that hold at any width, and interfaces that stay quick. Every project I ship starts here &mdash; both of the ones in production included.</p>
-                    <div class="layer__tools" role="group" aria-label="Interface tools">
-                        <button class="sat tool is-on" type="button" style="--acc:#E34F26" data-icon="l-html" data-name="HTML" data-cat="Frontend" data-layer="0"
-                                data-exp="Where every page starts. I write it semantically, so the structure means something to assistive tech and search engines, not just to the browser." aria-pressed="true"><svg aria-hidden="true"><use href="#l-html"></use></svg><span>HTML</span></button>
-                        <button class="sat tool" type="button" style="--acc:#1572B6" data-icon="l-css" data-name="CSS" data-cat="Frontend" data-layer="0"
-                                data-exp="Layout, motion and theming without reaching for a library by default. Custom properties and modern layout do most of the heavy lifting." aria-pressed="false"><svg aria-hidden="true"><use href="#l-css"></use></svg><span>CSS</span></button>
-                        <button class="sat tool" type="button" style="--acc:#F7DF1E" data-icon="l-js" data-name="JavaScript" data-cat="Frontend" data-layer="0"
-                                data-exp="The language I think in. Most of what I build starts as plain JavaScript before any framework gets involved." aria-pressed="false"><svg aria-hidden="true"><use href="#l-js"></use></svg><span>JavaScript</span></button>
-                        <button class="sat tool" type="button" style="--acc:#3178C6" data-icon="l-ts" data-name="TypeScript" data-cat="Frontend" data-layer="0"
-                                data-exp="I use it on anything meant to outlive a weekend. Types catch the mistakes I would otherwise find in production." aria-pressed="false"><svg aria-hidden="true"><use href="#l-ts"></use></svg><span>TypeScript</span></button>
-                        <button class="sat tool" type="button" style="--acc:#61DAFB" data-icon="l-react" data-name="React" data-cat="Frontend" data-layer="0"
-                                data-exp="My default for anything interactive. I build small composable components and keep state predictable as a project grows." aria-pressed="false"><svg aria-hidden="true"><use href="#l-react"></use></svg><span>React</span></button>
-                        <button class="sat tool" type="button" style="--acc:#E8E8E8" data-icon="l-next" data-name="Next.js" data-cat="Frontend" data-layer="0"
-                                data-exp="Routing, rendering and the app shell in one place. I reach for it when a project needs to be fast on first load and simple to deploy." aria-pressed="false"><svg aria-hidden="true"><use href="#l-next"></use></svg><span>Next.js</span></button>
-                        <button class="sat tool" type="button" style="--acc:#38BDF8" data-icon="l-tailwind" data-name="Tailwind CSS" data-cat="Frontend" data-layer="0"
-                                data-exp="Utility classes keep styling next to the markup it belongs to, which stops me inventing class names I later forget the meaning of." aria-pressed="false"><svg aria-hidden="true"><use href="#l-tailwind"></use></svg><span>Tailwind CSS</span></button>
-                    </div>
-                    <p class="layer__shipped"><span>Shipped in</span><a href="#projects" data-open-project="rtgs">RTGS Management System</a><a href="#projects" data-open-project="mpbl">Mega Packaging Website</a></p>
-                </div>
-                <div class="layer" id="layer1" role="tabpanel" aria-labelledby="layerTab1" data-layer="1" style="--c:#34d399">
-                    <h3 class="layer__tag">The rules, the APIs and who may do what</h3>
-                    <p class="layer__text">Where requests are checked, data is shaped and every role gets only what it should &mdash; enforced on the server, never just hidden in the interface.</p>
-                    <div class="layer__tools" role="group" aria-label="Server tools">
-                        <button class="sat tool" type="button" style="--acc:#539E43" data-icon="l-node" data-name="Node.js" data-cat="Backend" data-layer="1"
-                                data-exp="The other half of the stack, in the same language. I use it for APIs, server logic and the glue between the front end and the database." aria-pressed="false"><svg aria-hidden="true"><use href="#l-node"></use></svg><span>Node.js</span></button>
-                        <button class="sat tool" type="button" style="--acc:#8892BF" data-icon="l-php" data-name="PHP" data-cat="Backend" data-layer="1"
-                                data-exp="The server side of the RTGS system in production: it checks who is signed in, enforces each role on the server and keeps the shared register." aria-pressed="false"><svg aria-hidden="true"><use href="#l-php"></use></svg><span>PHP</span></button>
-                        <button class="sat tool" type="button" style="--acc:#818CF8" data-icon="l-auth" data-name="BetterAuth" data-cat="Backend" data-layer="1"
-                                data-exp="Authentication is the part you cannot get almost right. I use it to handle sessions and sign-in properly instead of rolling my own." aria-pressed="false"><svg aria-hidden="true"><use href="#l-auth"></use></svg><span>BetterAuth</span></button>
-                    </div>
-                    <p class="layer__shipped"><span>Shipped in</span><a href="#projects" data-open-project="rtgs">RTGS Management System</a></p>
-                </div>
-                <div class="layer" id="layer2" role="tabpanel" aria-labelledby="layerTab2" data-layer="2" style="--c:#22d3ee">
-                    <h3 class="layer__tag">Where it lives, and stays correct</h3>
-                    <p class="layer__text">Schemas that keep data honest, queries that stay quick, and records that can still be audited a year later.</p>
-                    <div class="layer__tools" role="group" aria-label="Data tools">
-                        <button class="sat tool" type="button" style="--acc:#4AA3D0" data-icon="l-mysql" data-name="MySQL" data-cat="Data" data-layer="2"
-                                data-exp="Where the RTGS register lives: every transaction in one shared, auditable store, which the browser syncs to whenever it comes back online." aria-pressed="false"><svg aria-hidden="true"><use href="#l-mysql"></use></svg><span>MySQL</span></button>
-                        <button class="sat tool" type="button" style="--acc:#4DB33D" data-icon="l-mongo" data-name="MongoDB" data-cat="Data" data-layer="2"
-                                data-exp="Where the data lives on most of what I build. Flexible documents suit projects whose shape is still changing." aria-pressed="false"><svg aria-hidden="true"><use href="#l-mongo"></use></svg><span>MongoDB</span></button>
-                        <button class="sat tool" type="button" style="--acc:#C6403C" data-icon="l-mongoose" data-name="Mongoose" data-cat="Data" data-layer="2"
-                                data-exp="I use it to give MongoDB the structure it does not enforce on its own: schemas, validation and models that keep the data honest." aria-pressed="false"><svg aria-hidden="true"><use href="#l-mongoose"></use></svg><span>Mongoose</span></button>
-                    </div>
-                    <p class="layer__shipped"><span>Shipped in</span><a href="#projects" data-open-project="rtgs">RTGS Management System</a></p>
-                </div>
-                <div class="layer" id="layer3" role="tabpanel" aria-labelledby="layerTab3" data-layer="3" style="--c:#fb923c">
-                    <h3 class="layer__tag">How it is built, reviewed and shipped</h3>
-                    <p class="layer__text">Version control from the first commit, small changes with a history that explains itself, and everything reviewed before it ships.</p>
-                    <div class="layer__tools" role="group" aria-label="Workflow tools">
-                        <button class="sat tool" type="button" style="--acc:#F05032" data-icon="l-git" data-name="Git" data-cat="Tooling" data-layer="3"
-                                data-exp="Every project lives in version control from the first commit. Branches and small commits keep the work reversible." aria-pressed="false"><svg aria-hidden="true"><use href="#l-git"></use></svg><span>Git</span></button>
-                        <button class="sat tool" type="button" style="--acc:#E6EDF3" data-icon="l-github" data-name="GitHub" data-cat="Tooling" data-layer="3"
-                                data-exp="Where the work is stored, reviewed and shared. Pull requests keep changes readable and the history explains itself later." aria-pressed="false"><svg aria-hidden="true"><use href="#l-github"></use></svg><span>GitHub</span></button>
-                    </div>
-                    <p class="layer__shipped"><span>Shipped in</span><a href="https://www.github.com/kamrujjamantuhinkt3" target="_blank" rel="noopener">Every project, on GitHub<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></p>
-                </div>
-
-                <div class="focus" id="focus" style="--acc:#E34F26">
-                    <span class="focus__logo" id="focusLogo"><svg aria-hidden="true"><use href="#l-html" id="focusUse"></use></svg></span>
-                    <div class="focus__body">
-                        <p class="focus__id"><b class="focus__name" id="focusName">HTML</b><span class="focus__cat" id="focusCat">Interface</span></p>
-                        <p class="focus__exp" id="focusExp">Where every page starts. I write it semantically, so the structure means something to assistive tech and search engines, not just to the browser.</p>
-                    </div>
-                </div>
-
-                <ul class="tally">
+        <!-- The stack as a solar system, in a window onto space. Each orbit is a
+             layer of a product - the workflow nearest the core, the interface
+             people see on the outside - and the tools are its planets. It can
+             be spun by dragging; a planet is named when pointed at and read out
+             in the card when chosen. The planets repeat the card's buttons, so
+             the sky is hidden from assistive tech. -->
+        <div class="cosmos" data-cosmos data-reveal style="--rd:.04s">
+            <div class="cosmos__stage">
+                <canvas class="cosmos__sky" aria-hidden="true"></canvas>
+                <div class="cosmos__core" aria-hidden="true"><span class="cosmos__corona"></span><span class="cosmos__face"><img src="assets/images/profile/kamrujjaman-tuhin-headshot-900.jpg" alt="" width="900" height="900" loading="lazy" decoding="async"></span></div>
+                <div class="cosmos__planets" aria-hidden="true"></div>
+                <p class="cosmos__tag" aria-hidden="true"><b></b><span></span></p>
+                <p class="cosmos__hint" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/></svg><span class="cosmos__hint-pointer">Drag to spin &middot; point at a planet</span><span class="cosmos__hint-touch">Swipe to spin &middot; tap a planet</span></p>
+                <ul class="cosmos__readout">
                     <li><b data-count="15">0</b><span>Technologies</span></li>
-                    <li><b data-count="4">0</b><span>Layers</span></li>
+                    <li><b data-count="4">0</b><span>Orbits</span></li>
                     <li><b data-count="2">0</b><span>In production</span></li>
                 </ul>
+            </div>
+
+            <div class="hud">
+                <div class="hud__tabs" role="tablist" aria-label="The orbits of my stack">
+                    <button class="orbit-tab is-on" type="button" role="tab" id="orbitTab0" aria-controls="orbit0" aria-selected="true" tabindex="0" data-orbit="0" style="--c:#818cf8">
+                        <svg class="orbit-tab__icon" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="10" ry="4.4" transform="rotate(-18 12 12)"/><circle cx="12" cy="12" r="2.6"/><circle cx="20.6" cy="9.4" r="1.9"/></svg><span class="orbit-tab__name">Interface</span><span class="orbit-tab__count">7 planets</span>
+                        <span class="orbit-tab__time" aria-hidden="true"><i></i></span>
+                    </button>
+                    <button class="orbit-tab" type="button" role="tab" id="orbitTab1" aria-controls="orbit1" aria-selected="false" tabindex="-1" data-orbit="1" style="--c:#34d399">
+                        <svg class="orbit-tab__icon" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="10" ry="4.4" transform="rotate(-18 12 12)"/><circle cx="12" cy="12" r="2.6"/><circle cx="20.6" cy="9.4" r="1.9"/></svg><span class="orbit-tab__name">Server</span><span class="orbit-tab__count">3 planets</span>
+                        <span class="orbit-tab__time" aria-hidden="true"><i></i></span>
+                    </button>
+                    <button class="orbit-tab" type="button" role="tab" id="orbitTab2" aria-controls="orbit2" aria-selected="false" tabindex="-1" data-orbit="2" style="--c:#22d3ee">
+                        <svg class="orbit-tab__icon" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="10" ry="4.4" transform="rotate(-18 12 12)"/><circle cx="12" cy="12" r="2.6"/><circle cx="20.6" cy="9.4" r="1.9"/></svg><span class="orbit-tab__name">Data</span><span class="orbit-tab__count">3 planets</span>
+                        <span class="orbit-tab__time" aria-hidden="true"><i></i></span>
+                    </button>
+                    <button class="orbit-tab" type="button" role="tab" id="orbitTab3" aria-controls="orbit3" aria-selected="false" tabindex="-1" data-orbit="3" style="--c:#fb923c">
+                        <svg class="orbit-tab__icon" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="10" ry="4.4" transform="rotate(-18 12 12)"/><circle cx="12" cy="12" r="2.6"/><circle cx="20.6" cy="9.4" r="1.9"/></svg><span class="orbit-tab__name">Workflow</span><span class="orbit-tab__count">2 planets</span>
+                        <span class="orbit-tab__time" aria-hidden="true"><i></i></span>
+                    </button>
+                </div>
+
+                <div class="hud__orbit" id="orbit0" role="tabpanel" aria-labelledby="orbitTab0" data-orbit="0" style="--c:#818cf8">
+                    <p class="hud__kicker">Outer orbit</p>
+                    <h3 class="hud__tag">What people see and use</h3>
+                    <p class="hud__text">Semantic pages, layouts that hold at any width, and interfaces that stay quick. Every project I ship starts here &mdash; both of the ones in production included.</p>
+                    <div class="hud__tools" role="group" aria-label="Interface tools">
+                            <button class="sat tool is-on" type="button" style="--acc:#E34F26" data-icon="l-html" data-name="HTML" data-cat="Frontend" data-layer="0"
+                                    data-exp="Where every page starts. I write it semantically, so the structure means something to assistive tech and search engines, not just to the browser." aria-pressed="true"><svg aria-hidden="true"><use href="#l-html"></use></svg><span>HTML</span></button>
+                            <button class="sat tool" type="button" style="--acc:#1572B6" data-icon="l-css" data-name="CSS" data-cat="Frontend" data-layer="0"
+                                    data-exp="Layout, motion and theming without reaching for a library by default. Custom properties and modern layout do most of the heavy lifting." aria-pressed="false"><svg aria-hidden="true"><use href="#l-css"></use></svg><span>CSS</span></button>
+                            <button class="sat tool" type="button" style="--acc:#F7DF1E" data-icon="l-js" data-name="JavaScript" data-cat="Frontend" data-layer="0"
+                                    data-exp="The language I think in. Most of what I build starts as plain JavaScript before any framework gets involved." aria-pressed="false"><svg aria-hidden="true"><use href="#l-js"></use></svg><span>JavaScript</span></button>
+                            <button class="sat tool" type="button" style="--acc:#3178C6" data-icon="l-ts" data-name="TypeScript" data-cat="Frontend" data-layer="0"
+                                    data-exp="I use it on anything meant to outlive a weekend. Types catch the mistakes I would otherwise find in production." aria-pressed="false"><svg aria-hidden="true"><use href="#l-ts"></use></svg><span>TypeScript</span></button>
+                            <button class="sat tool" type="button" style="--acc:#61DAFB" data-icon="l-react" data-name="React" data-cat="Frontend" data-layer="0"
+                                    data-exp="My default for anything interactive. I build small composable components and keep state predictable as a project grows." aria-pressed="false"><svg aria-hidden="true"><use href="#l-react"></use></svg><span>React</span></button>
+                            <button class="sat tool" type="button" style="--acc:#E8E8E8" data-icon="l-next" data-name="Next.js" data-cat="Frontend" data-layer="0"
+                                    data-exp="Routing, rendering and the app shell in one place. I reach for it when a project needs to be fast on first load and simple to deploy." aria-pressed="false"><svg aria-hidden="true"><use href="#l-next"></use></svg><span>Next.js</span></button>
+                            <button class="sat tool" type="button" style="--acc:#38BDF8" data-icon="l-tailwind" data-name="Tailwind CSS" data-cat="Frontend" data-layer="0"
+                                    data-exp="Utility classes keep styling next to the markup it belongs to, which stops me inventing class names I later forget the meaning of." aria-pressed="false"><svg aria-hidden="true"><use href="#l-tailwind"></use></svg><span>Tailwind CSS</span></button>
+                    </div>
+                    <p class="hud__shipped"><span>Shipped in</span><a href="#projects" data-open-project="rtgs">RTGS Management System</a><a href="#projects" data-open-project="mpbl">Mega Packaging Website</a></p>
+                </div>
+                <div class="hud__orbit" id="orbit1" role="tabpanel" aria-labelledby="orbitTab1" data-orbit="1" style="--c:#34d399">
+                    <p class="hud__kicker">Second orbit</p>
+                    <h3 class="hud__tag">The rules, the APIs and who may do what</h3>
+                    <p class="hud__text">Where requests are checked, data is shaped and every role gets only what it should &mdash; enforced on the server, never just hidden in the interface.</p>
+                    <div class="hud__tools" role="group" aria-label="Server tools">
+                            <button class="sat tool" type="button" style="--acc:#539E43" data-icon="l-node" data-name="Node.js" data-cat="Backend" data-layer="1"
+                                    data-exp="The other half of the stack, in the same language. I use it for APIs, server logic and the glue between the front end and the database." aria-pressed="false"><svg aria-hidden="true"><use href="#l-node"></use></svg><span>Node.js</span></button>
+                            <button class="sat tool" type="button" style="--acc:#8892BF" data-icon="l-php" data-name="PHP" data-cat="Backend" data-layer="1"
+                                    data-exp="The server side of the RTGS system in production: it checks who is signed in, enforces each role on the server and keeps the shared register." aria-pressed="false"><svg aria-hidden="true"><use href="#l-php"></use></svg><span>PHP</span></button>
+                            <button class="sat tool" type="button" style="--acc:#818CF8" data-icon="l-auth" data-name="BetterAuth" data-cat="Backend" data-layer="1"
+                                    data-exp="Authentication is the part you cannot get almost right. I use it to handle sessions and sign-in properly instead of rolling my own." aria-pressed="false"><svg aria-hidden="true"><use href="#l-auth"></use></svg><span>BetterAuth</span></button>
+                    </div>
+                    <p class="hud__shipped"><span>Shipped in</span><a href="#projects" data-open-project="rtgs">RTGS Management System</a></p>
+                </div>
+                <div class="hud__orbit" id="orbit2" role="tabpanel" aria-labelledby="orbitTab2" data-orbit="2" style="--c:#22d3ee">
+                    <p class="hud__kicker">Third orbit</p>
+                    <h3 class="hud__tag">Where it lives, and stays correct</h3>
+                    <p class="hud__text">Schemas that keep data honest, queries that stay quick, and records that can still be audited a year later.</p>
+                    <div class="hud__tools" role="group" aria-label="Data tools">
+                            <button class="sat tool" type="button" style="--acc:#4AA3D0" data-icon="l-mysql" data-name="MySQL" data-cat="Data" data-layer="2"
+                                    data-exp="Where the RTGS register lives: every transaction in one shared, auditable store, which the browser syncs to whenever it comes back online." aria-pressed="false"><svg aria-hidden="true"><use href="#l-mysql"></use></svg><span>MySQL</span></button>
+                            <button class="sat tool" type="button" style="--acc:#4DB33D" data-icon="l-mongo" data-name="MongoDB" data-cat="Data" data-layer="2"
+                                    data-exp="Where the data lives on most of what I build. Flexible documents suit projects whose shape is still changing." aria-pressed="false"><svg aria-hidden="true"><use href="#l-mongo"></use></svg><span>MongoDB</span></button>
+                            <button class="sat tool" type="button" style="--acc:#C6403C" data-icon="l-mongoose" data-name="Mongoose" data-cat="Data" data-layer="2"
+                                    data-exp="I use it to give MongoDB the structure it does not enforce on its own: schemas, validation and models that keep the data honest." aria-pressed="false"><svg aria-hidden="true"><use href="#l-mongoose"></use></svg><span>Mongoose</span></button>
+                    </div>
+                    <p class="hud__shipped"><span>Shipped in</span><a href="#projects" data-open-project="rtgs">RTGS Management System</a></p>
+                </div>
+                <div class="hud__orbit" id="orbit3" role="tabpanel" aria-labelledby="orbitTab3" data-orbit="3" style="--c:#fb923c">
+                    <p class="hud__kicker">Inner orbit</p>
+                    <h3 class="hud__tag">How it is built, reviewed and shipped</h3>
+                    <p class="hud__text">Version control from the first commit, small changes with a history that explains itself, and everything reviewed before it ships.</p>
+                    <div class="hud__tools" role="group" aria-label="Workflow tools">
+                            <button class="sat tool" type="button" style="--acc:#F05032" data-icon="l-git" data-name="Git" data-cat="Tooling" data-layer="3"
+                                    data-exp="Every project lives in version control from the first commit. Branches and small commits keep the work reversible." aria-pressed="false"><svg aria-hidden="true"><use href="#l-git"></use></svg><span>Git</span></button>
+                            <button class="sat tool" type="button" style="--acc:#E6EDF3" data-icon="l-github" data-name="GitHub" data-cat="Tooling" data-layer="3"
+                                    data-exp="Where the work is stored, reviewed and shared. Pull requests keep changes readable and the history explains itself later." aria-pressed="false"><svg aria-hidden="true"><use href="#l-github"></use></svg><span>GitHub</span></button>
+                    </div>
+                    <p class="hud__shipped"><span>Shipped in</span><a href="https://www.github.com/kamrujjamantuhinkt3" target="_blank" rel="noopener">Every project, on GitHub<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></p>
+                </div>
+
+                <div class="hud__focus" id="focus" style="--acc:#E34F26">
+                    <span class="hud__logo" id="focusLogo"><svg aria-hidden="true"><use href="#l-html" id="focusUse"></use></svg></span>
+                    <div class="hud__about">
+                        <p class="hud__id"><b class="hud__name" id="focusName">HTML</b><span class="hud__cat" id="focusCat">Interface</span></p>
+                        <p class="hud__exp" id="focusExp">Where every page starts. I write it semantically, so the structure means something to assistive tech and search engines, not just to the browser.</p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -876,10 +875,10 @@
     </section>
 
     <!-- Projects
-         NOTE: these entries are sample data so the section can be seen working.
-         Replace the name, blurb, highlights, data-repo and data-demo on each
-         <article class="proj"> with your real projects. Leaving data-demo
-         empty simply hides the demo button for that project. -->
+         NOTE: the small tiles are sample data so the section can be seen
+         working. Replace the name, blurb, highlights, data-repo and data-demo
+         on each <article class="proj"> with your real projects. Leaving
+         data-demo empty simply hides the demo button for that project. -->
     <section class="section projects" id="projects">
         <span class="skills__aura" aria-hidden="true"></span>
 
@@ -887,241 +886,14 @@
             <p class="section__label" data-reveal><span class="section__rule"></span>Projects</p>
             <h2 class="section__title" data-reveal="words" data-words>Things I have <em>built</em></h2>
             <p class="section__lede" data-reveal style="--rd:.14s">
-                Two projects running in production for a real company &mdash; an internal banking
-                system and the website its buyers order from &mdash; and smaller builds below them.
-                Open any of them for what it does, how it was built and where the code lives.
+                Two projects running in production for a real company &mdash; the website its
+                buyers order from and an internal banking system &mdash; with smaller builds around
+                them. Open any of them for what it does, how it was built and where the code lives.
             </p>
         </header>
 
-        <!-- Featured work: the two projects running in production for Mega
-             Packaging Bangladesh, each told beside a tour of its real screens -
-             captured from the live software, with no private data in them. The
-             second mirrors the first. Everything else follows under Other
-             projects. -->
-        <div class="featured" data-reveal>
-            <p class="featured__label"><span class="section__rule"></span>Featured work</p>
-            <p class="featured__note"><span class="case__pulse" aria-hidden="true"></span>Both live in production</p>
-        </div>
-
-        <article class="proj case" data-key="rtgs" data-featured data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="https://rtgs.megapackagingbd.com" data-reveal="case">
-            <header class="case__head">
-                <p class="case__meta"><span class="case__no">01</span><span class="case__eyebrow"><span class="case__pulse" aria-hidden="true"></span>Live in production</span><span class="case__kind"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="16" height="6.5" rx="1.8"/><path d="M8 7.25h.01M8 16.75h.01"/></svg>Internal system</span></p>
-                <h3 class="proj__name case__name">RTGS Management System</h3>
-                <p class="proj__cat case__for">Full-stack &middot; built for Mega Packaging Bangladesh Ltd.</p>
-            </header>
-
-            <div class="case__body">
-                <p class="proj__blurb case__lede">An operator fills in a form once, and the system prints the bank&rsquo;s own RTGS application or a fund-transfer letter, ready to sign &mdash; while every transaction lands in one shared, auditable register.</p>
-                <ul class="case__points">
-                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 9V3.5h10V9"/><rect x="3.5" y="9" width="17" height="8" rx="2"/><path d="M7 14h10v6.5H7z"/></svg><span><b>Bank-accurate printing</b>Each bank&rsquo;s own form and transfer letter, printed or saved as PDF exactly like the paper</span></li>
-                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2.5 4.5 13.5H12l-1 8 8.5-11H12z"/></svg><span><b>Offline-first</b>Entries save at once in the browser and sync to MySQL when the connection returns</span></li>
-                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 6v5.6c0 4.5 3.2 8.2 7.5 9.4 4.3-1.2 7.5-4.9 7.5-9.4V6L12 3Z"/><path d="m8.8 12.2 2.3 2.3 4.2-4.4"/></svg><span><b>Roles and an audit trail</b>Administrator and operator rights enforced on the server, with a record of who changed what</span></li>
-                </ul>
-                <dl class="case__stats">
-                    <div><dt>Workflows</dt><dd>3</dd></div>
-                    <div><dt>Banks</dt><dd>5</dd></div>
-                    <div><dt>Accounts</dt><dd>11</dd></div>
-                    <div><dt>Companies</dt><dd>5</dd></div>
-                </dl>
-                <div class="case__actions">
-                    <a class="btn btn--primary case__visit" href="https://rtgs.megapackagingbd.com" target="_blank" rel="noopener"><span>Visit the live app</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-                    <button class="btn btn--ghost proj__open case__more" type="button" aria-haspopup="dialog"><span>Case details</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
-                    <a class="case__code" href="https://www.github.com/kamrujjamantuhinkt3" target="_blank" rel="noopener" aria-label="Code for RTGS Management System on GitHub"><svg class="i i--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg></a>
-                </div>
-            </div>
-
-            <div class="case__show tour" data-tour style="--tour-hue:#6366f1">
-                <div class="tour__stage">
-                    <span class="tour__glow" aria-hidden="true"></span>
-                    <figure class="tour__win" id="rtgsScreen" role="tabpanel" aria-labelledby="rtgsTab0" aria-describedby="rtgsCaption">
-                        <span class="tour__chrome" aria-hidden="true">
-                            <i></i><i></i><i></i>
-                            <span class="tour__url"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9.5" rx="2.2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span data-tour-url>rtgs.megapackagingbd.com/#/home</span></span>
-                            <span class="tour__live"><span></span>Live</span>
-                        </span>
-                        <span class="proj__cover tour__screens" data-ui="table" style="--c1:#4338ca; --c2:#1e40af">
-                            <img class="is-on" src="assets/images/projects/rtgs-management-system.jpg" alt="RTGS Management System home screen, welcoming Mega Packaging Bangladesh Limited, with its three workflows" width="2049" height="1281" loading="lazy" decoding="async" data-url="rtgs.megapackagingbd.com/#/home">
-                            <img src="assets/images/projects/rtgs-tour-rtgs-forms.jpg" alt="The RTGS forms dashboard, with totals and a card for each bank" width="2049" height="1281" loading="lazy" decoding="async" data-url="rtgs.megapackagingbd.com/#/dashboard">
-                            <img src="assets/images/projects/rtgs-tour-fund-transfer.jpg" alt="The fund transfer dashboard, with totals and the banks and their accounts" width="2049" height="1281" loading="lazy" decoding="async" data-url="rtgs.megapackagingbd.com/#/transfers">
-                            <img src="assets/images/projects/rtgs-tour-top-sheet.jpg" alt="The top sheet: transaction totals, a bank-wise summary and the list of transactions" width="2049" height="1281" loading="lazy" decoding="async" data-url="rtgs.megapackagingbd.com/#/home">
-                            <img src="assets/images/projects/rtgs-tour-light.jpg" alt="The home screen in the light theme" width="2049" height="1281" loading="lazy" decoding="async" data-url="rtgs.megapackagingbd.com/#/home">
-                        </span>
-                    </figure>
-                </div>
-                <ol class="tour__steps" role="tablist" aria-label="A tour of the RTGS Management System">
-                    <li style="--li:0">
-                        <button class="tour__step is-on" type="button" role="tab" id="rtgsTab0" aria-controls="rtgsScreen" aria-selected="true" tabindex="0" data-step="0" style="--hue:#6366f1">
-                            <span class="tour__no">01</span>
-                            <b class="tour__title">Home</b>
-                            <span class="tour__more" hidden>The front door: RTGS forms, fund transfers and cash withdrawals, each one key away.</span>
-                            <span class="tour__track" aria-hidden="true"><i class="tour__fill"></i></span>
-                        </button>
-                    </li>
-                    <li style="--li:1">
-                        <button class="tour__step" type="button" role="tab" id="rtgsTab1" aria-controls="rtgsScreen" aria-selected="false" tabindex="-1" data-step="1" style="--hue:#3b82f6">
-                            <span class="tour__no">02</span>
-                            <b class="tour__title">RTGS forms</b>
-                            <span class="tour__more" hidden>Each bank&rsquo;s own application, filled in once and printed or saved as PDF, with totals per bank.</span>
-                            <span class="tour__track" aria-hidden="true"><i class="tour__fill"></i></span>
-                        </button>
-                    </li>
-                    <li style="--li:2">
-                        <button class="tour__step" type="button" role="tab" id="rtgsTab2" aria-controls="rtgsScreen" aria-selected="false" tabindex="-1" data-step="2" style="--hue:#8b5cf6">
-                            <span class="tour__no">03</span>
-                            <b class="tour__title">Transfers</b>
-                            <span class="tour__more" hidden>Transfer letters on the company letterhead, for eleven accounts across three banks.</span>
-                            <span class="tour__track" aria-hidden="true"><i class="tour__fill"></i></span>
-                        </button>
-                    </li>
-                    <li style="--li:3">
-                        <button class="tour__step" type="button" role="tab" id="rtgsTab3" aria-controls="rtgsScreen" aria-selected="false" tabindex="-1" data-step="3" style="--hue:#14b8a6">
-                            <span class="tour__no">04</span>
-                            <b class="tour__title">Top sheet</b>
-                            <span class="tour__more" hidden>Every transaction for a period, bank by bank, on the one page that gets printed.</span>
-                            <span class="tour__track" aria-hidden="true"><i class="tour__fill"></i></span>
-                        </button>
-                    </li>
-                    <li style="--li:4">
-                        <button class="tour__step" type="button" role="tab" id="rtgsTab4" aria-controls="rtgsScreen" aria-selected="false" tabindex="-1" data-step="4" style="--hue:#a5b4fc">
-                            <span class="tour__no">05</span>
-                            <b class="tour__title">Light theme</b>
-                            <span class="tour__more" hidden>Every screen also comes in a light theme, and the choice is remembered.</span>
-                            <span class="tour__track" aria-hidden="true"><i class="tour__fill"></i></span>
-                        </button>
-                    </li>
-                </ol>
-                <p class="tour__caption" id="rtgsCaption"><b data-tour-title>Home</b> <span data-tour-text>The front door: RTGS forms, fund transfers and cash withdrawals, each one key away.</span></p>
-                <p class="proj__tags case__stack"><i>HTML</i><i>CSS</i><i>JavaScript</i><i>PHP</i><i>MySQL</i><i>jsPDF</i></p>
-            </div>
-
-            <template class="proj__detail">
-                <p class="sheet__cat">Full-stack &middot; Live in production</p>
-                <h3 class="sheet__name">RTGS Management System</h3>
-                <p class="sheet__lede">Built for Mega Packaging Bangladesh Ltd. An operator fills in a form once and the system prints the bank's own RTGS application or fund-transfer letter, ready to sign, while every transaction is kept in one shared, auditable register.</p>
-                <h4 class="sheet__sub">Highlights</h4>
-                <ul class="sheet__list">
-                        <li>Bank-accurate RTGS forms, printed or saved as PDF exactly like each bank's own paper</li>
-                        <li>Fund-transfer letters on the company letterhead, and cash withdrawals recorded with the cheque's copy</li>
-                        <li>Administrator and operator roles enforced on the server, with a record of who saved and who changed each entry</li>
-                        <li>A printable top sheet with bank-wise totals for any period, and light and dark themes</li>
-                        <li>Offline-first: entries save instantly in the browser and sync to MySQL when the connection returns</li>
-                </ul>
-                <h4 class="sheet__sub">Built with</h4>
-                <p class="sheet__stack"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>PHP</span><span>MySQL</span><span>jsPDF</span></p>
-            </template>
-        </article>
-
-        <article class="proj case case--mpbl case--flip" data-key="mpbl" data-featured data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="https://www.megapackagingbd.com" data-reveal="case">
-            <header class="case__head">
-                <p class="case__meta"><span class="case__no">02</span><span class="case__eyebrow"><span class="case__pulse" aria-hidden="true"></span>Live in production</span><span class="case__kind"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2.4l2.1 10.2a1.6 1.6 0 0 0 1.6 1.3h8.1a1.6 1.6 0 0 0 1.6-1.2L20.5 8H6.2"/><circle cx="9.5" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/></svg>Buyers order here</span></p>
-                <h3 class="proj__name case__name">Mega Packaging Website</h3>
-                <p class="proj__cat case__for">B2B ordering website &middot; Mega Packaging Bangladesh Ltd.</p>
-            </header>
-
-            <div class="case__body">
-                <p class="proj__blurb case__lede">A production website where garment exporters order straight from the factory. Buyers browse fourteen products, build an enquiry list and send a complete order &mdash; quantities, specifications and sample images &mdash; in English or Bangla.</p>
-                <ul class="case__points">
-                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2.4l2.1 10.2a1.6 1.6 0 0 0 1.6 1.3h8.1a1.6 1.6 0 0 0 1.6-1.2L20.5 8H6.2"/><circle cx="9.5" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/></svg><span><b>Buyers order online</b>A four-step order &mdash; products, requirements, details, review &mdash; that keeps a draft and takes sample images</span></li>
-                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7Z"/></svg><span><b>Every order reaches the team</b>It lands with the merchandising team by email, or goes by WhatsApp in one tap, and is counted as a lead</span></li>
-                    <li><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><span><b>Built to be found</b>English and Bangla pages, with structured data for all 14 products, its services and FAQs</span></li>
-                </ul>
-                <dl class="case__stats">
-                    <div><dt>Products</dt><dd>14</dd></div>
-                    <div><dt>Order steps</dt><dd>4</dd></div>
-                    <div><dt>Languages</dt><dd>2</dd></div>
-                    <div><dt>Tracked events</dt><dd>20</dd></div>
-                </dl>
-                <div class="case__actions">
-                    <a class="btn btn--primary case__visit" href="https://www.megapackagingbd.com" target="_blank" rel="noopener"><span>Visit the live site</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-                    <button class="btn btn--ghost proj__open case__more" type="button" aria-haspopup="dialog"><span>Case details</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
-                    <a class="case__code" href="https://www.github.com/kamrujjamantuhinkt3" target="_blank" rel="noopener" aria-label="Code for the Mega Packaging website on GitHub"><svg class="i i--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg></a>
-                </div>
-            </div>
-
-            <div class="case__show tour" data-tour style="--tour-hue:#22d3ee">
-                <div class="tour__stage">
-                    <span class="tour__glow" aria-hidden="true"></span>
-                    <figure class="tour__win" id="mpblScreen" role="tabpanel" aria-labelledby="mpblTab0" aria-describedby="mpblCaption">
-                        <span class="tour__chrome" aria-hidden="true">
-                            <i></i><i></i><i></i>
-                            <span class="tour__url"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9.5" rx="2.2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span data-tour-url>megapackagingbd.com/</span></span>
-                            <span class="tour__live"><span></span>Live</span>
-                        </span>
-                        <span class="proj__cover tour__screens" data-ui="table" style="--c1:#0891b2; --c2:#312e81">
-                            <img class="is-on" src="assets/images/projects/mega-packaging-website.jpg" alt="The Mega Packaging website's home page: the headline, its certifications and a deck of product cards" width="2049" height="1281" loading="lazy" decoding="async" data-url="megapackagingbd.com/">
-                            <img src="assets/images/projects/mega-packaging-tour-catalogue.jpg" alt="The product catalogue, with search, filters and two products added to the enquiry list" width="2049" height="1281" loading="lazy" decoding="async" data-url="megapackagingbd.com/#products">
-                            <img src="assets/images/projects/mega-packaging-tour-product.jpg" alt="The poly bag's details: its features, a quote button, sharing links and related products" width="2049" height="1281" loading="lazy" decoding="async" data-url="megapackagingbd.com/#product-poly-bag">
-                            <img src="assets/images/projects/mega-packaging-tour-order.jpg" alt="The four-step order and quote request, with three products chosen" width="2049" height="1281" loading="lazy" decoding="async" data-url="megapackagingbd.com/#contact">
-                            <img src="assets/images/projects/mega-packaging-tour-bangla.jpg" alt="The home page in Bangla" width="2049" height="1281" loading="lazy" decoding="async" data-url="megapackagingbd.com/bn.html">
-                        </span>
-                    </figure>
-                </div>
-                <ol class="tour__steps" role="tablist" aria-label="A tour of the Mega Packaging website">
-                    <li style="--li:0">
-                        <button class="tour__step is-on" type="button" role="tab" id="mpblTab0" aria-controls="mpblScreen" aria-selected="true" tabindex="0" data-step="0" style="--hue:#22d3ee">
-                            <span class="tour__no">01</span>
-                            <b class="tour__title">Home</b>
-                            <span class="tour__more" hidden>Buyers land on the factory itself: products on a moving card deck, its certifications, and whether it is open right now in Dhaka.</span>
-                            <span class="tour__track" aria-hidden="true"><i class="tour__fill"></i></span>
-                        </button>
-                    </li>
-                    <li style="--li:1">
-                        <button class="tour__step" type="button" role="tab" id="mpblTab1" aria-controls="mpblScreen" aria-selected="false" tabindex="-1" data-step="1" style="--hue:#38bdf8">
-                            <span class="tour__no">02</span>
-                            <b class="tour__title">Catalogue</b>
-                            <span class="tour__more" hidden>Fourteen products to search and filter, each added to the enquiry list in a single tap.</span>
-                            <span class="tour__track" aria-hidden="true"><i class="tour__fill"></i></span>
-                        </button>
-                    </li>
-                    <li style="--li:2">
-                        <button class="tour__step" type="button" role="tab" id="mpblTab2" aria-controls="mpblScreen" aria-selected="false" tabindex="-1" data-step="2" style="--hue:#818cf8">
-                            <span class="tour__no">03</span>
-                            <b class="tour__title">Product page</b>
-                            <span class="tour__more" hidden>Features, specifications and related products &mdash; and every product has a link of its own to share.</span>
-                            <span class="tour__track" aria-hidden="true"><i class="tour__fill"></i></span>
-                        </button>
-                    </li>
-                    <li style="--li:3">
-                        <button class="tour__step" type="button" role="tab" id="mpblTab3" aria-controls="mpblScreen" aria-selected="false" tabindex="-1" data-step="3" style="--hue:#f59e0b">
-                            <span class="tour__no">04</span>
-                            <b class="tour__title">Order form</b>
-                            <span class="tour__more" hidden>The order itself: four steps &mdash; products, requirements, details, review &mdash; with the draft saved as the buyer goes.</span>
-                            <span class="tour__track" aria-hidden="true"><i class="tour__fill"></i></span>
-                        </button>
-                    </li>
-                    <li style="--li:4">
-                        <button class="tour__step" type="button" role="tab" id="mpblTab4" aria-controls="mpblScreen" aria-selected="false" tabindex="-1" data-step="4" style="--hue:#34d399">
-                            <span class="tour__no">05</span>
-                            <b class="tour__title">&#2476;&#2494;&#2434;&#2482;&#2494;</b>
-                            <span class="tour__more" hidden>The whole site in Bangla too, rebuilt from the English page by a script so the two never drift apart.</span>
-                            <span class="tour__track" aria-hidden="true"><i class="tour__fill"></i></span>
-                        </button>
-                    </li>
-                </ol>
-                <p class="tour__caption" id="mpblCaption"><b data-tour-title>Home</b> <span data-tour-text>Buyers land on the factory itself: products on a moving card deck, its certifications, and whether it is open right now in Dhaka.</span></p>
-                <p class="proj__tags case__stack"><i>HTML</i><i>CSS</i><i>JavaScript</i><i>Node.js</i><i>JSON-LD</i><i>GA4</i><i>Formspree</i></p>
-            </div>
-
-            <template class="proj__detail">
-                <p class="sheet__cat">B2B ordering website &middot; Live in production</p>
-                <h3 class="sheet__name">Mega Packaging Website</h3>
-                <p class="sheet__lede">The production website of Mega Packaging Bangladesh Ltd., a garments-accessories and packaging manufacturer, where buyers order straight from the factory: they browse fourteen products, collect an enquiry list and send a complete four-step order, in English or Bangla.</p>
-                <h4 class="sheet__sub">Highlights</h4>
-                <ul class="sheet__list">
-                        <li>Online ordering: a four-step order (products, requirements, details, review) that keeps a draft and accepts sample images</li>
-                        <li>Every order reaches the merchandising team by email, or by WhatsApp in one tap, and is tracked as a lead in Google Analytics</li>
-                        <li>A product catalogue with instant search, category filters, an enquiry list and a detail view for each of the 14 products, each with its own link</li>
-                        <li>English and Bangla from one source: a Node.js script rebuilds the Bangla page from 1,248 translated strings</li>
-                        <li>Built to be found: JSON-LD for the company, its two sites, 14 products, 6 services and 8 FAQs, a sitemap, and llms.txt for AI search</li>
-                        <li>Measured with consent: 20 analytics events and Microsoft Clarity, behind a cookie notice and Google Consent Mode v2</li>
-                </ul>
-                <h4 class="sheet__sub">Built with</h4>
-                <p class="sheet__stack"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Node.js</span><span>JSON-LD</span><span>GA4</span><span>Formspree</span></p>
-            </template>
-        </article>
-
-        <div class="index-head" data-reveal>
-            <p class="index-head__title"><span class="section__rule"></span>Other projects</p>
+        <div class="bento-bar" data-reveal>
+            <p class="bento-bar__note"><span class="case__pulse" aria-hidden="true"></span><b>2</b> live in production<span>&middot; the rest are builds of my own</span></p>
             <div class="filters projects__filters" role="tablist" aria-label="Filter projects">
                 <button class="filter is-on" type="button" role="tab" data-cat="all" aria-selected="true">All</button>
                 <button class="filter" type="button" role="tab" data-cat="Full-stack" aria-selected="false">Full-stack</button>
@@ -1130,330 +902,463 @@
             </div>
         </div>
 
-        <div class="projects__grid proj-index" id="projGrid">
-                <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.05s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="03">
-                        <span class="proj__cover" data-ui="landing" style="--c1:#4f46e5; --c2:#22b8d6" aria-hidden="true">
-                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
-                            <span class="proj__no">02</span>
-                        </span>
-                        <span class="proj__body">
-                            <span class="proj__cat">Frontend</span>
-                            <span class="proj__name">Devfolio</span>
-                            <span class="proj__blurb">This portfolio. A space-themed single page built from scratch with no framework and no UI library.</span>
-                            <span class="proj__tags"><i>HTML</i><i>CSS</i><i>JavaScript</i></span>
-                        </span>
-                        <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-                    </button>
+        <!-- One grid: the two projects running in production as large tiles,
+             side by side at the top, and the smaller builds under them in small
+             tiles. The filters sort the whole grid. -->
+        <div class="projects__grid bento" id="projGrid" data-glow-group>
+            <article class="proj case case--mpbl" data-key="mpbl" data-featured data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="https://www.megapackagingbd.com" data-shot="assets/images/projects/mega-packaging-website.jpg" data-glow data-reveal="case">
+                <!-- The site's own banner, playing: its navbar and banner, with the
+                     factory film that runs behind them on the live site. The banner
+                     is two pictures of the real page - the ground under the film, and
+                     everything over it on a clear ground - with the film between
+                     them, blended the way the site blends it. main.js plays it while
+                     it is on screen. -->
+                <div class="case__show film" data-film="the factory film" style="--tour-hue:#22d3ee">
+                    <div class="tour__stage">
+                        <span class="tour__glow" aria-hidden="true"></span>
+                        <figure class="tour__win film__win" id="mpblScreen" aria-label="The Mega Packaging website: its navbar and banner, with the factory film playing behind them">
+                            <span class="tour__chrome" aria-hidden="true">
+                                <i></i><i></i><i></i>
+                                <span class="tour__url"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9.5" rx="2.2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>megapackagingbd.com</span></span>
+                                <span class="tour__live"><span></span>Live</span>
+                            </span>
+                            <span class="proj__cover film__view" style="--c1:#0891b2; --c2:#312e81">
+                                <span class="film__stage">
+                                    <img class="film__base" src="assets/images/projects/mega-packaging-hero-base.webp" alt="" width="960" height="575" loading="lazy" decoding="async">
+                                    <span class="film__clip"><video class="film__video" muted playsinline loop preload="none" poster="assets/videos/mega-packaging-hero-poster.jpg" aria-hidden="true" tabindex="-1"><source src="assets/videos/mega-packaging-hero.mp4" type="video/mp4"></video></span>
+                                    <img class="film__top" src="assets/images/projects/mega-packaging-hero-top.webp" alt="" width="1440" height="862" loading="lazy" decoding="async">
+                                    <span class="film__grain" aria-hidden="true"></span>
+                                </span>
+                            </span>
+                        </figure>
+                    </div>
+                    <div class="film__bar">
+                        <button class="film__toggle" type="button" aria-pressed="false" aria-label="Pause the factory film"><svg class="film__pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4.2" height="14" rx="1.2"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.2"/></svg><svg class="film__play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.6v12.8a.9.9 0 0 0 1.4.8l10-6.4a.9.9 0 0 0 0-1.6l-10-6.4A.9.9 0 0 0 8 5.6z"/></svg></button>
+                        <span class="film__label"><b>Production Scenario</b><span>The factory film behind the banner</span></span>
+                        <span class="film__track" aria-hidden="true"><i class="film__fill"></i></span>
+                        <span class="film__time" aria-hidden="true">0:00</span>
+                    </div>
+                </div>
 
-                    <template class="proj__detail">
-                        <p class="sheet__cat">Frontend</p>
-                        <h3 class="sheet__name">Devfolio</h3>
-                        <p class="sheet__lede">This portfolio. A space-themed single page built from scratch with no framework and no UI library.</p>
-                        <h4 class="sheet__sub">Highlights</h4>
-                        <ul class="sheet__list">
-                                <li>Canvas starfield and an orbital skill system, both hand-written</li>
-                                <li>Every animation respects prefers-reduced-motion</li>
-                                <li>No build step — three files, opens straight in a browser</li>
-                        </ul>
-                        <h4 class="sheet__sub">Built with</h4>
-                        <p class="sheet__stack"><span>HTML</span><span>CSS</span><span>JavaScript</span></p>
-                    </template>
-                </article>
-                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.10s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="04">
-                        <span class="proj__cover" data-ui="board" style="--c1:#6366f1; --c2:#8b5cf6" aria-hidden="true">
-                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
-                            <span class="proj__no">03</span>
-                        </span>
-                        <span class="proj__body">
-                            <span class="proj__cat">Full-stack</span>
-                            <span class="proj__name">TaskOrbit</span>
-                            <span class="proj__blurb">A task board where work moves through columns and nothing gets lost between them.</span>
-                            <span class="proj__tags"><i>React</i><i>Node.js</i><i>MongoDB</i></span>
-                        </span>
-                        <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-                    </button>
+                <header class="case__head">
+                    <p class="case__meta"><span class="case__eyebrow"><span class="case__pulse" aria-hidden="true"></span>Live in production</span><span class="case__kind"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2.4l2.1 10.2a1.6 1.6 0 0 0 1.6 1.3h8.1a1.6 1.6 0 0 0 1.6-1.2L20.5 8H6.2"/><circle cx="9.5" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/></svg>Buyers order here</span></p>
+                    <h3 class="proj__name case__name">Mega Packaging Website</h3>
+                    <p class="proj__cat case__for">B2B ordering website &middot; Mega Packaging Bangladesh Ltd.</p>
+                </header>
 
-                    <template class="proj__detail">
-                        <p class="sheet__cat">Full-stack</p>
-                        <h3 class="sheet__name">TaskOrbit</h3>
-                        <p class="sheet__lede">A task board where work moves through columns and nothing gets lost between them.</p>
-                        <h4 class="sheet__sub">Highlights</h4>
-                        <ul class="sheet__list">
-                                <li>Drag and drop between columns with optimistic updates</li>
-                                <li>Per-board membership and invitations</li>
-                                <li>Activity feed so a team can see what moved and when</li>
-                        </ul>
-                        <h4 class="sheet__sub">Built with</h4>
-                        <p class="sheet__stack"><span>React</span><span>Node.js</span><span>MongoDB</span><span>Mongoose</span></p>
-                    </template>
-                </article>
-                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.15s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="05">
-                        <span class="proj__cover" data-ui="store" style="--c1:#1e40af; --c2:#0ea5e9" aria-hidden="true">
-                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
-                            <span class="proj__no">04</span>
-                        </span>
-                        <span class="proj__body">
-                            <span class="proj__cat">Full-stack</span>
-                            <span class="proj__name">ShopStack</span>
-                            <span class="proj__blurb">A storefront with a cart, checkout flow and an admin side for stock and orders.</span>
-                            <span class="proj__tags"><i>Next.js</i><i>TypeScript</i><i>MongoDB</i></span>
-                        </span>
-                        <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-                    </button>
+                <div class="case__body">
+                    <p class="proj__blurb case__lede">The factory&rsquo;s production website, where garment exporters order direct: they browse fourteen products, build an enquiry list and send a complete order &mdash; with sample images &mdash; in English or Bangla.</p>
+                    <dl class="case__stats">
+                        <div><dt>Products</dt><dd>14</dd></div>
+                        <div><dt>Order steps</dt><dd>4</dd></div>
+                        <div><dt>Languages</dt><dd>2</dd></div>
+                        <div><dt>Tracked events</dt><dd>20</dd></div>
+                    </dl>
+                    <p class="proj__tags case__stack"><i>HTML</i><i>CSS</i><i>JavaScript</i><i>Node.js</i><i>JSON-LD</i><i>GA4</i><i>Formspree</i></p>
+                    <div class="case__actions">
+                        <a class="btn btn--primary case__visit" href="https://www.megapackagingbd.com" target="_blank" rel="noopener"><span>Visit the live site</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+                        <button class="btn btn--ghost proj__open case__more" type="button" aria-haspopup="dialog"><span>Case details</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+                        <a class="case__code" href="https://www.github.com/kamrujjamantuhinkt3" target="_blank" rel="noopener" aria-label="Code for the Mega Packaging website on GitHub"><svg class="i i--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg></a>
+                    </div>
+                </div>
 
-                    <template class="proj__detail">
-                        <p class="sheet__cat">Full-stack</p>
-                        <h3 class="sheet__name">ShopStack</h3>
-                        <p class="sheet__lede">A storefront with a cart, checkout flow and an admin side for stock and orders.</p>
-                        <h4 class="sheet__sub">Highlights</h4>
-                        <ul class="sheet__list">
-                                <li>Cart that survives a refresh and a sign-in</li>
-                                <li>Admin dashboard for products, stock and order status</li>
-                                <li>Order history tied to the authenticated account</li>
-                        </ul>
-                        <h4 class="sheet__sub">Built with</h4>
-                        <p class="sheet__stack"><span>Next.js</span><span>TypeScript</span><span>MongoDB</span><span>BetterAuth</span></p>
-                    </template>
-                </article>
-                <article class="proj" data-cat="Tooling" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.20s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="06">
-                        <span class="proj__cover" data-ui="form" style="--c1:#4338ca; --c2:#6366f1" aria-hidden="true">
-                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
-                            <span class="proj__no">05</span>
-                        </span>
-                        <span class="proj__body">
-                            <span class="proj__cat">Tooling</span>
-                            <span class="proj__name">AuthKit Starter</span>
-                            <span class="proj__blurb">A starting point for projects that need real authentication on day one rather than week three.</span>
-                            <span class="proj__tags"><i>Next.js</i><i>BetterAuth</i><i>TypeScript</i></span>
-                        </span>
-                        <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-                    </button>
+                <template class="proj__detail">
+                    <p class="sheet__cat">B2B ordering website &middot; Live in production</p>
+                    <h3 class="sheet__name">Mega Packaging Website</h3>
+                    <p class="sheet__lede">The production website of Mega Packaging Bangladesh Ltd., a garments-accessories and packaging manufacturer, where buyers order straight from the factory: they browse fourteen products, collect an enquiry list and send a complete four-step order, in English or Bangla.</p>
+                    <h4 class="sheet__sub">Highlights</h4>
+                    <ul class="sheet__list">
+                            <li>Online ordering: a four-step order (products, requirements, details, review) that keeps a draft and accepts sample images</li>
+                            <li>Every order reaches the merchandising team by email, or by WhatsApp in one tap, and is tracked as a lead in Google Analytics</li>
+                            <li>A product catalogue with instant search, category filters, an enquiry list and a detail view for each of the 14 products, each with its own link</li>
+                            <li>English and Bangla from one source: a Node.js script rebuilds the Bangla page from 1,248 translated strings</li>
+                            <li>Built to be found: JSON-LD for the company, its two sites, 14 products, 6 services and 8 FAQs, a sitemap, and llms.txt for AI search</li>
+                            <li>Measured with consent: 20 analytics events and Microsoft Clarity, behind a cookie notice and Google Consent Mode v2</li>
+                    </ul>
+                    <h4 class="sheet__sub">Built with</h4>
+                    <p class="sheet__stack"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Node.js</span><span>JSON-LD</span><span>GA4</span><span>Formspree</span></p>
+                </template>
+            </article>
+            <article class="proj case" data-key="rtgs" data-featured data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="https://rtgs.megapackagingbd.com" data-shot="assets/images/projects/rtgs-management-system.jpg" data-glow data-reveal="case">
+                <!-- The app's own home screen as it opens: the board deals itself in
+                     and the welcome is written out by hand while the clock ticks. A
+                     recording of the real app, signed in to a private copy holding
+                     made-up entries. main.js plays it while it is on screen. -->
+                <div class="case__show film" data-film="the home screen" style="--tour-hue:#6366f1">
+                    <div class="tour__stage">
+                        <span class="tour__glow" aria-hidden="true"></span>
+                        <figure class="tour__win film__win" id="rtgsScreen" aria-label="The RTGS Management System's home screen as it opens: its three workflows deal in and the welcome is written out by hand">
+                            <span class="tour__chrome" aria-hidden="true">
+                                <i></i><i></i><i></i>
+                                <span class="tour__url"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9.5" rx="2.2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>rtgs.megapackagingbd.com/#/home</span></span>
+                                <span class="tour__live"><span></span>Live</span>
+                            </span>
+                            <span class="proj__cover film__view" style="--c1:#4338ca; --c2:#1e40af">
+                                <video class="film__screen" muted playsinline loop preload="none" poster="assets/videos/rtgs-home-poster.jpg" aria-hidden="true" tabindex="-1"><source src="assets/videos/rtgs-home.mp4" type="video/mp4"></video>
+                            </span>
+                        </figure>
+                    </div>
+                    <div class="film__bar">
+                        <button class="film__toggle" type="button" aria-pressed="false" aria-label="Pause the home screen"><svg class="film__pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4.2" height="14" rx="1.2"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.2"/></svg><svg class="film__play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.6v12.8a.9.9 0 0 0 1.4.8l10-6.4a.9.9 0 0 0 0-1.6l-10-6.4A.9.9 0 0 0 8 5.6z"/></svg></button>
+                        <span class="film__label"><b>Home screen</b><span>The welcome, written in as you sign in</span></span>
+                        <span class="film__track" aria-hidden="true"><i class="film__fill"></i></span>
+                        <span class="film__time" aria-hidden="true">0:00</span>
+                    </div>
+                </div>
 
-                    <template class="proj__detail">
-                        <p class="sheet__cat">Tooling</p>
-                        <h3 class="sheet__name">AuthKit Starter</h3>
-                        <p class="sheet__lede">A starting point for projects that need real authentication on day one rather than week three.</p>
-                        <h4 class="sheet__sub">Highlights</h4>
-                        <ul class="sheet__list">
-                                <li>Email and OAuth sign-in wired up and working</li>
-                                <li>Protected routes and session handling out of the box</li>
-                                <li>Typed helpers so the session is never an `any`</li>
-                        </ul>
-                        <h4 class="sheet__sub">Built with</h4>
-                        <p class="sheet__stack"><span>Next.js</span><span>BetterAuth</span><span>TypeScript</span></p>
-                    </template>
-                </article>
-                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.25s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="07">
-                        <span class="proj__cover" data-ui="notes" style="--c1:#7c3aed; --c2:#4f46e5" aria-hidden="true">
-                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
-                            <span class="proj__no">06</span>
-                        </span>
-                        <span class="proj__body">
-                            <span class="proj__cat">Full-stack</span>
-                            <span class="proj__name">NoteNebula</span>
-                            <span class="proj__blurb">Notes that organise themselves by tag instead of by folder, with search that actually finds things.</span>
-                            <span class="proj__tags"><i>React</i><i>Node.js</i><i>MongoDB</i></span>
-                        </span>
-                        <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-                    </button>
+                <header class="case__head">
+                    <p class="case__meta"><span class="case__eyebrow"><span class="case__pulse" aria-hidden="true"></span>Live in production</span><span class="case__kind"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="16" height="6.5" rx="1.8"/><path d="M8 7.25h.01M8 16.75h.01"/></svg>Internal system</span></p>
+                    <h3 class="proj__name case__name">RTGS Management System</h3>
+                    <p class="proj__cat case__for">Full-stack &middot; built for Mega Packaging Bangladesh Ltd.</p>
+                </header>
 
-                    <template class="proj__detail">
-                        <p class="sheet__cat">Full-stack</p>
-                        <h3 class="sheet__name">NoteNebula</h3>
-                        <p class="sheet__lede">Notes that organise themselves by tag instead of by folder, with search that actually finds things.</p>
-                        <h4 class="sheet__sub">Highlights</h4>
-                        <ul class="sheet__list">
-                                <li>Full-text search across titles and bodies</li>
-                                <li>Tags rather than folders, so a note can live in several places</li>
-                                <li>Markdown editing with a live preview</li>
-                        </ul>
-                        <h4 class="sheet__sub">Built with</h4>
-                        <p class="sheet__stack"><span>React</span><span>Node.js</span><span>MongoDB</span></p>
-                    </template>
-                </article>
-                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.30s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="08">
-                        <span class="proj__cover" data-ui="chat" style="--c1:#2563eb; --c2:#22d3ee" aria-hidden="true">
-                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
-                            <span class="proj__no">07</span>
-                        </span>
-                        <span class="proj__body">
-                            <span class="proj__cat">Full-stack</span>
-                            <span class="proj__name">DevChat</span>
-                            <span class="proj__blurb">A realtime chat room built to understand websockets properly rather than to reinvent Slack.</span>
-                            <span class="proj__tags"><i>Node.js</i><i>React</i><i>MongoDB</i></span>
-                        </span>
-                        <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-                    </button>
+                <div class="case__body">
+                    <p class="proj__blurb case__lede">An operator fills in a form once and the system prints the bank&rsquo;s own RTGS application or transfer letter, ready to sign &mdash; while every transaction lands in one shared, auditable register.</p>
+                    <dl class="case__stats">
+                        <div><dt>Workflows</dt><dd>3</dd></div>
+                        <div><dt>Banks</dt><dd>5</dd></div>
+                        <div><dt>Accounts</dt><dd>11</dd></div>
+                        <div><dt>Companies</dt><dd>5</dd></div>
+                    </dl>
+                    <p class="proj__tags case__stack"><i>HTML</i><i>CSS</i><i>JavaScript</i><i>PHP</i><i>MySQL</i><i>jsPDF</i></p>
+                    <div class="case__actions">
+                        <a class="btn btn--primary case__visit" href="https://rtgs.megapackagingbd.com" target="_blank" rel="noopener"><span>Visit the live app</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+                        <button class="btn btn--ghost proj__open case__more" type="button" aria-haspopup="dialog"><span>Case details</span><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+                        <a class="case__code" href="https://www.github.com/kamrujjamantuhinkt3" target="_blank" rel="noopener" aria-label="Code for RTGS Management System on GitHub"><svg class="i i--fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg></a>
+                    </div>
+                </div>
 
-                    <template class="proj__detail">
-                        <p class="sheet__cat">Full-stack</p>
-                        <h3 class="sheet__name">DevChat</h3>
-                        <p class="sheet__lede">A realtime chat room built to understand websockets properly rather than to reinvent Slack.</p>
-                        <h4 class="sheet__sub">Highlights</h4>
-                        <ul class="sheet__list">
-                                <li>Live messages over a socket connection, no polling</li>
-                                <li>Presence indicators and typing state</li>
-                                <li>History persisted so a refresh does not lose the room</li>
-                        </ul>
-                        <h4 class="sheet__sub">Built with</h4>
-                        <p class="sheet__stack"><span>Node.js</span><span>React</span><span>MongoDB</span></p>
-                    </template>
-                </article>
-                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.35s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="09">
-                        <span class="proj__cover" data-ui="chart" style="--c1:#4f46e5; --c2:#3b82f6" aria-hidden="true">
-                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
-                            <span class="proj__no">08</span>
-                        </span>
-                        <span class="proj__body">
-                            <span class="proj__cat">Full-stack</span>
-                            <span class="proj__name">TrackMate</span>
-                            <span class="proj__blurb">An expense tracker that answers one question well: where did the money actually go?</span>
-                            <span class="proj__tags"><i>Next.js</i><i>TypeScript</i><i>MongoDB</i></span>
-                        </span>
-                        <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-                    </button>
+                <template class="proj__detail">
+                    <p class="sheet__cat">Full-stack &middot; Live in production</p>
+                    <h3 class="sheet__name">RTGS Management System</h3>
+                    <p class="sheet__lede">Built for Mega Packaging Bangladesh Ltd. An operator fills in a form once and the system prints the bank's own RTGS application or fund-transfer letter, ready to sign, while every transaction is kept in one shared, auditable register.</p>
+                    <h4 class="sheet__sub">Highlights</h4>
+                    <ul class="sheet__list">
+                            <li>Bank-accurate RTGS forms, printed or saved as PDF exactly like each bank's own paper</li>
+                            <li>Fund-transfer letters on the company letterhead, and cash withdrawals recorded with the cheque's copy</li>
+                            <li>Administrator and operator roles enforced on the server, with a record of who saved and who changed each entry</li>
+                            <li>A printable top sheet with bank-wise totals for any period, and light and dark themes</li>
+                            <li>Offline-first: entries save instantly in the browser and sync to MySQL when the connection returns</li>
+                    </ul>
+                    <h4 class="sheet__sub">Built with</h4>
+                    <p class="sheet__stack"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>PHP</span><span>MySQL</span><span>jsPDF</span></p>
+                </template>
+            </article>
+            <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-glow data-reveal style="--rd:0s">
+                <button class="proj__open" type="button" aria-haspopup="dialog">
+                    <span class="proj__cover" data-ui="landing" style="--c1:#4f46e5; --c2:#22b8d6" aria-hidden="true">
+                        <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
+                    </span>
+                    <span class="proj__body">
+                        <span class="proj__cat">Frontend</span>
+                        <span class="proj__name">Devfolio</span>
+                        <span class="proj__blurb">This portfolio. A space-themed single page built from scratch with no framework and no UI library.</span>
+                        <span class="proj__tags"><i>HTML</i><i>CSS</i><i>JavaScript</i></span>
+                    </span>
+                    <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+                </button>
 
-                    <template class="proj__detail">
-                        <p class="sheet__cat">Full-stack</p>
-                        <h3 class="sheet__name">TrackMate</h3>
-                        <p class="sheet__lede">An expense tracker that answers one question well: where did the money actually go?</p>
-                        <h4 class="sheet__sub">Highlights</h4>
-                        <ul class="sheet__list">
-                                <li>Category breakdowns with month-on-month comparison</li>
-                                <li>Recurring expenses handled without duplicate entries</li>
-                                <li>CSV export for anything that needs a spreadsheet</li>
-                        </ul>
-                        <h4 class="sheet__sub">Built with</h4>
-                        <p class="sheet__stack"><span>Next.js</span><span>TypeScript</span><span>MongoDB</span><span>Mongoose</span></p>
-                    </template>
-                </article>
-                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.40s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="10">
-                        <span class="proj__cover" data-ui="article" style="--c1:#5b21b6; --c2:#6366f1" aria-hidden="true">
-                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
-                            <span class="proj__no">09</span>
-                        </span>
-                        <span class="proj__body">
-                            <span class="proj__cat">Full-stack</span>
-                            <span class="proj__name">BlogVerse</span>
-                            <span class="proj__blurb">A publishing platform with drafts, scheduling and a reading experience that gets out of the way.</span>
-                            <span class="proj__tags"><i>Next.js</i><i>MongoDB</i><i>Tailwind CSS</i></span>
-                        </span>
-                        <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-                    </button>
+                <template class="proj__detail">
+                    <p class="sheet__cat">Frontend</p>
+                    <h3 class="sheet__name">Devfolio</h3>
+                    <p class="sheet__lede">This portfolio. A space-themed single page built from scratch with no framework and no UI library.</p>
+                    <h4 class="sheet__sub">Highlights</h4>
+                    <ul class="sheet__list">
+                            <li>Canvas starfield and an orbital skill system, both hand-written</li>
+                            <li>Every animation respects prefers-reduced-motion</li>
+                            <li>No build step — three files, opens straight in a browser</li>
+                    </ul>
+                    <h4 class="sheet__sub">Built with</h4>
+                    <p class="sheet__stack"><span>HTML</span><span>CSS</span><span>JavaScript</span></p>
+                </template>
+            </article>
+            <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-glow data-reveal style="--rd:0.06s">
+                <button class="proj__open" type="button" aria-haspopup="dialog">
+                    <span class="proj__cover" data-ui="board" style="--c1:#6366f1; --c2:#8b5cf6" aria-hidden="true">
+                        <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
+                    </span>
+                    <span class="proj__body">
+                        <span class="proj__cat">Full-stack</span>
+                        <span class="proj__name">TaskOrbit</span>
+                        <span class="proj__blurb">A task board where work moves through columns and nothing gets lost between them.</span>
+                        <span class="proj__tags"><i>React</i><i>Node.js</i><i>MongoDB</i></span>
+                    </span>
+                    <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+                </button>
 
-                    <template class="proj__detail">
-                        <p class="sheet__cat">Full-stack</p>
-                        <h3 class="sheet__name">BlogVerse</h3>
-                        <p class="sheet__lede">A publishing platform with drafts, scheduling and a reading experience that gets out of the way.</p>
-                        <h4 class="sheet__sub">Highlights</h4>
-                        <ul class="sheet__list">
-                                <li>Draft, schedule and publish states</li>
-                                <li>Server-rendered posts for fast first loads and clean sharing</li>
-                                <li>Comment threads with moderation</li>
-                        </ul>
-                        <h4 class="sheet__sub">Built with</h4>
-                        <p class="sheet__stack"><span>Next.js</span><span>MongoDB</span><span>Tailwind CSS</span></p>
-                    </template>
-                </article>
-                <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.45s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="11">
-                        <span class="proj__cover" data-ui="calendar" style="--c1:#1d4ed8; --c2:#818cf8" aria-hidden="true">
-                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
-                            <span class="proj__no">10</span>
-                        </span>
-                        <span class="proj__body">
-                            <span class="proj__cat">Full-stack</span>
-                            <span class="proj__name">EventHorizon</span>
-                            <span class="proj__blurb">Event listings and booking, with capacity that cannot be oversold by two people clicking at once.</span>
-                            <span class="proj__tags"><i>Next.js</i><i>Node.js</i><i>MongoDB</i></span>
-                        </span>
-                        <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-                    </button>
+                <template class="proj__detail">
+                    <p class="sheet__cat">Full-stack</p>
+                    <h3 class="sheet__name">TaskOrbit</h3>
+                    <p class="sheet__lede">A task board where work moves through columns and nothing gets lost between them.</p>
+                    <h4 class="sheet__sub">Highlights</h4>
+                    <ul class="sheet__list">
+                            <li>Drag and drop between columns with optimistic updates</li>
+                            <li>Per-board membership and invitations</li>
+                            <li>Activity feed so a team can see what moved and when</li>
+                    </ul>
+                    <h4 class="sheet__sub">Built with</h4>
+                    <p class="sheet__stack"><span>React</span><span>Node.js</span><span>MongoDB</span><span>Mongoose</span></p>
+                </template>
+            </article>
+            <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-glow data-reveal style="--rd:0.12s">
+                <button class="proj__open" type="button" aria-haspopup="dialog">
+                    <span class="proj__cover" data-ui="store" style="--c1:#1e40af; --c2:#0ea5e9" aria-hidden="true">
+                        <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
+                    </span>
+                    <span class="proj__body">
+                        <span class="proj__cat">Full-stack</span>
+                        <span class="proj__name">ShopStack</span>
+                        <span class="proj__blurb">A storefront with a cart, checkout flow and an admin side for stock and orders.</span>
+                        <span class="proj__tags"><i>Next.js</i><i>TypeScript</i><i>MongoDB</i></span>
+                    </span>
+                    <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+                </button>
 
-                    <template class="proj__detail">
-                        <p class="sheet__cat">Full-stack</p>
-                        <h3 class="sheet__name">EventHorizon</h3>
-                        <p class="sheet__lede">Event listings and booking, with capacity that cannot be oversold by two people clicking at once.</p>
-                        <h4 class="sheet__sub">Highlights</h4>
-                        <ul class="sheet__list">
-                                <li>Seat holds so concurrent bookings cannot oversell</li>
-                                <li>Organiser dashboard for attendees and check-in</li>
-                                <li>Confirmation emails on successful booking</li>
-                        </ul>
-                        <h4 class="sheet__sub">Built with</h4>
-                        <p class="sheet__stack"><span>Next.js</span><span>Node.js</span><span>MongoDB</span><span>BetterAuth</span></p>
-                    </template>
-                </article>
-                <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.50s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="12">
-                        <span class="proj__cover" data-ui="list" style="--c1:#0891b2; --c2:#4f46e5" aria-hidden="true">
-                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
-                            <span class="proj__no">11</span>
-                        </span>
-                        <span class="proj__body">
-                            <span class="proj__cat">Frontend</span>
-                            <span class="proj__name">LinkVault</span>
-                            <span class="proj__blurb">A bookmark manager for the links you save and then never find again.</span>
-                            <span class="proj__tags"><i>React</i><i>TypeScript</i><i>Tailwind CSS</i></span>
-                        </span>
-                        <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-                    </button>
+                <template class="proj__detail">
+                    <p class="sheet__cat">Full-stack</p>
+                    <h3 class="sheet__name">ShopStack</h3>
+                    <p class="sheet__lede">A storefront with a cart, checkout flow and an admin side for stock and orders.</p>
+                    <h4 class="sheet__sub">Highlights</h4>
+                    <ul class="sheet__list">
+                            <li>Cart that survives a refresh and a sign-in</li>
+                            <li>Admin dashboard for products, stock and order status</li>
+                            <li>Order history tied to the authenticated account</li>
+                    </ul>
+                    <h4 class="sheet__sub">Built with</h4>
+                    <p class="sheet__stack"><span>Next.js</span><span>TypeScript</span><span>MongoDB</span><span>BetterAuth</span></p>
+                </template>
+            </article>
+            <article class="proj" data-cat="Tooling" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-glow data-reveal style="--rd:0.18s">
+                <button class="proj__open" type="button" aria-haspopup="dialog">
+                    <span class="proj__cover" data-ui="form" style="--c1:#4338ca; --c2:#6366f1" aria-hidden="true">
+                        <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
+                    </span>
+                    <span class="proj__body">
+                        <span class="proj__cat">Tooling</span>
+                        <span class="proj__name">AuthKit Starter</span>
+                        <span class="proj__blurb">A starting point for projects that need real authentication on day one rather than week three.</span>
+                        <span class="proj__tags"><i>Next.js</i><i>BetterAuth</i><i>TypeScript</i></span>
+                    </span>
+                    <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+                </button>
 
-                    <template class="proj__detail">
-                        <p class="sheet__cat">Frontend</p>
-                        <h3 class="sheet__name">LinkVault</h3>
-                        <p class="sheet__lede">A bookmark manager for the links you save and then never find again.</p>
-                        <h4 class="sheet__sub">Highlights</h4>
-                        <ul class="sheet__list">
-                                <li>Instant client-side filtering across hundreds of links</li>
-                                <li>Keyboard-first: everything reachable without the mouse</li>
-                                <li>Import from the browser's own bookmark export</li>
-                        </ul>
-                        <h4 class="sheet__sub">Built with</h4>
-                        <p class="sheet__stack"><span>React</span><span>TypeScript</span><span>Tailwind CSS</span></p>
-                    </template>
-                </article>
-                <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-reveal style="--rd:0.55s">
-                    <button class="proj__open" type="button" aria-haspopup="dialog" data-no="13">
-                        <span class="proj__cover" data-ui="store" style="--c1:#7c3aed; --c2:#38bdf8" aria-hidden="true">
-                            <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
-                            <span class="proj__no">12</span>
-                        </span>
-                        <span class="proj__body">
-                            <span class="proj__cat">Frontend</span>
-                            <span class="proj__name">RecipeBox</span>
-                            <span class="proj__blurb">Recipes with the ingredient list scaled to however many people are actually eating.</span>
-                            <span class="proj__tags"><i>React</i><i>Tailwind CSS</i></span>
-                        </span>
-                        <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
-                    </button>
+                <template class="proj__detail">
+                    <p class="sheet__cat">Tooling</p>
+                    <h3 class="sheet__name">AuthKit Starter</h3>
+                    <p class="sheet__lede">A starting point for projects that need real authentication on day one rather than week three.</p>
+                    <h4 class="sheet__sub">Highlights</h4>
+                    <ul class="sheet__list">
+                            <li>Email and OAuth sign-in wired up and working</li>
+                            <li>Protected routes and session handling out of the box</li>
+                            <li>Typed helpers so the session is never an `any`</li>
+                    </ul>
+                    <h4 class="sheet__sub">Built with</h4>
+                    <p class="sheet__stack"><span>Next.js</span><span>BetterAuth</span><span>TypeScript</span></p>
+                </template>
+            </article>
+            <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-glow data-reveal style="--rd:0s">
+                <button class="proj__open" type="button" aria-haspopup="dialog">
+                    <span class="proj__cover" data-ui="notes" style="--c1:#7c3aed; --c2:#4f46e5" aria-hidden="true">
+                        <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
+                    </span>
+                    <span class="proj__body">
+                        <span class="proj__cat">Full-stack</span>
+                        <span class="proj__name">NoteNebula</span>
+                        <span class="proj__blurb">Notes that organise themselves by tag instead of by folder, with search that actually finds things.</span>
+                        <span class="proj__tags"><i>React</i><i>Node.js</i><i>MongoDB</i></span>
+                    </span>
+                    <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+                </button>
 
-                    <template class="proj__detail">
-                        <p class="sheet__cat">Frontend</p>
-                        <h3 class="sheet__name">RecipeBox</h3>
-                        <p class="sheet__lede">Recipes with the ingredient list scaled to however many people are actually eating.</p>
-                        <h4 class="sheet__sub">Highlights</h4>
-                        <ul class="sheet__list">
-                                <li>Serving-size scaling that recalculates every quantity</li>
-                                <li>Step-by-step cooking mode with the screen kept awake</li>
-                                <li>Saved favourites stored on the device</li>
-                        </ul>
-                        <h4 class="sheet__sub">Built with</h4>
-                        <p class="sheet__stack"><span>React</span><span>Tailwind CSS</span></p>
-                    </template>
-                </article>
+                <template class="proj__detail">
+                    <p class="sheet__cat">Full-stack</p>
+                    <h3 class="sheet__name">NoteNebula</h3>
+                    <p class="sheet__lede">Notes that organise themselves by tag instead of by folder, with search that actually finds things.</p>
+                    <h4 class="sheet__sub">Highlights</h4>
+                    <ul class="sheet__list">
+                            <li>Full-text search across titles and bodies</li>
+                            <li>Tags rather than folders, so a note can live in several places</li>
+                            <li>Markdown editing with a live preview</li>
+                    </ul>
+                    <h4 class="sheet__sub">Built with</h4>
+                    <p class="sheet__stack"><span>React</span><span>Node.js</span><span>MongoDB</span></p>
+                </template>
+            </article>
+            <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-glow data-reveal style="--rd:0.06s">
+                <button class="proj__open" type="button" aria-haspopup="dialog">
+                    <span class="proj__cover" data-ui="chat" style="--c1:#2563eb; --c2:#22d3ee" aria-hidden="true">
+                        <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
+                    </span>
+                    <span class="proj__body">
+                        <span class="proj__cat">Full-stack</span>
+                        <span class="proj__name">DevChat</span>
+                        <span class="proj__blurb">A realtime chat room built to understand websockets properly rather than to reinvent Slack.</span>
+                        <span class="proj__tags"><i>Node.js</i><i>React</i><i>MongoDB</i></span>
+                    </span>
+                    <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+                </button>
+
+                <template class="proj__detail">
+                    <p class="sheet__cat">Full-stack</p>
+                    <h3 class="sheet__name">DevChat</h3>
+                    <p class="sheet__lede">A realtime chat room built to understand websockets properly rather than to reinvent Slack.</p>
+                    <h4 class="sheet__sub">Highlights</h4>
+                    <ul class="sheet__list">
+                            <li>Live messages over a socket connection, no polling</li>
+                            <li>Presence indicators and typing state</li>
+                            <li>History persisted so a refresh does not lose the room</li>
+                    </ul>
+                    <h4 class="sheet__sub">Built with</h4>
+                    <p class="sheet__stack"><span>Node.js</span><span>React</span><span>MongoDB</span></p>
+                </template>
+            </article>
+            <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-glow data-reveal style="--rd:0.12s">
+                <button class="proj__open" type="button" aria-haspopup="dialog">
+                    <span class="proj__cover" data-ui="chart" style="--c1:#4f46e5; --c2:#3b82f6" aria-hidden="true">
+                        <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
+                    </span>
+                    <span class="proj__body">
+                        <span class="proj__cat">Full-stack</span>
+                        <span class="proj__name">TrackMate</span>
+                        <span class="proj__blurb">An expense tracker that answers one question well: where did the money actually go?</span>
+                        <span class="proj__tags"><i>Next.js</i><i>TypeScript</i><i>MongoDB</i></span>
+                    </span>
+                    <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+                </button>
+
+                <template class="proj__detail">
+                    <p class="sheet__cat">Full-stack</p>
+                    <h3 class="sheet__name">TrackMate</h3>
+                    <p class="sheet__lede">An expense tracker that answers one question well: where did the money actually go?</p>
+                    <h4 class="sheet__sub">Highlights</h4>
+                    <ul class="sheet__list">
+                            <li>Category breakdowns with month-on-month comparison</li>
+                            <li>Recurring expenses handled without duplicate entries</li>
+                            <li>CSV export for anything that needs a spreadsheet</li>
+                    </ul>
+                    <h4 class="sheet__sub">Built with</h4>
+                    <p class="sheet__stack"><span>Next.js</span><span>TypeScript</span><span>MongoDB</span><span>Mongoose</span></p>
+                </template>
+            </article>
+            <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-glow data-reveal style="--rd:0.18s">
+                <button class="proj__open" type="button" aria-haspopup="dialog">
+                    <span class="proj__cover" data-ui="article" style="--c1:#5b21b6; --c2:#6366f1" aria-hidden="true">
+                        <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
+                    </span>
+                    <span class="proj__body">
+                        <span class="proj__cat">Full-stack</span>
+                        <span class="proj__name">BlogVerse</span>
+                        <span class="proj__blurb">A publishing platform with drafts, scheduling and a reading experience that gets out of the way.</span>
+                        <span class="proj__tags"><i>Next.js</i><i>MongoDB</i><i>Tailwind CSS</i></span>
+                    </span>
+                    <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+                </button>
+
+                <template class="proj__detail">
+                    <p class="sheet__cat">Full-stack</p>
+                    <h3 class="sheet__name">BlogVerse</h3>
+                    <p class="sheet__lede">A publishing platform with drafts, scheduling and a reading experience that gets out of the way.</p>
+                    <h4 class="sheet__sub">Highlights</h4>
+                    <ul class="sheet__list">
+                            <li>Draft, schedule and publish states</li>
+                            <li>Server-rendered posts for fast first loads and clean sharing</li>
+                            <li>Comment threads with moderation</li>
+                    </ul>
+                    <h4 class="sheet__sub">Built with</h4>
+                    <p class="sheet__stack"><span>Next.js</span><span>MongoDB</span><span>Tailwind CSS</span></p>
+                </template>
+            </article>
+            <article class="proj" data-cat="Full-stack" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-glow data-reveal style="--rd:0s">
+                <button class="proj__open" type="button" aria-haspopup="dialog">
+                    <span class="proj__cover" data-ui="calendar" style="--c1:#1d4ed8; --c2:#818cf8" aria-hidden="true">
+                        <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
+                    </span>
+                    <span class="proj__body">
+                        <span class="proj__cat">Full-stack</span>
+                        <span class="proj__name">EventHorizon</span>
+                        <span class="proj__blurb">Event listings and booking, with capacity that cannot be oversold by two people clicking at once.</span>
+                        <span class="proj__tags"><i>Next.js</i><i>Node.js</i><i>MongoDB</i></span>
+                    </span>
+                    <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+                </button>
+
+                <template class="proj__detail">
+                    <p class="sheet__cat">Full-stack</p>
+                    <h3 class="sheet__name">EventHorizon</h3>
+                    <p class="sheet__lede">Event listings and booking, with capacity that cannot be oversold by two people clicking at once.</p>
+                    <h4 class="sheet__sub">Highlights</h4>
+                    <ul class="sheet__list">
+                            <li>Seat holds so concurrent bookings cannot oversell</li>
+                            <li>Organiser dashboard for attendees and check-in</li>
+                            <li>Confirmation emails on successful booking</li>
+                    </ul>
+                    <h4 class="sheet__sub">Built with</h4>
+                    <p class="sheet__stack"><span>Next.js</span><span>Node.js</span><span>MongoDB</span><span>BetterAuth</span></p>
+                </template>
+            </article>
+            <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-glow data-reveal style="--rd:0.06s">
+                <button class="proj__open" type="button" aria-haspopup="dialog">
+                    <span class="proj__cover" data-ui="list" style="--c1:#0891b2; --c2:#4f46e5" aria-hidden="true">
+                        <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
+                    </span>
+                    <span class="proj__body">
+                        <span class="proj__cat">Frontend</span>
+                        <span class="proj__name">LinkVault</span>
+                        <span class="proj__blurb">A bookmark manager for the links you save and then never find again.</span>
+                        <span class="proj__tags"><i>React</i><i>TypeScript</i><i>Tailwind CSS</i></span>
+                    </span>
+                    <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+                </button>
+
+                <template class="proj__detail">
+                    <p class="sheet__cat">Frontend</p>
+                    <h3 class="sheet__name">LinkVault</h3>
+                    <p class="sheet__lede">A bookmark manager for the links you save and then never find again.</p>
+                    <h4 class="sheet__sub">Highlights</h4>
+                    <ul class="sheet__list">
+                            <li>Instant client-side filtering across hundreds of links</li>
+                            <li>Keyboard-first: everything reachable without the mouse</li>
+                            <li>Import from the browser's own bookmark export</li>
+                    </ul>
+                    <h4 class="sheet__sub">Built with</h4>
+                    <p class="sheet__stack"><span>React</span><span>TypeScript</span><span>Tailwind CSS</span></p>
+                </template>
+            </article>
+            <article class="proj" data-cat="Frontend" data-repo="https://www.github.com/kamrujjamantuhinkt3" data-demo="" data-glow data-reveal style="--rd:0.12s">
+                <button class="proj__open" type="button" aria-haspopup="dialog">
+                    <span class="proj__cover" data-ui="store" style="--c1:#7c3aed; --c2:#38bdf8" aria-hidden="true">
+                        <!-- screenshot: <img src="assets/images/projects/NAME.jpg" alt=""> (it shows inside the browser window) -->
+                    </span>
+                    <span class="proj__body">
+                        <span class="proj__cat">Frontend</span>
+                        <span class="proj__name">RecipeBox</span>
+                        <span class="proj__blurb">Recipes with the ingredient list scaled to however many people are actually eating.</span>
+                        <span class="proj__tags"><i>React</i><i>Tailwind CSS</i></span>
+                    </span>
+                    <span class="proj__cue">View details<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+                </button>
+
+                <template class="proj__detail">
+                    <p class="sheet__cat">Frontend</p>
+                    <h3 class="sheet__name">RecipeBox</h3>
+                    <p class="sheet__lede">Recipes with the ingredient list scaled to however many people are actually eating.</p>
+                    <h4 class="sheet__sub">Highlights</h4>
+                    <ul class="sheet__list">
+                            <li>Serving-size scaling that recalculates every quantity</li>
+                            <li>Step-by-step cooking mode with the screen kept awake</li>
+                            <li>Saved favourites stored on the device</li>
+                    </ul>
+                    <h4 class="sheet__sub">Built with</h4>
+                    <p class="sheet__stack"><span>React</span><span>Tailwind CSS</span></p>
+                </template>
+            </article>
+            <a class="bento-more" href="https://www.github.com/kamrujjamantuhinkt3" target="_blank" rel="noopener" data-glow data-reveal style="--rd:.18s">
+                <span class="bento-more__orbit" aria-hidden="true"><i></i><i></i><svg class="i i--fill bento-more__mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.94.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2z"/></svg></span>
+                <span class="bento-more__title">More on GitHub</span>
+                <span class="bento-more__text">Experiments, starters and whatever I am building this week.</span>
+                <span class="bento-more__go">github.com/kamrujjamantuhinkt3<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+            </a>
         </div>
-
-        <!-- a preview of the row under the pointer, filled by script -->
-        <div class="proj-peek" id="projPeek" aria-hidden="true"></div>
     </section>
 
     <!-- Experience
@@ -2249,9 +2154,9 @@
 
             <div class="uni__tools">
                 <span class="uni__chip" title="Skill crystals collected"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4.5 8v8L12 21l7.5-5V8z"/><path d="M4.5 8 12 12l7.5-4M12 12v9"/></svg><b id="uniCrystals">0/13</b></span>
-                <button class="uni__tool" id="uniMapBtn" type="button" aria-controls="uniMap"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6.5V20l6-2.5 6 2.5 6-2.5V4l-6 2.5L9 4zM9 4v13.5M15 6.5V20"/></svg><span>Map</span></button>
+                <button class="uni__tool" id="uniMapBtn" type="button" aria-controls="uniMap" aria-label="Star map"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6.5V20l6-2.5 6 2.5 6-2.5V4l-6 2.5L9 4zM9 4v13.5M15 6.5V20"/></svg><span>Map</span></button>
                 <button class="uni__tool uni__tool--icon" id="uniSound" type="button" aria-pressed="false" aria-label="Sound"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="wave" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg></button>
-                <button class="uni__tool" type="button" data-uni-classic><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Classic view</span></button>
+                <button class="uni__tool" type="button" data-uni-classic aria-label="Classic view"><svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Classic view</span></button>
             </div>
         </header>
 
@@ -2279,8 +2184,40 @@
         </button>
 
         <footer class="uni__bottom">
-            <p class="uni__hint" id="uniHintKeys"><kbd>W A S D</kbd> fly <kbd>Shift</kbd> boost <kbd>Space</kbd> land <kbd>P</kbd> autopilot <span>&middot; or click anywhere to set a course</span></p>
-            <p class="uni__hint" id="uniHintTouch" hidden>Tap to fly &middot; tap a world to land &middot; or let the autopilot fly</p>
+            <!-- How to fly: the keys as keycaps that light up as they are pressed.
+                 Once the ship is under way the card folds into its title, and
+                 opens again from it. -->
+            <section class="uni__keys" id="uniKeys" aria-label="Flight controls">
+                <button class="uni__keys-head" id="uniKeysToggle" type="button" aria-expanded="true" aria-controls="uniKeysBody">
+                    <svg class="ui-i" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2.6"/><path d="M6.5 10h.01M10 10h.01M14 10h.01M17.5 10h.01M8 14h8"/></svg>
+                    <span>Flight controls</span>
+                    <svg class="ui-i uni__keys-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </button>
+                <div class="uni__keys-body" id="uniKeysBody">
+                    <div class="uni__keys-in">
+                        <div class="kc-pad" id="uniHintKeys">
+                            <div class="kc-fly">
+                                <span class="kc-cross" aria-hidden="true"><kbd class="kc kc--w" data-k="up">W</kbd><kbd class="kc" data-k="left">A</kbd><kbd class="kc" data-k="down">S</kbd><kbd class="kc" data-k="right">D</kbd></span>
+                                <span class="kc-label"><b>Fly</b>or the arrow keys</span>
+                            </div>
+                            <ul class="kc-list">
+                                <li><kbd class="kc kc--wide" data-k="boost">Shift</kbd><span class="kc-label"><b>Boost</b></span></li>
+                                <li><kbd class="kc kc--wide" data-k="land">Space</kbd><span class="kc-label"><b>Land</b></span></li>
+                                <li><kbd class="kc" data-k="auto">P</kbd><span class="kc-label"><b>Autopilot</b></span></li>
+                                <li><kbd class="kc" data-k="map">M</kbd><span class="kc-label"><b>Star map</b></span></li>
+                                <li class="kc-more"><kbd class="kc" data-k="next">N</kbd><span class="kc-label"><b>Next world</b></span></li>
+                                <li class="kc-more"><kbd class="kc kc--wide" data-k="esc">Esc</kbd><span class="kc-label"><b>Take off</b></span></li>
+                            </ul>
+                            <p class="kc-foot"><span class="kc-mouse" data-k="mouse" aria-hidden="true"><i></i></span><span><b>Click anywhere</b> to set a course</span></p>
+                        </div>
+                        <ul class="kc-touch" id="uniHintTouch" hidden>
+                            <li><span class="kc-ic" aria-hidden="true"><svg class="ui-i" viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10m0-.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0v4c0 3.6-2.4 6-6 6s-4.2-1.4-6.3-4.6l-1.1-1.8a1.5 1.5 0 0 1 2.4-1.8L9 14.5"/></svg></span><span class="kc-label"><b>Tap</b>to fly there</span></li>
+                            <li><span class="kc-ic" aria-hidden="true"><svg class="ui-i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5.5"/><path d="M3.5 15.5c-1.6 1.5-2 2.8-1.4 3.4 1.3 1.3 7.2-1.8 12.6-7.2s8.5-11.3 7.2-12.6c-.6-.6-1.9-.2-3.4 1.4"/></svg></span><span class="kc-label"><b>Tap a world</b>to land on it</span></li>
+                            <li><span class="kc-ic" aria-hidden="true"><svg class="ui-i" viewBox="0 0 24 24"><path d="M8 5.8v12.4a.8.8 0 0 0 1.2.7l9.6-6.2a.8.8 0 0 0 0-1.4L9.2 5.1A.8.8 0 0 0 8 5.8z"/></svg></span><span class="kc-label"><b>Autopilot</b>for the guided tour</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
             <div class="uni__drive">
                 <!-- the autopilot: a guided tour of every world, paused by any hand on the controls -->
                 <button class="uni__auto" id="uniAuto" type="button" aria-pressed="false" title="Autopilot (P)">

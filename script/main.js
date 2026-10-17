@@ -2244,188 +2244,458 @@
     }
 
 
-    /* Skills - the stack, layer by layer. The model on the left is four
-       glass layers with the tools standing on them; the layer chosen lifts
-       away from the others and is read out on the right. It moves on through
-       the layers by itself while it is on screen, until someone picks a
-       layer or a tool - from then on it stays where they put it. */
-    var stackx = document.querySelector("[data-stack]");
+    /* Skills - the stack as a solar system. Each orbit is one layer of a
+       product: the workflow nearest the core, then the data, the server and,
+       on the outside, the interface people see. The tools are its planets.
+       Every frame the rings, trails, belt and stars are drawn on a canvas and
+       the planets - the real logos - are placed over it, the near ones larger
+       and in front of the core, the far ones smaller and behind it. It spins
+       when dragged, slows down when pointed at, names the planet under the
+       pointer and reads out, in the card, the one chosen. Until someone
+       chooses, the card moves through the orbits on its own. */
+    var cosmos = document.querySelector("[data-cosmos]");
 
-    if (stackx) {
-        var stackModel = stackx.querySelector(".stackx__model");
-        var stackScene = stackx.querySelector(".stackx__scene");
-        var slabs = Array.prototype.slice.call(stackx.querySelectorAll(".slab"));
-        var layerTabs = Array.prototype.slice.call(stackx.querySelectorAll(".layers__tab"));
-        var layerPanels = Array.prototype.slice.call(stackx.querySelectorAll(".layer"));
-        var stackTools = Array.prototype.slice.call(stackx.querySelectorAll(".tool"));
+    if (cosmos) {
+        var cosmosStage = cosmos.querySelector(".cosmos__stage");
+        var cosmosSky = cosmos.querySelector(".cosmos__sky");
+        var sky2d = cosmosSky.getContext("2d");
+        var cosmosCore = cosmos.querySelector(".cosmos__core");
+        var planetLayer = cosmos.querySelector(".cosmos__planets");
+        var cosmosTag = cosmos.querySelector(".cosmos__tag");
+        var hud = cosmos.querySelector(".hud");
+        var orbitTabs = Array.prototype.slice.call(cosmos.querySelectorAll(".orbit-tab"));
+        var orbitPanels = Array.prototype.slice.call(cosmos.querySelectorAll(".hud__orbit"));
+        var cosmosTools = Array.prototype.slice.call(cosmos.querySelectorAll(".tool"));
         var focusBox = document.getElementById("focus");
         var focusUse = document.getElementById("focusUse");
         var focusLogo = document.getElementById("focusLogo");
         var focusName = document.getElementById("focusName");
         var focusCat = document.getElementById("focusCat");
         var focusExp = document.getElementById("focusExp");
-        var layerNames = layerTabs.map(function (t) { return t.querySelector(".layers__name").textContent; });
-        var layerAt = 0;
-        var toolAt = null;
-        var stackTaken = false;              // someone has chosen; it no longer moves by itself
-        var swapTimer = 0;
-        var GAP = 0.2, OPEN = 0.13;          // between layers, and the extra either side of the one chosen
-        var LAYER_DUR = 8000;                // ms each layer is shown for, on its own
 
-        stackx.style.setProperty("--layer-dur", LAYER_DUR + "ms");
+        var rgbOf = function (hex) {
+            var v = (hex || "#818cf8").trim().replace("#", "");
+            if (v.length === 3) v = v.replace(/./g, "$&$&");
+            var n = parseInt(v, 16);
+            return (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255);
+        };
+        var orbitNames = orbitTabs.map(function (t) { return t.querySelector(".orbit-tab__name").textContent; });
+        var orbitRgb = orbitTabs.map(function (t) { return rgbOf(t.style.getPropertyValue("--c")); });
 
-        // Each tool stands on its layer, round the port in the middle. The front
-        // of the ring is left clear, so the requests passing through stay in view.
-        stackTools.forEach(function (tool) {
-            var layer = +tool.dataset.layer;
-            var mates = stackTools.filter(function (t) { return +t.dataset.layer === layer; });
-            var n = mates.length;
-            var a = (135 + 180 / n + mates.indexOf(tool) * 360 / n) * Math.PI / 180;
-            var r = n > 4 ? 0.36 : 0.31;
-            var pin = document.createElement("span");
-            pin.className = "pin";
-            pin.style.setProperty("--px", (50 + Math.cos(a) * r * 100).toFixed(2) + "%");
-            pin.style.setProperty("--py", (50 + Math.sin(a) * r * 100).toFixed(2) + "%");
-            pin.style.setProperty("--acc", tool.style.getPropertyValue("--acc"));
-            pin.innerHTML = '<svg viewBox="0 0 24 24"><use href="#' + tool.dataset.icon + '"></use></svg>';
-            slabs[layer].appendChild(pin);
-            tool.stackPin = pin;
-            pin.addEventListener("click", function () { takeStack(); showTool(tool); });
+        // each orbit's radius, as a share of the system's, and its speed in
+        // radians a second - in the card's order, the outermost first
+        var ORBIT = [
+            { r: 0.94, w: 0.10 },
+            { r: 0.74, w: 0.14 },
+            { r: 0.55, w: 0.19 },
+            { r: 0.36, w: 0.27 }
+        ];
+        var BELT_R = 0.645;                  // the asteroid belt, between the server and the data
+        var PHI = -0.14;                     // how far the system is turned in the page
+        var ORBIT_DUR = 7000;                // ms each orbit is read out for, on its own
+
+        var W = 0, H = 0, DPR = 1, cx = 0, cy = 0, R = 120, PS = 40;
+        var view = { tilt: 0.5, tiltT: 0.5, tiltBase: 0.5, phi: PHI, phiT: PHI };
+        var spin = 0, spinVel = 0, clock = 0, timeScale = 1, timeScaleT = 1;
+        var cosmosStars = [], belt = [], meteor = null;
+        var orbitAt = 0, toolAt = null, hoverP = null, cosmosTaken = false;
+        var cosmosSeen = false, cosmosRaf = 0, cosmosLast = 0, cosmosSwap = 0;
+        var drag = null, dragMoved = false;
+
+        cosmos.style.setProperty("--orbit-dur", ORBIT_DUR + "ms");
+
+        // the planets, one per tool, spaced evenly round their orbit
+        var planets = cosmosTools.map(function (tool) {
+            var o = +tool.dataset.layer;
+            var mates = cosmosTools.filter(function (t) { return +t.dataset.layer === o; });
+            var el = document.createElement("span");
+            el.className = "planet";
+            el.style.setProperty("--acc", tool.style.getPropertyValue("--acc"));
+            el.innerHTML = '<svg viewBox="0 0 24 24"><use href="#' + tool.dataset.icon + '"></use></svg>';
+            planetLayer.appendChild(el);
+            var p = {
+                tool: tool, el: el, o: o,
+                base: mates.indexOf(tool) / mates.length * Math.PI * 2 + o * 1.3,
+                acc: rgbOf(tool.style.getPropertyValue("--acc")),
+                a: 0, x: 0, y: 0
+            };
+            tool.cosmosPlanet = p;
+            return p;
         });
 
-        // the layers' heights: the one chosen lifts away from those below it,
-        // and those above it lift further, so it opens up there
-        var placeLayers = function () {
-            slabs.forEach(function (slab, k) {
-                var z = (slabs.length - 1 - k) * GAP + (k <= layerAt ? OPEN : 0) + (k < layerAt ? OPEN : 0);
-                slab.style.setProperty("--z", z.toFixed(3));
-                slab.classList.toggle("is-on", k === layerAt);
-            });
-            stackScene.style.setProperty("--top-z", ((slabs.length - 1) * GAP + OPEN + (layerAt > 0 ? OPEN : 0)).toFixed(3));
+        // a point on an orbit (r, as a share of the radius), turned and tilted
+        // into the page; depth runs from -1 at the back to 1 at the front
+        var orbitPoint = function (r, a) {
+            var rx = R * r, ry = rx * view.tilt;
+            var ex = Math.cos(a) * rx, ey = Math.sin(a) * ry;
+            var cs = Math.cos(view.phi), sn = Math.sin(view.phi);
+            return { x: cx + ex * cs - ey * sn, y: cy + ex * sn + ey * cs, depth: Math.sin(a) };
         };
 
-        var showTool = function (tool) {
-            if (+tool.dataset.layer !== layerAt) showLayer(+tool.dataset.layer, false, true);
+        var layoutCosmos = function () {
+            W = cosmosStage.clientWidth;
+            H = cosmosStage.clientHeight;
+            if (!W || !H) return;
+            DPR = Math.min(window.devicePixelRatio || 1, 2);
+            cosmosSky.width = Math.round(W * DPR);
+            cosmosSky.height = Math.round(H * DPR);
+
+            // the system fills the space beside the card, or all of it when the card is below
+            var beside = getComputedStyle(hud).position === "absolute";
+            var x0 = 20, x1 = W - (beside ? hud.offsetWidth + 40 : 0) - 20;
+            cx = (x0 + x1) / 2;
+            cy = H / 2 + (beside ? 6 : 0);
+            view.tiltBase = beside ? 0.48 : 0.56;
+            view.tilt = view.tiltT = view.tiltBase;
+            var byWidth = ((x1 - x0) / 2 - 32) / ORBIT[0].r;
+            var byHeight = (H / 2 - 50) / (ORBIT[0].r * (view.tiltBase + 0.07));
+            R = Math.max(90, Math.min(byWidth, byHeight));
+            PS = Math.max(28, Math.min(54, R * 0.135));
+            cosmos.style.setProperty("--ps", PS.toFixed(1) + "px");
+            cosmos.style.setProperty("--core", Math.max(58, Math.min(112, R * 0.27)).toFixed(1) + "px");
+            cosmosCore.style.left = cx.toFixed(1) + "px";
+            cosmosCore.style.top = cy.toFixed(1) + "px";
+
+            // stars of its own, and the belt
+            cosmosStars = [];
+            var n = Math.round(W * H / 6000);
+            for (var i = 0; i < n; i++) {
+                cosmosStars.push({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.2 + 0.3,
+                             a: Math.random() * 0.6 + 0.2, tw: Math.random() * 2 + 0.6, ph: Math.random() * 6.3 });
+            }
+            if (!belt.length) {
+                for (var b = 0; b < 170; b++) {
+                    belt.push({ a: Math.random() * Math.PI * 2, r: BELT_R + (Math.random() - 0.5) * 0.07,
+                                s: Math.random() * 1.2 + 0.4, w: 0.03 + Math.random() * 0.025 });
+                }
+            }
+        };
+
+        var placePlanets = function () {
+            for (var i = 0; i < planets.length; i++) {
+                var pl = planets[i], or = ORBIT[pl.o];
+                pl.a = pl.base + spin + clock * or.w;
+                var pt = orbitPoint(or.r, pl.a);
+                pl.x = pt.x;
+                pl.y = pt.y;
+                var near = (pt.depth + 1) / 2;
+                var s = (0.66 + 0.34 * near) * (pl.tool === toolAt ? 1.12 : 1);
+                pl.el.style.transform = "translate(" + pt.x.toFixed(1) + "px," + pt.y.toFixed(1) + "px) scale(" + s.toFixed(3) + ")";
+                pl.el.style.zIndex = pt.depth >= 0 ? 3 : 1;
+                pl.el.style.opacity = ((pl.o === orbitAt ? 1 : 0.55) * (0.5 + 0.5 * near)).toFixed(3);
+            }
+            if (hoverP) cosmosTag.style.transform = "translate(" + hoverP.x.toFixed(1) + "px," + (hoverP.y - PS * 0.7).toFixed(1) + "px)";
+        };
+
+        var drawSky = function () {
+            var g = sky2d;
+            g.setTransform(DPR, 0, 0, DPR, 0, 0);
+            g.clearRect(0, 0, W, H);
+
+            // the stars
+            g.fillStyle = "#ffffff";
+            for (var i = 0; i < cosmosStars.length; i++) {
+                var st = cosmosStars[i];
+                g.globalAlpha = reduced ? st.a : st.a * (0.55 + 0.45 * Math.sin(clock * st.tw + st.ph));
+                g.fillRect(st.x, st.y, st.r, st.r);
+            }
+
+            // a shooting star, now and then
+            if (meteor) {
+                var tail = g.createLinearGradient(meteor.x, meteor.y, meteor.x - meteor.vx * 0.14, meteor.y - meteor.vy * 0.14);
+                var fade = 1 - meteor.life / meteor.max;
+                tail.addColorStop(0, "rgba(224,231,255," + (0.9 * fade).toFixed(3) + ")");
+                tail.addColorStop(1, "rgba(224,231,255,0)");
+                g.globalAlpha = 1;
+                g.strokeStyle = tail;
+                g.lineWidth = 1.4;
+                g.lineCap = "round";
+                g.beginPath();
+                g.moveTo(meteor.x, meteor.y);
+                g.lineTo(meteor.x - meteor.vx * 0.14, meteor.y - meteor.vy * 0.14);
+                g.stroke();
+            }
+            g.globalAlpha = 1;
+
+            // the rings: brighter at the front; the one chosen lit, the others dashed
+            for (var o = 0; o < ORBIT.length; o++) {
+                var rx = R * ORBIT[o].r, ry = rx * view.tilt, on = o === orbitAt, rgb = orbitRgb[o];
+                var ring = g.createLinearGradient(cx, cy - ry, cx, cy + ry);
+                ring.addColorStop(0, "rgba(" + rgb + "," + (on ? 0.34 : 0.1) + ")");
+                ring.addColorStop(1, "rgba(" + rgb + "," + (on ? 0.95 : 0.42) + ")");
+                g.save();
+                g.beginPath();
+                g.ellipse(cx, cy, rx, ry, view.phi, 0, Math.PI * 2);
+                g.strokeStyle = ring;
+                g.lineWidth = on ? 1.7 : 1;
+                g.setLineDash(on ? [] : [2, 7]);
+                if (on) {
+                    g.shadowColor = "rgba(" + rgb + ",.9)";
+                    g.shadowBlur = 12;
+                }
+                g.stroke();
+                g.restore();
+            }
+
+            // the belt
+            g.fillStyle = "#c7d2fe";
+            for (var b = 0; b < belt.length; b++) {
+                var k = belt[b], bp = orbitPoint(k.r, k.a + clock * k.w + spin * 0.6);
+                g.globalAlpha = 0.18 + 0.42 * (bp.depth + 1) / 2;
+                g.fillRect(bp.x, bp.y, k.s, k.s);
+            }
+            g.globalAlpha = 1;
+
+            // each planet's trail, fading out behind it
+            var STEPS = 10, TRAIL = 0.6;
+            for (var p = 0; p < planets.length; p++) {
+                var pl = planets[p], prx = R * ORBIT[pl.o].r, pry = prx * view.tilt, dim = pl.o !== orbitAt;
+                for (var j = 0; j < STEPS; j++) {
+                    g.beginPath();
+                    g.ellipse(cx, cy, prx, pry, view.phi, pl.a - TRAIL * (j + 1) / STEPS, pl.a - TRAIL * j / STEPS);
+                    g.strokeStyle = "rgba(" + pl.acc + "," + ((1 - j / STEPS) * (dim ? 0.2 : 0.7)).toFixed(3) + ")";
+                    g.lineWidth = (1 - j / STEPS) * 3 + 0.4;
+                    g.stroke();
+                }
+            }
+
+            // a beam from the core to the planet chosen
+            if (toolAt) {
+                var f = toolAt.cosmosPlanet;
+                g.save();
+                g.setLineDash([3, 5]);
+                g.lineDashOffset = -clock * 26;
+                g.strokeStyle = "rgba(" + f.acc + ",.75)";
+                g.lineWidth = 1.2;
+                g.beginPath();
+                g.moveTo(cx, cy);
+                g.lineTo(f.x, f.y);
+                g.stroke();
+                g.restore();
+            }
+        };
+
+        var renderCosmos = function () {
+            placePlanets();
+            drawSky();
+        };
+
+        var cosmosFrame = function (now) {
+            cosmosRaf = 0;
+            if (!cosmosSeen) return;
+            var dt = cosmosLast ? Math.min((now - cosmosLast) / 1000, 0.05) : 0.016;
+            cosmosLast = now;
+            if (!root.classList.contains("is-universe")) {
+                view.tilt += (view.tiltT - view.tilt) * 0.06;
+                view.phi += (view.phiT - view.phi) * 0.06;
+                timeScale += (timeScaleT - timeScale) * 0.08;
+                if (!drag) {
+                    spin += spinVel * dt;
+                    spinVel *= Math.pow(0.15, dt);
+                }
+                clock += dt * timeScale;
+                if (!meteor && Math.random() < dt * 0.09) {
+                    meteor = { x: Math.random() * W * 0.7, y: Math.random() * H * 0.35, vx: 420 + Math.random() * 220,
+                               vy: 130 + Math.random() * 90, life: 0, max: 0.9 };
+                }
+                if (meteor) {
+                    meteor.x += meteor.vx * dt;
+                    meteor.y += meteor.vy * dt;
+                    meteor.life += dt;
+                    if (meteor.life > meteor.max) meteor = null;
+                }
+                renderCosmos();
+            }
+            cosmosRaf = requestAnimationFrame(cosmosFrame);
+        };
+
+        var runCosmos = function () {
+            if (reduced || cosmosRaf || !cosmosSeen) return;
+            cosmosLast = 0;
+            cosmosRaf = requestAnimationFrame(cosmosFrame);
+        };
+
+        var showCosmosTool = function (tool) {
+            if (+tool.dataset.layer !== orbitAt) showOrbit(+tool.dataset.layer, false, true);
             if (toolAt === tool) return;
             toolAt = tool;
-            stackTools.forEach(function (t) {
+            cosmosTools.forEach(function (t) {
                 var on = t === tool;
                 t.classList.toggle("is-on", on);
                 t.setAttribute("aria-pressed", String(on));
-                t.stackPin.classList.toggle("is-focus", on);
+                t.cosmosPlanet.el.classList.toggle("is-focus", on);
             });
             focusBox.style.setProperty("--acc", tool.style.getPropertyValue("--acc"));
 
             // the logo and the words swap over
             focusLogo.classList.add("is-swapping");
             focusExp.classList.add("is-swapping");
-            clearTimeout(swapTimer);
-            swapTimer = setTimeout(function () {
+            clearTimeout(cosmosSwap);
+            cosmosSwap = setTimeout(function () {
                 focusUse.setAttribute("href", "#" + tool.dataset.icon);
                 focusName.textContent = tool.dataset.name;
-                focusCat.textContent = layerNames[+tool.dataset.layer];
+                focusCat.textContent = orbitNames[+tool.dataset.layer];
                 focusExp.textContent = tool.dataset.exp;
                 focusLogo.classList.remove("is-swapping");
                 focusExp.classList.remove("is-swapping");
             }, reduced ? 0 : 200);
+            if (reduced) renderCosmos();
         };
 
-        var showLayer = function (k, focusTab, keepTool) {
-            layerAt = (k + slabs.length) % slabs.length;
-            layerTabs.forEach(function (t, i) {
-                var on = i === layerAt;
+        var showOrbit = function (k, focusTab, keepTool) {
+            orbitAt = (k + orbitTabs.length) % orbitTabs.length;
+            orbitTabs.forEach(function (t, i) {
+                var on = i === orbitAt;
                 t.classList.toggle("is-on", on);
                 t.setAttribute("aria-selected", String(on));
                 t.tabIndex = on ? 0 : -1;
             });
-            layerPanels.forEach(function (p, i) { p.hidden = i !== layerAt; });
-            stackx.style.setProperty("--layer-c", layerTabs[layerAt].style.getPropertyValue("--c"));
-            placeLayers();
+            orbitPanels.forEach(function (p, i) { p.hidden = i !== orbitAt; });
+            planets.forEach(function (p) { p.el.classList.toggle("is-dim", p.o !== orbitAt); });
+            cosmos.style.setProperty("--orbit-c", orbitTabs[orbitAt].style.getPropertyValue("--c"));
 
-            // this layer's own time starts from empty
-            var bar = layerTabs[layerAt].querySelector(".layers__time i");
+            // this orbit's own time starts from empty
+            var bar = orbitTabs[orbitAt].querySelector(".orbit-tab__time i");
             if (bar) {
                 bar.style.animation = "none";
                 void bar.offsetWidth;
                 bar.style.animation = "";
             }
             if (!keepTool) {
-                var first = stackTools.filter(function (t) { return +t.dataset.layer === layerAt; })[0];
-                if (first) showTool(first);
+                var first = cosmosTools.filter(function (t) { return +t.dataset.layer === orbitAt; })[0];
+                if (first) showCosmosTool(first);
             }
-            if (focusTab) layerTabs[layerAt].focus();
+            if (focusTab) orbitTabs[orbitAt].focus();
+            if (reduced) renderCosmos();
         };
 
         // once someone chooses, it stays where they put it
-        var takeStack = function () {
-            stackTaken = true;
-            stackx.classList.remove("is-playing");
+        var takeCosmos = function () {
+            cosmosTaken = true;
+            cosmos.classList.remove("is-playing");
         };
 
-        layerTabs.forEach(function (tab, i) {
-            tab.addEventListener("click", function () { takeStack(); showLayer(i); });
-            var bar = tab.querySelector(".layers__time i");
+        orbitTabs.forEach(function (tab, i) {
+            tab.addEventListener("click", function () { takeCosmos(); showOrbit(i); });
+            var bar = tab.querySelector(".orbit-tab__time i");
             if (bar) {
                 bar.addEventListener("animationend", function () {
-                    if (!stackTaken && tab.classList.contains("is-on") && stackx.classList.contains("is-playing")) showLayer(layerAt + 1);
+                    if (!cosmosTaken && tab.classList.contains("is-on") && cosmos.classList.contains("is-playing")) showOrbit(orbitAt + 1);
                 });
             }
         });
-        stackx.querySelector(".layers").addEventListener("keydown", function (e) {
-            var k = e.key;
-            var to = k === "ArrowRight" || k === "ArrowDown" ? layerAt + 1
-                   : k === "ArrowLeft" || k === "ArrowUp" ? layerAt - 1
-                   : k === "Home" ? 0 : k === "End" ? slabs.length - 1 : null;
+        cosmos.querySelector(".hud__tabs").addEventListener("keydown", function (e) {
+            var key = e.key;
+            var to = key === "ArrowRight" || key === "ArrowDown" ? orbitAt + 1
+                   : key === "ArrowLeft" || key === "ArrowUp" ? orbitAt - 1
+                   : key === "Home" ? 0 : key === "End" ? orbitTabs.length - 1 : null;
             if (to === null) return;
             e.preventDefault();
-            takeStack();
-            showLayer(to, true);
+            takeCosmos();
+            showOrbit(to, true);
         });
-        stackTools.forEach(function (tool) {
-            tool.addEventListener("click", function () { takeStack(); showTool(tool); });
-        });
-        slabs.forEach(function (slab, i) {
-            slab.querySelector(".slab__face").addEventListener("click", function () { takeStack(); showLayer(i); });
+        cosmosTools.forEach(function (tool) {
+            tool.addEventListener("click", function () { takeCosmos(); showCosmosTool(tool); });
         });
 
-        showLayer(0);
+        // a planet is named when pointed at, slows almost to a stop, and is chosen when clicked
+        planets.forEach(function (p) {
+            p.el.addEventListener("pointerenter", function (e) {
+                if (e.pointerType === "touch") return;
+                hoverP = p;
+                cosmosTag.querySelector("b").textContent = p.tool.dataset.name;
+                cosmosTag.querySelector("span").textContent = orbitNames[p.o];
+                cosmosTag.classList.add("is-on");
+                timeScaleT = 0.06;
+                if (reduced) renderCosmos();
+            });
+            p.el.addEventListener("pointerleave", function () {
+                if (hoverP === p) hoverP = null;
+                cosmosTag.classList.remove("is-on");
+                timeScaleT = 0.35;
+            });
+            p.el.addEventListener("click", function () {
+                if (dragMoved) return;
+                takeCosmos();
+                showCosmosTool(p.tool);
+            });
+        });
 
-        if (!reduced && "IntersectionObserver" in window) {
+        // pointing anywhere in the sky slows it down and leans it a little that way
+        cosmosStage.addEventListener("pointermove", function (e) {
+            if (drag || e.pointerType === "touch") return;
+            var r = cosmosStage.getBoundingClientRect();
+            var nx = Math.max(-1, Math.min(1, (e.clientX - r.left - cx) / R));
+            var ny = Math.max(-1, Math.min(1, (e.clientY - r.top - cy) / R));
+            view.tiltT = view.tiltBase + ny * 0.06;
+            view.phiT = PHI + nx * 0.07;
+            if (!hoverP) timeScaleT = 0.35;
+        });
+        cosmosStage.addEventListener("pointerleave", function () {
+            view.tiltT = view.tiltBase;
+            view.phiT = PHI;
+            timeScaleT = 1;
+        });
+
+        // dragging sideways spins it, and it carries on spinning for a moment after
+        var dragMove = function (e) {
+            if (!drag) return;
+            var dx = e.clientX - drag.x;
+            if (Math.abs(e.clientX - drag.x0) > 5) {
+                dragMoved = true;
+                cosmosStage.classList.add("is-dragging");
+            }
+            var dtm = Math.max(8, e.timeStamp - drag.t);
+            spin += dx * 0.006;
+            spinVel = spinVel * 0.5 + (dx * 0.006) / (dtm / 1000) * 0.5;
+            drag.x = e.clientX;
+            drag.t = e.timeStamp;
+            if (reduced) renderCosmos();
+        };
+        var dragEnd = function () {
+            if (!drag) return;
+            drag = null;
+            cosmosStage.classList.remove("is-dragging");
+            window.removeEventListener("pointermove", dragMove);
+            window.removeEventListener("pointerup", dragEnd);
+            window.removeEventListener("pointercancel", dragEnd);
+            if (dragMoved) takeCosmos();
+            if (reduced) spinVel = 0;
+        };
+        cosmosStage.addEventListener("pointerdown", function (e) {
+            if (e.button !== 0) return;
+            drag = { x0: e.clientX, x: e.clientX, t: e.timeStamp };
+            dragMoved = false;
+            spinVel = 0;
+            window.addEventListener("pointermove", dragMove);
+            window.addEventListener("pointerup", dragEnd);
+            window.addEventListener("pointercancel", dragEnd);
+        });
+
+        layoutCosmos();
+        showOrbit(0);
+        renderCosmos();
+
+        if ("ResizeObserver" in window) {
+            new ResizeObserver(function () { layoutCosmos(); renderCosmos(); }).observe(cosmos);
+        }
+        if ("IntersectionObserver" in window) {
             new IntersectionObserver(function (entries) {
-                if (!stackTaken) stackx.classList.toggle("is-playing", entries[0].isIntersecting);
-            }, { threshold: 0.35 }).observe(stackx);
-
-            stackx.addEventListener("pointerenter", function (e) { if (e.pointerType !== "touch") stackx.classList.add("is-paused"); });
-            stackx.addEventListener("pointerleave", function () { stackx.classList.remove("is-paused"); });
-            stackx.addEventListener("focusin", function () { stackx.classList.add("is-paused"); });
-            stackx.addEventListener("focusout", function (e) {
-                if (!stackx.contains(e.relatedTarget)) stackx.classList.remove("is-paused");
-            });
+                cosmosSeen = entries[0].isIntersecting;
+                if (!cosmosTaken && !reduced) cosmos.classList.toggle("is-playing", cosmosSeen);
+                if (cosmosSeen) runCosmos();
+            }, { threshold: 0.2 }).observe(cosmos);
+        } else {
+            cosmosSeen = true;
+            runCosmos();
         }
 
-        // the model leans a little towards the pointer, eased
-        if (pointerFx) {
-            var lean = { x: 0, z: 0, tx: 0, tz: 0, raf: 0 };
-            var leanStep = function () {
-                lean.x += (lean.tx - lean.x) * 0.08;
-                lean.z += (lean.tz - lean.z) * 0.08;
-                stackScene.style.setProperty("--tx", lean.x.toFixed(2) + "deg");
-                stackScene.style.setProperty("--tz", lean.z.toFixed(2) + "deg");
-                lean.raf = Math.abs(lean.tx - lean.x) + Math.abs(lean.tz - lean.z) > 0.05 ? requestAnimationFrame(leanStep) : 0;
-            };
-            var leanTo = function (x, z) {
-                lean.tx = x;
-                lean.tz = z;
-                if (!lean.raf) lean.raf = requestAnimationFrame(leanStep);
-            };
-            stackModel.addEventListener("pointermove", function (e) {
-                var r = stackModel.getBoundingClientRect();
-                var nx = (e.clientX - r.left) / r.width - 0.5;
-                var ny = (e.clientY - r.top) / r.height - 0.5;
-                leanTo(-ny * 10, nx * 16);
-            });
-            stackModel.addEventListener("pointerleave", function () { leanTo(0, 0); });
-        }
+        cosmos.addEventListener("pointerenter", function (e) { if (e.pointerType !== "touch") cosmos.classList.add("is-paused"); });
+        cosmos.addEventListener("pointerleave", function () { cosmos.classList.remove("is-paused"); });
+        cosmos.addEventListener("focusin", function () { cosmos.classList.add("is-paused"); });
+        cosmos.addEventListener("focusout", function (e) {
+            if (!cosmos.contains(e.relatedTarget)) cosmos.classList.remove("is-paused");
+        });
     }
 
 
@@ -2499,16 +2769,14 @@
     if (projGrid && sheet) {
         var sheetBody = document.getElementById("sheetBody");
         var sheetLinks = document.getElementById("sheetLinks");
-        // the case study and every row of the index; the case study stands on
-        // its own, so the filters only ever sort the index
+        // every tile in the grid, large and small; the filters sort them all
         var projects = Array.prototype.slice.call(document.querySelectorAll("#projects .proj"));
-        var indexCards = projects.filter(function (p) { return !p.hasAttribute("data-featured"); });
         var projFilters = Array.prototype.slice.call(document.querySelectorAll(".projects .filter"));
         var lastOpener = null;
         var currentCat = "all";
 
         function layoutProjects() {
-            indexCards.forEach(function (card) {
+            projects.forEach(function (card) {
                 card.classList.toggle("is-hidden", currentCat !== "all" && card.dataset.cat !== currentCat);
             });
         }
@@ -2516,7 +2784,7 @@
         // each filter shows how many projects it holds
         projFilters.forEach(function (btn) {
             var cat = btn.dataset.cat;
-            var count = indexCards.filter(function (p) { return cat === "all" || p.dataset.cat === cat; }).length;
+            var count = projects.filter(function (p) { return cat === "all" || p.dataset.cat === cat; }).length;
             var badge = document.createElement("span");
             badge.className = "filter__n";
             badge.textContent = count;
@@ -2697,10 +2965,14 @@
         projects.forEach(dressCard);
         layoutProjects();
 
-        /* Filtering */
+        /* Filtering - the tiles that stay glide from where they were to where
+           they now sit, and the ones coming back grow in where they land */
+        var bentoTiles = Array.prototype.slice.call(projGrid.children);
+
         projFilters.forEach(function (btn) {
             btn.addEventListener("click", function () {
                 var cat = btn.dataset.cat;
+                if (cat === currentCat) return;
 
                 projFilters.forEach(function (b) {
                     var on = b === btn;
@@ -2708,10 +2980,65 @@
                     b.setAttribute("aria-selected", String(on));
                 });
 
+                var glide = !reduced && typeof projGrid.animate === "function";
+                var before = new Map();
+                if (glide) {
+                    bentoTiles.forEach(function (t) {
+                        if (!t.classList.contains("is-hidden")) before.set(t, t.getBoundingClientRect());
+                    });
+                }
+
                 currentCat = cat;
                 layoutProjects();
+                if (!glide) return;
+
+                var landed = 0;
+                bentoTiles.forEach(function (t) {
+                    if (t.classList.contains("is-hidden")) return;
+                    var now = t.getBoundingClientRect();
+                    var was = before.get(t);
+                    if (was) {
+                        var dx = was.left - now.left;
+                        var dy = was.top - now.top;
+                        if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+                        t.animate([{ translate: dx + "px " + dy + "px" }, { translate: "0 0" }],
+                                  { duration: 620, easing: "cubic-bezier(.22, 1, .36, 1)" });
+                    } else {
+                        t.animate([{ opacity: 0, scale: .9 }, { opacity: 1, scale: 1 }],
+                                  { duration: 480, delay: 60 + landed++ * 45, easing: "cubic-bezier(.22, 1, .36, 1)", fill: "backwards" });
+                    }
+                });
             });
         });
+
+        /* Tilt - a small tile leans towards the pointer, a few degrees at most */
+        if (pointerFx) {
+            bentoTiles.forEach(function (t) {
+                if (t.classList.contains("case")) return;
+                var tiltRaf = 0;
+                var tiltAt = null;
+                t.addEventListener("pointermove", function (e) {
+                    if (e.pointerType !== "mouse") return;
+                    tiltAt = e;
+                    if (tiltRaf) return;
+                    tiltRaf = requestAnimationFrame(function () {
+                        tiltRaf = 0;
+                        var r = t.getBoundingClientRect();
+                        var px = (tiltAt.clientX - r.left) / r.width - 0.5;
+                        var py = (tiltAt.clientY - r.top) / r.height - 0.5;
+                        t.classList.add("is-tilting");
+                        t.style.setProperty("--rx", (-py * 7).toFixed(2) + "deg");
+                        t.style.setProperty("--ry", (px * 9).toFixed(2) + "deg");
+                    });
+                });
+                t.addEventListener("pointerleave", function () {
+                    if (tiltRaf) { cancelAnimationFrame(tiltRaf); tiltRaf = 0; }
+                    t.classList.remove("is-tilting");
+                    t.style.setProperty("--rx", "0deg");
+                    t.style.setProperty("--ry", "0deg");
+                });
+            });
+        }
 
         /* The sheet */
         function linkButton(href, label, primary) {
@@ -2724,9 +3051,15 @@
             return a;
         }
 
-        // the case study's front screen, in the same browser window the sketches use
+        // the project's front screen, in the same browser window the sketches
+        // use: its own still (data-shot) where it plays something else
         function shotCover(card, deck) {
             var img = deck.querySelector("img");
+            if (card.dataset.shot) {
+                img = document.createElement("img");
+                img.src = card.dataset.shot;
+                img.alt = "";
+            }
             var out = document.createElement("span");
             var address = "";
             try { address = new URL(card.dataset.demo).hostname; } catch (e) { /* no address */ }
@@ -2803,168 +3136,85 @@
         });
 
 
-        /* The case studies - each plays a short tour of its real screens in a
-           browser window. Each step fills its line, then hands on to the next.
-           A tour plays only while it is on screen, holds still while the
-           pointer or the keyboard is on it, and any step can be chosen. */
-        document.querySelectorAll("[data-tour]").forEach(function (tour) {
-            var tourSteps = Array.prototype.slice.call(tour.querySelectorAll(".tour__step"));
-            var tourShots = Array.prototype.slice.call(tour.querySelectorAll(".tour__screens img"));
-            var tourUrl = tour.querySelector("[data-tour-url]");
-            var tourWin = tour.querySelector(".tour__win");
-            var tourCaption = tour.querySelector(".tour__caption");
-            var tourTitle = tour.querySelector("[data-tour-title]");
-            var tourText = tour.querySelector("[data-tour-text]");
-            var captionTimer = 0;
-            var tourCard = tour.closest(".proj");
-            var tourAt = 0;
-            var TOUR_STEP = 6000;                  // ms each screen plays for
+        /* The two production projects, each playing in its window: the
+           website's banner with the factory film behind it, and the app's home
+           screen as it opens. A film plays only while its window is on screen,
+           and waits to be asked when motion is turned down or data is being
+           saved: its still frame stands in. The button under the window pauses
+           and plays it, and the line beside it runs with it. */
+        var filmConn = navigator.connection;
+        var filmLowData = !!(filmConn && (filmConn.saveData || /(^|-)2g$/.test(filmConn.effectiveType || "")));
 
-            tour.style.setProperty("--tour-dur", TOUR_STEP + "ms");
+        document.querySelectorAll("[data-film]").forEach(function (show) {
+            var video = show.querySelector("video");
+            var toggle = show.querySelector(".film__toggle");
+            var fill = show.querySelector(".film__fill");
+            var clock = show.querySelector(".film__time");
+            var win = show.querySelector(".tour__win");
+            var card = show.closest(".proj");
+            var what = show.getAttribute("data-film") || "the film";
+            var held = reduced || filmLowData;          // held until asked for
+            var seen = false;
+            var raf = 0;
+            var second = -1;
 
-            var showStep = function (i, focus) {
-                tourAt = (i + tourSteps.length) % tourSteps.length;
-                tourSteps.forEach(function (s, k) {
-                    var on = k === tourAt;
-                    s.classList.toggle("is-on", on);
-                    s.setAttribute("aria-selected", String(on));
-                    s.tabIndex = on ? 0 : -1;
-                });
-                tourShots.forEach(function (im, k) {
-                    im.classList.toggle("is-on", k === tourAt);
-                    im.setAttribute("aria-hidden", String(k !== tourAt));
-                });
-
-                var step = tourSteps[tourAt];
-                var shot = tourShots[tourAt];
-                if (tourUrl && shot) tourUrl.textContent = shot.getAttribute("data-url");
-
-                // the caption under the tabs says what this screen shows
-                var more = step.querySelector(".tour__more");
-                var title = step.querySelector(".tour__title");
-                if (tourCaption && tourTitle && tourText && more && title && tourTitle.textContent !== title.textContent) {
-                    clearTimeout(captionTimer);
-                    tourCaption.classList.add("is-swapping");
-                    captionTimer = setTimeout(function () {
-                        tourTitle.textContent = title.textContent;
-                        tourText.textContent = more.textContent;
-                        tourCaption.classList.remove("is-swapping");
-                    }, reduced ? 0 : 220);
-                }
-                tour.style.setProperty("--tour-hue", step.style.getPropertyValue("--hue"));
-                if (tourWin) tourWin.setAttribute("aria-labelledby", step.id);
-
-                // start this step's line from empty, even when it is chosen again
-                var fill = step.querySelector(".tour__fill");
-                if (fill) {
-                    fill.style.animation = "none";
-                    void fill.offsetWidth;
-                    fill.style.animation = "";
-                }
-                if (focus) step.focus();
-
-                // the next screen is fetched ahead of its turn
-                var next = tourShots[(tourAt + 1) % tourShots.length];
-                if (next && next.loading === "lazy") next.loading = "eager";
+            var wanted = function () {
+                return seen && !held && !document.hidden && !root.classList.contains("is-universe");
             };
 
-            tourSteps.forEach(function (s, k) {
-                s.addEventListener("click", function () { showStep(k); });
-                var fill = s.querySelector(".tour__fill");
-                if (fill) {
-                    fill.addEventListener("animationend", function () {
-                        if (s.classList.contains("is-on") && tour.classList.contains("is-playing")) showStep(tourAt + 1);
-                    });
+            var paint = function () {
+                raf = 0;
+                var d = video.duration;
+                var t = video.currentTime;
+                if (d) fill.style.transform = "scaleX(" + Math.min(1, t / d).toFixed(4) + ")";
+                var sec = Math.floor(t);
+                if (sec !== second) {
+                    second = sec;
+                    clock.textContent = Math.floor(sec / 60) + ":" + ("0" + (sec % 60)).slice(-2);
                 }
-            });
+                if (!video.paused) raf = requestAnimationFrame(paint);
+            };
 
-            // arrow keys, Home and End move between the steps, as tabs do
-            tour.querySelector(".tour__steps").addEventListener("keydown", function (e) {
-                var k = e.key;
-                var to = k === "ArrowDown" || k === "ArrowRight" ? tourAt + 1
-                       : k === "ArrowUp" || k === "ArrowLeft" ? tourAt - 1
-                       : k === "Home" ? 0 : k === "End" ? tourSteps.length - 1 : null;
-                if (to === null) return;
-                e.preventDefault();
-                showStep(to, true);
+            var sync = function () {
+                if (wanted()) {
+                    if (video.preload !== "auto") video.preload = "auto";
+                    var playing = video.play();
+                    // autoplay can still be refused; the still frame stands on its own
+                    if (playing && playing.catch) playing.catch(function () {});
+                } else if (!video.paused) {
+                    video.pause();
+                }
+                show.classList.toggle("is-held", held);
+                toggle.setAttribute("aria-pressed", String(held));
+                toggle.setAttribute("aria-label", (held ? "Play " : "Pause ") + what);
+            };
+
+            video.addEventListener("playing", function () {
+                show.classList.add("is-playing");
+                if (!raf) raf = requestAnimationFrame(paint);
+            });
+            video.addEventListener("pause", function () { show.classList.remove("is-playing"); });
+
+            toggle.addEventListener("click", function () {
+                held = !held;
+                sync();
             });
 
             // the window itself opens the case details
-            if (tourWin && tourCard) tourWin.addEventListener("click", function () { openSheet(tourCard); });
+            if (win && card) win.addEventListener("click", function () { openSheet(card); });
 
-            showStep(0);
-
-            if (!reduced && "IntersectionObserver" in window) {
+            document.addEventListener("visibilitychange", sync);
+            document.addEventListener("kt:mode", function () { setTimeout(sync, 60); });
+            if ("IntersectionObserver" in window) {
                 new IntersectionObserver(function (entries) {
-                    entries.forEach(function (en) { tour.classList.toggle("is-playing", en.isIntersecting); });
-                }, { threshold: 0.35 }).observe(tour);
-
-                tour.addEventListener("pointerenter", function (e) { if (e.pointerType !== "touch") tour.classList.add("is-paused"); });
-                tour.addEventListener("pointerleave", function () { tour.classList.remove("is-paused"); });
-                tour.addEventListener("focusin", function () { tour.classList.add("is-paused"); });
-                tour.addEventListener("focusout", function (e) {
-                    if (!tour.contains(e.relatedTarget)) tour.classList.remove("is-paused");
-                });
+                    seen = entries[0].isIntersecting;
+                    sync();
+                }, { threshold: 0.25 }).observe(show);
+            } else {
+                seen = true;
             }
+            sync();
         });
-
-
-        /* The index - a preview of the row under the pointer follows it down
-           the list, eased, and leaning into the direction it is moving */
-        var peek = document.getElementById("projPeek");
-
-        if (peek && pointerFx) {
-            projGrid.classList.add("has-peek");
-            var pk = { row: null, x: 0, y: 0, tx: 0, ty: 0, raf: 0, on: false };
-
-            var peekStep = function () {
-                pk.raf = 0;
-                var dx = pk.tx - pk.x;
-                var dy = pk.ty - pk.y;
-                pk.x += dx * 0.18;
-                pk.y += dy * 0.18;
-
-                var w = peek.offsetWidth;
-                var hh = peek.offsetHeight;
-                var left = pk.x + 34;
-                if (left + w > window.innerWidth - 16) left = pk.x - 34 - w;     // flip to the other side
-                var top = Math.max(84, Math.min(window.innerHeight - hh - 16, pk.y - hh / 2));
-                var lean = Math.max(-8, Math.min(8, dx * 0.05));
-
-                peek.style.transform = "translate3d(" + left.toFixed(1) + "px," + top.toFixed(1) + "px,0) rotate(" + lean.toFixed(2) + "deg)";
-                if (Math.abs(dx) > 0.4 || Math.abs(dy) > 0.4) pk.raf = requestAnimationFrame(peekStep);
-            };
-
-            var hidePeek = function () {
-                pk.on = false;
-                pk.row = null;
-                peek.classList.remove("is-on");
-            };
-
-            projGrid.addEventListener("pointermove", function (e) {
-                if (e.pointerType === "touch") return;
-                var row = e.target.closest(".proj");
-                if (!row) { hidePeek(); return; }
-
-                if (row !== pk.row) {
-                    pk.row = row;
-                    var cover = row.querySelector(".proj__cover");
-                    peek.innerHTML = "";
-                    if (cover) peek.appendChild(cover.cloneNode(true));
-                }
-                pk.tx = e.clientX;
-                pk.ty = e.clientY;
-                if (!pk.on) {
-                    pk.on = true;
-                    pk.x = pk.tx;          // appear where the pointer is, not fly in from a corner
-                    pk.y = pk.ty;
-                    peek.classList.add("is-on");
-                }
-                if (!pk.raf) pk.raf = requestAnimationFrame(peekStep);
-            });
-            projGrid.addEventListener("pointerleave", hidePeek);
-            window.addEventListener("scroll", function () { if (pk.on) hidePeek(); }, { passive: true });
-        }
 
 
         sheet.querySelectorAll("[data-sheet-close]").forEach(function (el) {

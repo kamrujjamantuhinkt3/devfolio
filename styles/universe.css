@@ -32,6 +32,7 @@ html.is-universe body > footer { visibility: hidden; }
     --u-line:  rgba(129, 140, 248, .22);
     --u-text:  #eaedfb;
     --u-muted: #9aa3c9;
+    --u-inset: max(32px, calc((100% - 1320px) / 2));   /* the HUD's margin either side */
     position: fixed;
     inset: 0;
     z-index: 500;
@@ -87,29 +88,50 @@ kbd {
 }
 
 
-/* HUD - the top bar */
+/* HUD - the top bar: one floating bar of glass, held in from the edges like
+   the classic page's navbar, with a line of light along its foot */
 .uni__top {
     position: absolute;
-    top: 0; left: 0; right: 0;
+    top: 14px; left: var(--u-inset); right: var(--u-inset);
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding: 16px 20px 26px;
-    background: linear-gradient(rgba(2, 4, 13, .78), transparent);
+    padding: 6px 7px 6px 6px;
+    border-radius: 999px;
+    border: 1px solid var(--u-line);
+    background: linear-gradient(180deg, rgba(16, 22, 54, .74), rgba(8, 12, 32, .7));
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+    box-shadow: 0 18px 50px rgba(2, 4, 16, .55), inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+.uni__top::after {
+    content: "";
+    position: absolute;
+    left: 12%; right: 12%; bottom: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(129, 140, 248, .7), rgba(224, 231, 255, .9), rgba(129, 140, 248, .7), transparent);
     pointer-events: none;
 }
-.uni__top > * { pointer-events: auto; }
 
-/* the brand is the welcome's badge (style.css), in the HUD's own glass */
+/* the brand is the welcome's badge (style.css), at home in the bar */
 .uni__brand {
     flex: none;
-    border-color: var(--u-line);
-    background: rgba(8, 12, 32, .72);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
+    border-color: transparent;
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
 }
 .uni__brand .who__face { width: 40px; height: 40px; }
+
+/* inside the bar the pills need no glass of their own */
+.uni__top .uni__progress,
+.uni__top .uni__chip,
+.uni__top .uni__tool {
+    background: rgba(255, 255, 255, .035);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
 
 .uni__progress {
     display: flex;
@@ -168,7 +190,7 @@ kbd {
 /* Transmissions - a line from the pilot, top centre */
 .uni__comms {
     position: absolute;
-    top: 80px; left: 50%;
+    top: 92px; left: 50%;
     display: flex;
     align-items: flex-start;
     gap: 12px;
@@ -189,7 +211,7 @@ kbd {
 
 /* landed: the line moves into the open space beside the panel */
 .uni.is-landed .uni__comms {
-    left: calc((100% - min(470px, 44vw) - 20px) / 2);
+    left: calc((100% - min(470px, 44vw) - var(--u-inset)) / 2);
     width: min(540px, calc(100% - min(470px, 44vw) - 72px));
 }
 .uni__face {
@@ -225,7 +247,7 @@ kbd {
 /* Toast - a crystal collected, a world explored */
 .uni__toast {
     position: absolute;
-    top: 80px; right: 20px;
+    top: 92px; right: var(--u-inset);
     display: flex;
     align-items: center;
     gap: 12px;
@@ -323,7 +345,7 @@ kbd {
     grid-template-columns: 1fr auto 1fr;
     align-items: end;
     gap: 16px;
-    padding: 30px 20px 20px;
+    padding: 30px var(--u-inset) 20px;
     background: linear-gradient(transparent, rgba(2, 4, 13, .7));
     pointer-events: none;
     transition: opacity .35s ease;
@@ -333,15 +355,161 @@ kbd {
 .uni.is-landed .uni__prompt { opacity: 0; pointer-events: none; }
 .uni.is-landed .uni__bottom > * { pointer-events: none; }
 
-.uni__hint {
+/* Flight controls - the keys as keycaps, lit as they are pressed, in a card
+   that folds into its title once the ship is under way */
+.uni__keys {
     justify-self: start;
-    align-self: center;
-    max-width: 340px;
-    font-size: .74rem;
-    line-height: 2;
+    align-self: end;
+    width: 396px;
+    border-radius: 20px;
+    border: 1px solid var(--u-line);
+    background: linear-gradient(180deg, rgba(16, 22, 54, .78), rgba(8, 12, 32, .74));
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 18px 44px rgba(2, 4, 16, .5), inset 0 1px 0 rgba(255, 255, 255, .05);
+    transition: width .45s cubic-bezier(.22, 1, .36, 1);
+}
+.uni__keys-head {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    padding: 11px 14px 9px;
+    border-radius: 20px;
+    font-size: .6rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--indigo-300);
+    text-align: left;
+}
+.uni__keys-head > svg:first-child { width: 17px; height: 17px; }
+.uni__keys-head span { flex: 1; }
+.uni__keys-chev { width: 15px; height: 15px; color: var(--u-muted); transition: transform .4s cubic-bezier(.22, 1, .36, 1); }
+.uni__keys-head:hover .uni__keys-chev { color: var(--u-text); }
+
+/* the fold: the body's row closes to nothing */
+.uni__keys-body {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows .45s cubic-bezier(.22, 1, .36, 1), opacity .3s ease;
+}
+.uni__keys-in { min-height: 0; overflow: hidden; }
+.uni__keys.is-folded { width: 206px; }
+.uni__keys.is-folded .uni__keys-body { grid-template-rows: 0fr; opacity: 0; }
+.uni__keys.is-folded .uni__keys-head { padding-bottom: 11px; }
+.uni__keys.is-folded .uni__keys-chev { transform: rotate(180deg); }
+
+.kc-pad {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 4px 18px;
+    padding: 4px 14px 12px;
+}
+.kc-fly { display: flex; flex-direction: column; align-items: center; gap: 9px; padding-top: 4px; }
+.kc-cross { display: grid; grid-template-columns: repeat(3, 32px); gap: 5px; }
+.kc-cross .kc--w { grid-column: 2; }
+.kc-cross .kc:not(.kc--w) { grid-row: 2; }
+.kc-fly .kc-label { text-align: center; }
+
+.kc-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 10px;
+    align-content: start;
+    padding-top: 2px;
+}
+.kc-list li { display: flex; align-items: center; gap: 8px; min-width: 0; }
+
+/* a keycap: a raised key with its edge underneath, pressed down and lit
+   while held */
+.kc {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    min-width: 32px; height: 30px;
+    padding: 0 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(165, 180, 252, .34);
+    background: linear-gradient(180deg, rgba(129, 140, 248, .22), rgba(79, 70, 229, .08));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .16), 0 3px 0 #1b1a4a, 0 6px 14px rgba(2, 4, 16, .55);
+    font-family: var(--font-body);
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .3px;
+    color: #e0e7ff;
+    transition: transform .08s ease, box-shadow .12s ease, background .15s ease, color .15s ease, border-color .15s ease;
+}
+.kc--wide { min-width: 52px; }
+.kc.is-down {
+    transform: translateY(2px);
+    border-color: #c7d2fe;
+    background: linear-gradient(180deg, #818cf8, #4f46e5);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .32), 0 1px 0 #1b1a4a, 0 0 18px rgba(129, 140, 248, .85);
+    color: #ffffff;
+}
+
+.kc-label { display: flex; flex-direction: column; min-width: 0; font-size: .62rem; line-height: 1.35; color: var(--u-muted); }
+.kc-label b { font-size: .74rem; font-weight: 600; white-space: nowrap; color: var(--u-text); }
+.kc-fly .kc-label { font-size: .6rem; }
+
+/* the mouse: a click anywhere sets a course */
+.kc-foot {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(129, 140, 248, .14);
+    font-size: .68rem;
     color: var(--u-muted);
 }
-.uni__hint kbd { margin-right: 2px; }
+.kc-foot b { font-weight: 600; color: var(--u-text); }
+.kc-mouse {
+    position: relative;
+    flex: none;
+    width: 17px; height: 25px;
+    border-radius: 9px;
+    border: 1.5px solid rgba(165, 180, 252, .6);
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+.kc-mouse::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 50%; top: 0;
+    height: 42%;
+    border-radius: 8px 0 0 0;
+    border-right: 1.5px solid rgba(165, 180, 252, .6);
+    border-bottom: 1.5px solid rgba(165, 180, 252, .6);
+    transition: background .15s ease;
+}
+.kc-mouse i {
+    position: absolute;
+    left: 50%; top: 5px;
+    width: 3px; height: 5px;
+    margin-left: -1.5px;
+    border-radius: 2px;
+    background: var(--indigo-300);
+}
+.kc-mouse.is-down { border-color: #c7d2fe; box-shadow: 0 0 14px rgba(129, 140, 248, .8); }
+.kc-mouse.is-down::before { background: rgba(129, 140, 248, .85); }
+
+/* on a touch screen: the gestures instead of the keys */
+.kc-touch { list-style: none; display: grid; gap: 10px; padding: 4px 14px 14px; }
+.kc-touch li { display: flex; align-items: center; gap: 11px; }
+.kc-ic {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    border: 1px solid rgba(165, 180, 252, .3);
+    background: rgba(129, 140, 248, .12);
+    color: #e0e7ff;
+}
+.kc-ic svg { width: 18px; height: 18px; }
 
 /* "Next" and the autopilot, side by side in the middle */
 .uni__drive { justify-self: center; display: flex; align-items: center; gap: 12px; }
@@ -484,7 +652,7 @@ kbd {
 /* Landing panel - a side panel, or a bottom sheet on phones */
 .uni__panel {
     position: absolute;
-    top: 78px; right: 20px; bottom: 20px;
+    top: 90px; right: var(--u-inset); bottom: 20px;
     display: flex;
     flex-direction: column;
     width: min(470px, 44vw);
@@ -1251,18 +1419,33 @@ kbd {
     .uni__brand .who__status { display: none; }
 }
 
+@media (max-width: 1300px) {
+    /* the card keeps the keys that matter most */
+    .uni__keys { width: 268px; }
+    .kc-list { grid-template-columns: 1fr; gap: 7px; }
+    .kc-list .kc-more { display: none; }
+}
+
+@media (max-width: 1180px) {
+    /* the tools keep their icons; their names stay with screen readers */
+    .uni__tool span { display: none; }
+    .uni__tool { width: 38px; padding: 0; justify-content: center; }
+}
+
 @media (max-width: 1100px) {
     .uni__brand .who__id span { display: none; }
-    .uni__hint span { display: none; }
     .uni__mini { width: 170px; height: 116px; }
+}
+
+@media (max-width: 1024px) {
+    .uni { --u-inset: 20px; }
+    .uni__dot { width: 26px; height: 26px; }
 }
 
 @media (max-width: 900px) {
     .uni__brand .who__id,
-    .uni__chip,
-    .uni__tool span { display: none; }
-    .uni__tool { width: 38px; padding: 0; justify-content: center; }
-    .uni__hint { display: none; }
+    .uni__chip { display: none; }
+    .uni__keys { display: none; }
     .uni__bottom { grid-template-columns: 1fr auto; }
     .uni__drive,
     .uni__next { justify-self: start; }
@@ -1287,14 +1470,16 @@ kbd {
 
 /* Phones */
 @media (max-width: 620px) {
-    .uni__top { padding: 12px 12px 22px; gap: 8px; }
+    .uni { --u-inset: 10px; }
+    .uni__top { top: 10px; padding: 4px; gap: 8px; }
+    .uni__top::after { left: 20%; right: 20%; }
     .uni__brand { padding: 4px; }
     .uni__brand .who__face { width: 34px; height: 34px; }
     .uni__progress { padding: 0 14px; height: 38px; }
     .uni__dots { display: none; }
     .uni__tools { gap: 6px; }
 
-    .uni__comms { top: 64px; padding: 10px 14px 10px 10px; }
+    .uni__comms { top: 66px; padding: 10px 14px 10px 10px; }
     .uni__face { width: 38px; height: 38px; }
     .uni__comms-text { font-size: .84rem; }
     .uni__toast { top: auto; bottom: 92px; right: 12px; left: 12px; }
@@ -1335,4 +1520,5 @@ kbd {
     .uni__prompt,
     .uni__auto-ring circle,
     .uni__comms-from span { animation: none !important; }
+    .kc.is-down { transform: none; }
 }
